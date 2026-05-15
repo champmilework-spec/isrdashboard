@@ -249,21 +249,21 @@ tbody tr:hover{
 
   <!-- FILTER -->
   <div class="filterbar">
-    <input id="searchBox" type="text" placeholder="Search Item Code / Description / OH..." />
+    <input id="searchBox" type="text" placeholder="Search Item Code / name / OH..." />
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th onclick="sortTable('Item_Code')">
-            Item Code <span class="sort-arrow" id="arrow-Item_Code">↕</span>
+          <th onclick="sortTable('gbarcode')">
+            Item Code <span class="sort-arrow" id="arrow-gbarcode">↕</span>
           </th>
-          <th onclick="sortTable('Description')">
-            Description <span class="sort-arrow" id="arrow-Description">↕</span>
+          <th onclick="sortTable('name')">
+            name <span class="sort-arrow" id="arrow-name">↕</span>
           </th>
-          <th onclick="sortTable('OnHand')" class="col-stock">
-            OH <span class="sort-arrow" id="arrow-OnHand">↕</span>
+          <th onclick="sortTable('Onhand_All')" class="col-stock">
+            OH <span class="sort-arrow" id="arrow-Onhand_All">↕</span>
           </th>
         </tr>
       </thead>
@@ -318,16 +318,16 @@ function applyAll(){
 
   if(q){
     result = result.filter(i =>
-      String(i.Item_Code   || "").toLowerCase().includes(q) ||
-      String(i.Description || "").toLowerCase().includes(q) ||
-      String(i.OnHand      || "").toLowerCase().includes(q)
+      String(i.gbarcode   || "").toLowerCase().includes(q) ||
+      String(i.name || "").toLowerCase().includes(q) ||
+      String(i.Onhand_All      || "").toLowerCase().includes(q)
     );
   }
 
   // 2. HIDE ZERO / DASH
   if(hideZero){
     result = result.filter(i => {
-      const v = String(i.OnHand || "").trim();
+      const v = String(i.Onhand_All || "").trim();
       if(v === "" || v === "-") return false;
       const n = parseFloat(v);
       if(!isNaN(n) && n === 0) return false;
@@ -400,9 +400,9 @@ function renderTable(data){
 
   tbody.innerHTML = data.map(p => `
     <tr>
-      <td class="col-code">${p.Item_Code   || "-"}</td>
-      <td class="col-desc">${p.Description || "-"}</td>
-      <td class="col-stock">${p.OnHand     || "0"}</td>
+      <td class="col-code">${p.gbarcode   || "-"}</td>
+      <td class="col-desc">${p.name || "-"}</td>
+      <td class="col-stock">${p.Onhand_All    || "0"}</td>
     </tr>
   `).join("");
 }
@@ -411,7 +411,6 @@ function renderTable(data){
    ARROWS
 ========================= */
 function updateArrows(active, dir){
-  ["Item_Code", "Description", "OnHand"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(!el) return;
     if(!active){
