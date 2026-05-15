@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SUPERPART GROUP</title>
+<style>
+/* =========================
+   BASE
+========================= */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Kanit", Arial, sans-serif;
+}
+body{
+  background:#ffffff;
+  color:#111;
+  overflow-x:hidden;
+}
+.bg{
+  position:fixed;
+  width:700px;
+  height:700px;
+  background:radial-gradient(circle, rgba(47,94,168,0.04), transparent 70%);
+  top:-250px;
+  right:-250px;
+  z-index:-1;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:18px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,0.82);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #eee;
+  z-index:100;
+}
+.logo{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#111;
+  text-decoration:none;
+}
+/* blue accent line under logo */
+.logo span{
+  display:block;
+  height:2px;
+  width:0;
+  background:#2f5ea8;
+  margin-top:3px;
+  transition:width 0.3s;
+}
+.logo:hover span{ width:100%; }
+
+.menu{
+  width:28px;
+  height:14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
+}
+.menu span{
+  height:2px;
+  background:#111;
+  width:100%;
+  border-radius:999px;
+}
+.menu span:first-child{ background:#2f5ea8; }
+
+/* =========================
+   HERO
+========================= */
+.hero{
+  min-height:70vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:100px 20px 60px;
+}
+.tag{
+  font-size:11px;
+  letter-spacing:4px;
+  color:#2f5ea8;
+  margin-bottom:18px;
+}
+h1{
+  font-size:78px;
+  letter-spacing:16px;
+  margin:0 0 18px;
+  text-align:center;
+  width:100%;
+  color:#111;
+}
+.sub{
+  max-width:600px;
+  font-size:16px;
+  color:#777;
+  line-height:1.8;
+  margin-bottom:40px;
+}
+
+/* =========================
+   HERO BUTTONS — 2×2 grid
+========================= */
+.hero-action{
+  width:100%;
+  max-width:480px;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.hero-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:14px 16px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:11px;
+  letter-spacing:1.5px;
+  font-weight:500;
+  transition:0.22s;
+  border:1px solid;
+}
+/* Default — ghost */
+.hero-btn.ghost{
+  background:#fff;
+  color:#111;
+  border-color:#ddd;
+}
+.hero-btn.ghost:hover{
+  background:#f5f5f5;
+  border-color:#bbb;
+  transform:translateY(-2px);
+}
+/* Blue — primary */
+.hero-btn.blue{
+  background:#2f5ea8;
+  color:#fff;
+  border-color:#2f5ea8;
+}
+.hero-btn.blue:hover{
+  background:#244a86;
+  border-color:#244a86;
+  transform:translateY(-2px);
+}
+/* Blue outline */
+.hero-btn.blue-out{
+  background:#fff;
+  color:#2f5ea8;
+  border-color:#2f5ea8;
+}
+.hero-btn.blue-out:hover{
+  background:#f0f5ff;
+  transform:translateY(-2px);
+}
+/* Red accent */
+.hero-btn.red{
+  background:#fff;
+  color:#c0392b;
+  border-color:#e0c0be;
+}
+.hero-btn.red:hover{
+  background:#fff5f5;
+  border-color:#c0392b;
+  transform:translateY(-2px);
+}
+.btn-icon{
+  font-size:18px;
+  line-height:1;
+}
+.btn-label{
+  font-size:10px;
+  letter-spacing:1.5px;
+}
+
+/* =========================
+   SECTION SYSTEM
+========================= */
+.section{
+  padding:60px 20px;
+}
+.title{
+  text-align:center;
+  font-size:13px;
+  letter-spacing:4px;
+  color:#999;
+  margin-bottom:30px;
+}
+.title .accent{ color:#2f5ea8; }
+.textblock{
+  max-width:720px;
+  margin:0 auto;
+  line-height:1.8;
+  color:#444;
+}
+
+/* =========================
+   PROMOTIONS ZONE (empty placeholder)
+========================= */
+.promotions{
+  background:#fafafa;
+  border-top:1px solid #eee;
+  border-bottom:1px solid #eee;
+}
+.promo-empty{
+  max-width:900px;
+  margin:0 auto;
+  min-height:160px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:1px dashed #ddd;
+  border-radius:14px;
+  padding:40px;
+}
+.promo-empty-label{
+  font-size:11px;
+  letter-spacing:3px;
+  color:#ccc;
+}
+.promo-empty-sub{
+  font-size:12px;
+  color:#ddd;
+}
+
+/* =========================
+   OUR BRANDS
+========================= */
+.brands{
+  max-width:900px;
+  margin:0 auto;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+}
+.brandtag{
+  font-size:11px;
+  letter-spacing:1.5px;
+  border:1px solid #e0e0e0;
+  padding:7px 14px;
+  border-radius:999px;
+  color:#555;
+  transition:0.2s;
+}
+.brandtag:hover{
+  border-color:#2f5ea8;
+  color:#2f5ea8;
+  background:#f0f5ff;
+}
+.brandtag a{
+  text-decoration:none;
+  color:inherit;
+}
+
+/* =========================
+   CONTACT
+========================= */
+.contact{
+  padding:60px 20px 40px;
+  text-align:center;
+  border-top:1px solid #eee;
+}
+.contact-email{
+  font-size:13px;
+  color:#555;
+  letter-spacing:0.5px;
+  margin-bottom:6px;
+}
+.contact-email a{
+  color:#2f5ea8;
+  text-decoration:none;
+}
+.contact-email a:hover{ text-decoration:underline; }
+
+/* =========================
+   FOOTER SIGN-OFF
+========================= */
+.footer-signoff{
+  padding:20px 20px 40px;
+  text-align:center;
+}
+.footer-signoff p{
+  font-size:11px;
+  letter-spacing:2px;
+  color:#ccc;
+  line-height:1.9;
+}
+.footer-signoff .dot{
+  display:inline-block;
+  width:4px;
+  height:4px;
+  background:#2f5ea8;
+  border-radius:50%;
+  margin:0 8px;
+  vertical-align:middle;
+  opacity:0.5;
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media(max-width:768px){
+  h1{
+    font-size:42px;
+    letter-spacing:8px;
+    line-height:1.2;
+  }
+  .hero{
+    padding:120px 24px 60px;
+  }
+  .sub{
+    font-size:14px;
+  }
+  .hero-action{
+    max-width:100%;
+    padding:0 4px;
+  }
+  .hero-grid{
+    gap:8px;
+  }
+  .hero-btn{
+    padding:13px 12px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- ================= TOPBAR ================= -->
+<div class="topbar">
+  <a class="logo" href="index.html">
+    SUPERPART
+    <span></span>
+  </a>
+  <div class="menu">
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="tag">AUTOMOTIVE PARTS DISTRIBUTION</div>
+  <h1>SUPERPART</h1>
+  <div class="sub">
+    Multi-channel distribution system for automotive parts and coatings —<br>
+    built for speed, precision, and scale.
+  </div>
+
+  <!-- 4 BUTTONS — 2×2 GRID -->
+  <div class="hero-action">
+    <div class="hero-grid">
+      <a class="hero-btn blue" href="products.html">
+        <span class="btn-icon">📦</span>
+        <span class="btn-label">ALL PRODUCTS</span>
+      </a>
+      <a class="hero-btn ghost" href="inventory.html">
+        <span class="btn-icon">🗂</span>
+        <span class="btn-label">INVENTORY</span>
+      </a>
+      <a class="hero-btn blue-out" href="promotion.html">
+        <span class="btn-icon">🏷</span>
+        <span class="btn-label">PROMOTIONS</span>
+      </a>
+      <a class="hero-btn red" href="dashboard.html">
+        <span class="btn-icon">📊</span>
+        <span class="btn-label">SALES DASHBOARD</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROMOTIONS (empty zone) ================= -->
+<section class="section promotions">
+  <div class="title"><span class="accent">—</span> PROMOTIONS <span class="accent">—</span></div>
+  <div class="promo-empty">
+    <div class="promo-empty-label">COMING SOON</div>
+    <div class="promo-empty-sub">โปรโมชันจะแสดงในส่วนนี้</div>
+  </div>
+</section>
+
+<!-- ================= OUR BRANDS ================= -->
+<section class="section">
+  <div class="title">OUR BRANDS</div>
+  <div class="brands">
+    <div class="brandtag">Nippon Paint</div>
+    <div class="brandtag">3M</div>
+    <div class="brandtag">Cromax</div>
+    <div class="brandtag">Nason</div>
+    <div class="brandtag">SOLAR</div>
+    <div class="brandtag">LEZZON</div>
+    <div class="brandtag">DOMAC</div>
+    <div class="brandtag">NORBIN</div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact">
+  <div class="title">CONTACT</div>
+  <div class="contact-email">
+    <a href="mailto:supalerk.k@superpart.co.th">supalerk.k@superpart.co.th</a>
+  </div>
+</section>
+
+<!-- ================= FOOTER SIGN-OFF ================= -->
+<div class="footer-signoff">
+  <p>
+    SUPERPART GROUP
+    <span class="dot"></span>
+    AUTOMOTIVE DISTRIBUTION
+    <span class="dot"></span>
+    THAILAND
+  </p>
+  <p style="margin-top:6px; font-size:10px; color:#ddd; letter-spacing:1px;">
+    parts move. business follows.
+  </p>
+</div>
+
+</body>
+</html>
