@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SUPERPART | Inventory OnHand</title>
+<style>
+
+/* =========================
+   BASE
+========================= */
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#fafafa;
+  color:#111;
+  padding-top:70px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:18px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #eee;
+  z-index:100;
+  box-sizing:border-box;
+}
+
+.logo{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#111;
+  text-decoration:none;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.container{
+  max-width:800px;
+  margin:0 auto;
+  padding:20px;
+}
+
+/* =========================
+   BREADCRUMB ROW
+========================= */
+.breadcrumb-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.breadcrumb{
+  font-size:12px;
+  color:#777;
+  letter-spacing:1px;
+}
+
+.hide-zero-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:#777;
+  white-space:nowrap;
+  cursor:pointer;
+  user-select:none;
+}
+
+.hide-zero-wrap input[type="checkbox"]{
+  width:14px;
+  height:14px;
+  cursor:pointer;
+  accent-color:#2f5ea8;
+}
+
+/* =========================
+   FILTER BAR
+========================= */
+.filterbar{
+  margin-bottom:10px;
+}
+
+.filterbar input{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  font-size:16px;
+  outline:none;
+  box-sizing:border-box;
+}
+
+/* =========================
+   TABLE WRAP
+========================= */
+.table-wrap{
+  width:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:1px solid #eee;
+  border-radius:12px;
+  background:#fff;
+  max-height:75vh;
+}
+
+/* =========================
+   TABLE
+========================= */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+/* =========================
+   HEADER
+========================= */
+thead th{
+  position:sticky;
+  top:0;
+  background:#2f5ea8;
+  color:#fff;
+  z-index:50;
+  text-align:left;
+  font-size:12px;
+  padding:12px 10px;
+  letter-spacing:1px;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+}
+
+thead th:hover{
+  background:#244a86;
+}
+
+/* =========================
+   BODY
+========================= */
+tbody td{
+  font-size:13px;
+  padding:10px;
+  border-bottom:1px solid #f0f0f0;
+}
+
+tbody tr:hover{
+  background:#f7f7f7;
+}
+
+/* =========================
+   COLUMN WIDTHS
+========================= */
+.col-code{
+  width:90px;
+  white-space:nowrap;
+}
+
+.col-desc{
+  width:auto;
+  word-break:break-word;
+  white-space:normal;
+}
+
+.col-stock{
+  width:50px;
+  text-align:right;
+  white-space:nowrap;
+}
+
+/* =========================
+   FLOAT TOP BUTTON
+========================= */
+#toTop{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+#toTop:hover{
+  transform:translateY(-3px);
+}
+
+/* =========================
+   SORT ICON
+========================= */
+.sort-arrow{
+  font-size:10px;
+  margin-left:6px;
+  opacity:0.9;
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media(max-width:768px){
+  .table-wrap{
+    overflow-x:hidden;
+  }
+  thead th.col-stock{
+    background:#2f5ea8;
+    color:#fff;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="logo" href="index.html">SUPERPART</a>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <!-- BREADCRUMB ROW -->
+  <div class="breadcrumb-row">
+    <div class="breadcrumb">HOME / INVENTORY</div>
+    <label class="hide-zero-wrap">
+      <input type="checkbox" id="hideZero" checked />
+      Hide 0 / –
+    </label>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filterbar">
+    <input id="searchBox" type="text" placeholder="Search Item Code / Description / OH..." />
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('Item_Code')">
+            Item Code <span class="sort-arrow" id="arrow-Item_Code">↕</span>
+          </th>
+          <th onclick="sortTable('Description')">
+            Description <span class="sort-arrow" id="arrow-Description">↕</span>
+          </th>
+          <th onclick="sortTable('OnHand')" class="col-stock">
+            OH <span class="sort-arrow" id="arrow-OnHand">↕</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <tr><td colspan="3">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- FLOAT TOP -->
+<div id="toTop">↑</div>
+
+<script>
+
+const API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
+
+let rawData      = [];
+let filteredData = [];
+let viewData     = [];
+
+let sortState = {
+  key: null,
+  dir: "asc"
+};
+
+/* =========================
+   LOAD DATA
+========================= */
+async function loadTable(){
+  try {
+    const res = await fetch(API);
+    rawData = await res.json();
+    applyAll();
+  } catch(e) {
+    document.getElementById("table-body").innerHTML =
+      '<tr><td colspan="3">Failed to load data.</td></tr>';
+  }
+}
+
+/* =========================
+   APPLY ALL (filter + hideZero + sort)
+========================= */
+function applyAll(){
+
+  const q        = document.getElementById("searchBox").value.toLowerCase().trim();
+  const hideZero = document.getElementById("hideZero").checked;
+
+  // 1. FILTER BY SEARCH
+  let result = rawData;
+
+  if(q){
+    result = result.filter(i =>
+      String(i.Item_Code   || "").toLowerCase().includes(q) ||
+      String(i.Description || "").toLowerCase().includes(q) ||
+      String(i.OnHand      || "").toLowerCase().includes(q)
+    );
+  }
+
+  // 2. HIDE ZERO / DASH
+  if(hideZero){
+    result = result.filter(i => {
+      const v = String(i.OnHand || "").trim();
+      if(v === "" || v === "-") return false;
+      const n = parseFloat(v);
+      if(!isNaN(n) && n === 0) return false;
+      return true;
+    });
+  }
+
+  filteredData = result;
+
+  // 3. SORT
+  if(sortState.key){
+    applySortOnFiltered();
+  } else {
+    viewData = filteredData;
+    renderTable(viewData);
+  }
+}
+
+/* =========================
+   SORT
+========================= */
+function sortTable(key){
+  if(sortState.key === key){
+    sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+  } else {
+    sortState.key = key;
+    sortState.dir = "asc";
+  }
+  applySortOnFiltered();
+  updateArrows(sortState.key, sortState.dir);
+}
+
+function applySortOnFiltered(){
+  const key = sortState.key;
+  const dir = sortState.dir;
+
+  viewData = [...filteredData].sort((a, b) => {
+    let v1 = a[key] ?? "";
+    let v2 = b[key] ?? "";
+
+    const n1 = parseFloat(v1);
+    const n2 = parseFloat(v2);
+
+    if(!isNaN(n1) && !isNaN(n2)){
+      return dir === "asc" ? n1 - n2 : n2 - n1;
+    }
+
+    v1 = String(v1).toLowerCase();
+    v2 = String(v2).toLowerCase();
+
+    if(v1 < v2) return dir === "asc" ? -1 : 1;
+    if(v1 > v2) return dir === "asc" ?  1 : -1;
+    return 0;
+  });
+
+  updateArrows(key, dir);
+  renderTable(viewData);
+}
+
+/* =========================
+   RENDER
+========================= */
+function renderTable(data){
+  const tbody = document.getElementById("table-body");
+
+  if(!data || data.length === 0){
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">No results found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(p => `
+    <tr>
+      <td class="col-code">${p.Item_Code   || "-"}</td>
+      <td class="col-desc">${p.Description || "-"}</td>
+      <td class="col-stock">${p.OnHand     || "0"}</td>
+    </tr>
+  `).join("");
+}
+
+/* =========================
+   ARROWS
+========================= */
+function updateArrows(active, dir){
+  ["Item_Code", "Description", "OnHand"].forEach(k => {
+    const el = document.getElementById("arrow-" + k);
+    if(!el) return;
+    if(!active){
+      el.textContent = "↕";
+      return;
+    }
+    el.textContent = k === active ? (dir === "asc" ? "↑" : "↓") : "↕";
+  });
+}
+
+/* =========================
+   INIT
+========================= */
+window.addEventListener("load", () => {
+
+  document.getElementById("searchBox").addEventListener("input", () => {
+    applyAll();
+  });
+
+  document.getElementById("hideZero").addEventListener("change", () => {
+    applyAll();
+  });
+
+  loadTable();
+
+});
+
+/* =========================
+   TOP BUTTON
+========================= */
+document.getElementById("toTop").onclick = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+</script>
+</body>
+</html>
