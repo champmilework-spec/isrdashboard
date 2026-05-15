@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SUPERPART | Inventory OnHand</title>
 <style>
-
 /* =========================
    BASE
 ========================= */
@@ -16,7 +15,6 @@ body{
   color:#111;
   padding-top:70px;
 }
-
 /* =========================
    TOPBAR
 ========================= */
@@ -35,14 +33,12 @@ body{
   z-index:100;
   box-sizing:border-box;
 }
-
 .logo{
   font-size:12px;
   letter-spacing:3px;
   color:#111;
   text-decoration:none;
 }
-
 /* =========================
    LAYOUT
 ========================= */
@@ -51,7 +47,6 @@ body{
   margin:0 auto;
   padding:20px;
 }
-
 /* =========================
    BREADCRUMB ROW
 ========================= */
@@ -61,13 +56,11 @@ body{
   align-items:center;
   margin-bottom:12px;
 }
-
 .breadcrumb{
   font-size:12px;
   color:#777;
   letter-spacing:1px;
 }
-
 .hide-zero-wrap{
   display:flex;
   align-items:center;
@@ -78,21 +71,18 @@ body{
   cursor:pointer;
   user-select:none;
 }
-
 .hide-zero-wrap input[type="checkbox"]{
   width:14px;
   height:14px;
   cursor:pointer;
   accent-color:#2f5ea8;
 }
-
 /* =========================
    FILTER BAR
 ========================= */
 .filterbar{
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
-
 .filterbar input{
   width:100%;
   padding:10px 12px;
@@ -102,7 +92,47 @@ body{
   outline:none;
   box-sizing:border-box;
 }
-
+/* =========================
+   CATEGORY FILTER CHIPS
+========================= */
+.cat-filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:10px;
+}
+.cat-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 12px;
+  border-radius:999px;
+  border:1px solid #ddd;
+  background:#fff;
+  font-size:11px;
+  letter-spacing:0.5px;
+  color:#555;
+  cursor:pointer;
+  user-select:none;
+  transition:0.15s;
+}
+.cat-chip input[type="checkbox"]{
+  width:12px;
+  height:12px;
+  cursor:pointer;
+  accent-color:#2f5ea8;
+  margin:0;
+}
+.cat-chip:hover{
+  border-color:#2f5ea8;
+  color:#2f5ea8;
+}
+.cat-chip.active{
+  border-color:#2f5ea8;
+  background:#f0f5ff;
+  color:#2f5ea8;
+  font-weight:600;
+}
 /* =========================
    TABLE WRAP
 ========================= */
@@ -115,7 +145,6 @@ body{
   background:#fff;
   max-height:75vh;
 }
-
 /* =========================
    TABLE
 ========================= */
@@ -123,7 +152,6 @@ table{
   width:100%;
   border-collapse:collapse;
 }
-
 /* =========================
    HEADER
 ========================= */
@@ -141,11 +169,9 @@ thead th{
   user-select:none;
   white-space:nowrap;
 }
-
 thead th:hover{
   background:#244a86;
 }
-
 /* =========================
    BODY
 ========================= */
@@ -154,11 +180,9 @@ tbody td{
   padding:10px;
   border-bottom:1px solid #f0f0f0;
 }
-
 tbody tr:hover{
   background:#f7f7f7;
 }
-
 /* =========================
    COLUMN WIDTHS
 ========================= */
@@ -166,19 +190,26 @@ tbody tr:hover{
   width:90px;
   white-space:nowrap;
 }
-
 .col-desc{
   width:auto;
   word-break:break-word;
   white-space:normal;
 }
-
 .col-stock{
   width:50px;
   text-align:right;
   white-space:nowrap;
 }
-
+/* =========================
+   RESULT COUNT
+========================= */
+.result-count{
+  font-size:11px;
+  color:#aaa;
+  letter-spacing:0.5px;
+  margin-bottom:6px;
+  text-align:right;
+}
 /* =========================
    FLOAT TOP BUTTON
 ========================= */
@@ -198,11 +229,9 @@ tbody tr:hover{
   font-size:18px;
   box-shadow:0 8px 20px rgba(0,0,0,0.2);
 }
-
 #toTop:hover{
   transform:translateY(-3px);
 }
-
 /* =========================
    SORT ICON
 ========================= */
@@ -211,7 +240,6 @@ tbody tr:hover{
   margin-left:6px;
   opacity:0.9;
 }
-
 /* =========================
    MOBILE
 ========================= */
@@ -223,11 +251,16 @@ tbody tr:hover{
     background:#2f5ea8;
     color:#fff;
   }
+  .cat-filter-bar{
+    gap:5px;
+  }
+  .cat-chip{
+    font-size:10px;
+    padding:4px 10px;
+  }
 }
-
 </style>
 </head>
-
 <body>
 
 <!-- TOPBAR -->
@@ -247,20 +280,48 @@ tbody tr:hover{
     </label>
   </div>
 
-  <!-- FILTER -->
+  <!-- SEARCH -->
   <div class="filterbar">
-    <input id="searchBox" type="text" placeholder="Search Item Code / name / OH..." />
+    <input id="searchBox" type="text" placeholder="Search Item Code / Description / OH..." />
   </div>
 
+  <!-- CATEGORY FILTER CHIPS -->
+  <div class="cat-filter-bar">
+    <label class="cat-chip" id="chip-lacquer">
+      <input type="checkbox" id="cat-lacquer" />
+      แลคเกอร์
+    </label>
+    <label class="cat-chip" id="chip-tape">
+      <input type="checkbox" id="cat-tape" />
+      กระดาษกาว
+    </label>
+    <label class="cat-chip" id="chip-primer">
+      <input type="checkbox" id="cat-primer" />
+      สีพื้น
+    </label>
+    <label class="cat-chip" id="chip-spray">
+      <input type="checkbox" id="cat-spray" />
+      สีพ่น
+    </label>
+    <label class="cat-chip" id="chip-putty">
+      <input type="checkbox" id="cat-putty" />
+      สีโป๊ว
+    </label>
+  </div>
+
+  <!-- RESULT COUNT -->
+  <div class="result-count" id="result-count"></div>
+
+  <!-- TABLE -->
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th onclick="sortTable('gbarcode')">
+          <th onclick="sortTable('gbarcode')" class="col-code">
             Item Code <span class="sort-arrow" id="arrow-gbarcode">↕</span>
           </th>
           <th onclick="sortTable('name')">
-            name <span class="sort-arrow" id="arrow-name">↕</span>
+            Description <span class="sort-arrow" id="arrow-name">↕</span>
           </th>
           <th onclick="sortTable('Onhand_All')" class="col-stock">
             OH <span class="sort-arrow" id="arrow-Onhand_All">↕</span>
@@ -279,17 +340,21 @@ tbody tr:hover{
 <div id="toTop">↑</div>
 
 <script>
-
 const API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
+
+// Category filter definitions — keyword searched in gnamechr
+const CAT_FILTERS = [
+  { id: "cat-lacquer", keyword: "แลคเกอร์พ่นสีรถยนต์", chipId: "chip-lacquer" },
+  { id: "cat-tape",    keyword: "กระดาษกาว",           chipId: "chip-tape"    },
+  { id: "cat-primer",  keyword: "สีรองพื้น",            chipId: "chip-primer"  },
+  { id: "cat-spray",   keyword: "สีพ่น",                chipId: "chip-spray"   },
+  { id: "cat-putty",   keyword: "สีโป๊ว",               chipId: "chip-putty"   },
+];
 
 let rawData      = [];
 let filteredData = [];
 let viewData     = [];
-
-let sortState = {
-  key: null,
-  dir: "asc"
-};
+let sortState    = { key: null, dir: "asc" };
 
 /* =========================
    LOAD DATA
@@ -306,25 +371,36 @@ async function loadTable(){
 }
 
 /* =========================
-   APPLY ALL (filter + hideZero + sort)
+   APPLY ALL
 ========================= */
 function applyAll(){
-
   const q        = document.getElementById("searchBox").value.toLowerCase().trim();
   const hideZero = document.getElementById("hideZero").checked;
 
-  // 1. FILTER BY SEARCH
+  // Which category filters are active?
+  const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id).checked);
+
   let result = rawData;
 
+  // 1. CATEGORY FILTER (OR logic across active chips)
+  if(activeCats.length > 0){
+    result = result.filter(i => {
+      const gname = String(i.gnamechr || "").toLowerCase();
+      return activeCats.some(f => gname.includes(f.keyword.toLowerCase()));
+    });
+  }
+
+  // 2. TEXT SEARCH
   if(q){
     result = result.filter(i =>
-      String(i.gbarcode   || "").toLowerCase().includes(q) ||
-      String(i.name || "").toLowerCase().includes(q) ||
-      String(i.Onhand_All      || "").toLowerCase().includes(q)
+      String(i.gbarcode    || "").toLowerCase().includes(q) ||
+      String(i.name        || "").toLowerCase().includes(q) ||
+      String(i.gnamechr    || "").toLowerCase().includes(q) ||
+      String(i.Onhand_All  || "").toLowerCase().includes(q)
     );
   }
 
-  // 2. HIDE ZERO / DASH
+  // 3. HIDE ZERO / DASH
   if(hideZero){
     result = result.filter(i => {
       const v = String(i.Onhand_All || "").trim();
@@ -337,13 +413,15 @@ function applyAll(){
 
   filteredData = result;
 
-  // 3. SORT
+  // 4. SORT
   if(sortState.key){
     applySortOnFiltered();
   } else {
     viewData = filteredData;
     renderTable(viewData);
   }
+
+  updateResultCount(viewData.length || filteredData.length);
 }
 
 /* =========================
@@ -357,34 +435,27 @@ function sortTable(key){
     sortState.dir = "asc";
   }
   applySortOnFiltered();
-  updateArrows(sortState.key, sortState.dir);
 }
 
 function applySortOnFiltered(){
-  const key = sortState.key;
-  const dir = sortState.dir;
-
+  const { key, dir } = sortState;
   viewData = [...filteredData].sort((a, b) => {
     let v1 = a[key] ?? "";
     let v2 = b[key] ?? "";
-
     const n1 = parseFloat(v1);
     const n2 = parseFloat(v2);
-
     if(!isNaN(n1) && !isNaN(n2)){
       return dir === "asc" ? n1 - n2 : n2 - n1;
     }
-
     v1 = String(v1).toLowerCase();
     v2 = String(v2).toLowerCase();
-
     if(v1 < v2) return dir === "asc" ? -1 : 1;
     if(v1 > v2) return dir === "asc" ?  1 : -1;
     return 0;
   });
-
   updateArrows(key, dir);
   renderTable(viewData);
+  updateResultCount(viewData.length);
 }
 
 /* =========================
@@ -392,32 +463,47 @@ function applySortOnFiltered(){
 ========================= */
 function renderTable(data){
   const tbody = document.getElementById("table-body");
-
   if(!data || data.length === 0){
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">No results found.</td></tr>';
     return;
   }
-
   tbody.innerHTML = data.map(p => `
     <tr>
-      <td class="col-code">${p.gbarcode   || "-"}</td>
-      <td class="col-desc">${p.name || "-"}</td>
-      <td class="col-stock">${p.Onhand_All    || "0"}</td>
+      <td class="col-code">${p.gbarcode    || "-"}</td>
+      <td class="col-desc">${p.name        || "-"}</td>
+      <td class="col-stock">${p.Onhand_All || "0"}</td>
     </tr>
   `).join("");
+}
+
+/* =========================
+   RESULT COUNT
+========================= */
+function updateResultCount(n){
+  document.getElementById("result-count").textContent =
+    n > 0 ? n.toLocaleString() + " items" : "";
 }
 
 /* =========================
    ARROWS
 ========================= */
 function updateArrows(active, dir){
+  ["gbarcode", "name", "Onhand_All"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(!el) return;
-    if(!active){
-      el.textContent = "↕";
-      return;
-    }
     el.textContent = k === active ? (dir === "asc" ? "↑" : "↓") : "↕";
+  });
+}
+
+/* =========================
+   CHIP ACTIVE STATE
+========================= */
+function updateChipStyles(){
+  CAT_FILTERS.forEach(f => {
+    const checked = document.getElementById(f.id).checked;
+    const chip    = document.getElementById(f.chipId);
+    if(checked) chip.classList.add("active");
+    else        chip.classList.remove("active");
   });
 }
 
@@ -425,17 +511,17 @@ function updateArrows(active, dir){
    INIT
 ========================= */
 window.addEventListener("load", () => {
+  document.getElementById("searchBox").addEventListener("input", applyAll);
+  document.getElementById("hideZero").addEventListener("change", applyAll);
 
-  document.getElementById("searchBox").addEventListener("input", () => {
-    applyAll();
-  });
-
-  document.getElementById("hideZero").addEventListener("change", () => {
-    applyAll();
+  CAT_FILTERS.forEach(f => {
+    document.getElementById(f.id).addEventListener("change", () => {
+      updateChipStyles();
+      applyAll();
+    });
   });
 
   loadTable();
-
 });
 
 /* =========================
@@ -444,7 +530,6 @@ window.addEventListener("load", () => {
 document.getElementById("toTop").onclick = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
-
 </script>
 </body>
 </html>
