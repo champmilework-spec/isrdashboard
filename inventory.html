@@ -2,271 +2,261 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SUPERPART | Inventory OnHand</title>
 <style>
 /* =========================
    BASE
 ========================= */
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#fafafa;
-  color:#111;
-  padding-top:70px;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  color: #111;
+  padding-top: 80px;
 }
-/* =========================
-   TOPBAR
-========================= */
-.topbar{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  padding:18px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid #eee;
-  z-index:100;
-  box-sizing:border-box;
-}
-.logo{
-  font-size:12px;
-  letter-spacing:3px;
-  color:#111;
-  text-decoration:none;
-}
+
 /* =========================
    LAYOUT
 ========================= */
-.container{
-  max-width:800px;
-  margin:0 auto;
-  padding:20px;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
 }
+
 /* =========================
    BREADCRUMB ROW
 ========================= */
-.breadcrumb-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
+.breadcrumb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
-.breadcrumb{
-  font-size:12px;
-  color:#777;
-  letter-spacing:1px;
+.breadcrumb {
+  font-size: 12px;
+  color: #777;
+  letter-spacing: 1px;
 }
-.hide-zero-wrap{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:12px;
-  color:#777;
-  white-space:nowrap;
-  cursor:pointer;
-  user-select:none;
+.hide-zero-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #777;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
 }
-.hide-zero-wrap input[type="checkbox"]{
-  width:14px;
-  height:14px;
-  cursor:pointer;
-  accent-color:#2f5ea8;
+.hide-zero-wrap input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #2f5ea8;
 }
+
 /* =========================
    FILTER BAR
 ========================= */
-.filterbar{
-  margin-bottom:8px;
+.filterbar {
+  margin-bottom: 8px;
 }
-.filterbar input{
-  width:100%;
-  padding:10px 12px;
-  border:1px solid #ddd;
-  border-radius:8px;
-  font-size:16px;
-  outline:none;
-  box-sizing:border-box;
+.filterbar input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
 }
+
 /* =========================
    CATEGORY FILTER CHIPS
 ========================= */
-.cat-filter-bar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-bottom:10px;
+.cat-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
 }
-.cat-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:5px 12px;
-  border-radius:999px;
-  border:1px solid #ddd;
-  background:#fff;
-  font-size:11px;
-  letter-spacing:0.5px;
-  color:#555;
-  cursor:pointer;
-  user-select:none;
-  transition:0.15s;
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.15s;
 }
-.cat-chip input[type="checkbox"]{
-  width:12px;
-  height:12px;
-  cursor:pointer;
-  accent-color:#2f5ea8;
-  margin:0;
+.cat-chip input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+  accent-color: #2f5ea8;
+  margin: 0;
 }
-.cat-chip:hover{
-  border-color:#2f5ea8;
-  color:#2f5ea8;
+.cat-chip:hover {
+  border-color: #2f5ea8;
+  color: #2f5ea8;
 }
-.cat-chip.active{
-  border-color:#2f5ea8;
-  background:#f0f5ff;
-  color:#2f5ea8;
-  font-weight:600;
+.cat-chip.active {
+  border-color: #2f5ea8;
+  background: #f0f5ff;
+  color: #2f5ea8;
+  font-weight: 600;
 }
+
 /* =========================
    TABLE WRAP
 ========================= */
-.table-wrap{
-  width:100%;
-  overflow-x:hidden;
-  overflow-y:auto;
-  border:1px solid #eee;
-  border-radius:12px;
-  background:#fff;
-  max-height:75vh;
+.table-wrap {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fff;
+  max-height: 75vh;
 }
+
 /* =========================
    TABLE
 ========================= */
-table{
-  width:100%;
-  border-collapse:collapse;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
+
 /* =========================
    HEADER
 ========================= */
-thead th{
-  position:sticky;
-  top:0;
-  background:#2f5ea8;
-  color:#fff;
-  z-index:50;
-  text-align:left;
-  font-size:12px;
-  padding:12px 10px;
-  letter-spacing:1px;
-  cursor:pointer;
-  user-select:none;
-  white-space:nowrap;
+thead th {
+  position: sticky;
+  top: 0;
+  background: #2f5ea8;
+  color: #fff;
+  z-index: 50;
+  text-align: left;
+  font-size: 12px;
+  padding: 12px 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
 }
-thead th:hover{
-  background:#244a86;
+thead th:hover {
+  background: #244a86;
 }
+
 /* =========================
    BODY
 ========================= */
-tbody td{
-  font-size:13px;
-  padding:10px;
-  border-bottom:1px solid #f0f0f0;
+tbody td {
+  font-size: 13px;
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
 }
-tbody tr:hover{
-  background:#f7f7f7;
+tbody tr:hover {
+  background: #f7f7f7;
 }
+
 /* =========================
    COLUMN WIDTHS
 ========================= */
-.col-code{
-  width:90px;
-  white-space:nowrap;
+.col-code {
+  width: 90px;
+  white-space: nowrap;
 }
-.col-desc{
-  width:auto;
-  word-break:break-word;
-  white-space:normal;
+.col-desc {
+  width: auto;
+  word-break: break-word;
+  white-space: normal;
 }
-.col-stock{
-  width:50px;
-  text-align:right;
-  white-space:nowrap;
+.col-stock {
+  width: 50px;
+  text-align: right;
+  white-space: nowrap;
 }
+
 /* =========================
    RESULT COUNT
 ========================= */
-.result-count{
-  font-size:11px;
-  color:#aaa;
-  letter-spacing:0.5px;
-  margin-bottom:6px;
-  text-align:right;
+.result-count {
+  font-size: 11px;
+  color: #aaa;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  text-align: right;
 }
+
 /* =========================
    FLOAT TOP BUTTON
 ========================= */
-#toTop{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:#111;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  font-size:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+#toTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 99;
 }
-#toTop:hover{
-  transform:translateY(-3px);
+#toTop:hover {
+  transform: translateY(-3px);
 }
+
 /* =========================
    SORT ICON
 ========================= */
-.sort-arrow{
-  font-size:10px;
-  margin-left:6px;
-  opacity:0.9;
+.sort-arrow {
+  font-size: 10px;
+  margin-left: 6px;
+  opacity: 0.9;
 }
+
 /* =========================
    MOBILE
 ========================= */
 @media(max-width:768px){
-  .table-wrap{
-    overflow-x:hidden;
+  .table-wrap {
+    overflow-x: hidden;
   }
-  thead th.col-stock{
-    background:#2f5ea8;
-    color:#fff;
+  thead th.col-stock {
+    background: #2f5ea8;
+    color: #fff;
   }
-  .cat-filter-bar{
-    gap:5px;
+  .cat-filter-bar {
+    gap: 5px;
   }
-  .cat-chip{
-    font-size:10px;
-    padding:4px 10px;
+  .cat-chip {
+    font-size: 10px;
+    padding: 4px 10px;
   }
 }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <a class="logo" href="index.html">SUPERPART</a>
-</div>
+<!-- TOPBAR PLACEHOLDER (LOAD FROM LAYOUT) -->
+<div id="header-placeholder"></div>
 
 <!-- CONTENT -->
 <div class="container">
@@ -339,14 +329,17 @@ tbody tr:hover{
 <!-- FLOAT TOP -->
 <div id="toTop">↑</div>
 
+<!-- EXTERNAL LAYOUT LOADER -->
+<script src="layout.js"></script>
+
 <script>
 const API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
 
 // Category filter definitions — keyword searched in gnamechr
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์พ่นสีรถยนต์", chipId: "chip-lacquer" },
-  { id: "cat-tape",    keyword: "กระดาษกาว",           chipId: "chip-tape"    },
-  { id: "cat-primer",  keyword: "สีรองพื้น",            chipId: "chip-primer"  },
+  { id: "cat-tape",    keyword: "กระดาษกาว",            chipId: "chip-tape"    },
+  { id: "cat-primer",  keyword: "สีรองพื้น",             chipId: "chip-primer"  },
   { id: "cat-spray",   keyword: "สีพ่น",                chipId: "chip-spray"   },
   { id: "cat-putty",   keyword: "สีโป๊ว",               chipId: "chip-putty"   },
 ];
@@ -377,12 +370,11 @@ function applyAll(){
   const q        = document.getElementById("searchBox").value.toLowerCase().trim();
   const hideZero = document.getElementById("hideZero").checked;
 
-  // Which category filters are active?
   const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id).checked);
 
   let result = rawData;
 
-  // 1. CATEGORY FILTER (OR logic across active chips)
+  // 1. CATEGORY FILTER
   if(activeCats.length > 0){
     result = result.filter(i => {
       const gname = String(i.gnamechr || "").toLowerCase();
