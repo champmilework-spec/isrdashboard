@@ -13,7 +13,7 @@ body {
   font-family: Arial, sans-serif;
   background: #fafafa;
   color: #111;
-  padding-top: 80px;
+  padding-top: 80px; /* เว้นพื้นที่ด้านบนให้ Topbar ไม่บังเนื้อหา */
 }
 
 /* =========================
@@ -24,7 +24,7 @@ body {
   margin: 0 auto;
   padding: 20px;
   position: relative;
-  z-index: 1;
+  z-index: 1; /* อยู่เลเยอร์ต่ำกว่า Topbar (z-index: 100) เสมอ */
 }
 
 /* =========================
@@ -233,7 +233,7 @@ tbody tr:hover {
 }
 
 /* =========================
-   MOBILE
+   MOBILE RESPONSIVE
 ========================= */
 @media(max-width:768px){
   .table-wrap {
@@ -255,10 +255,10 @@ tbody tr:hover {
 </head>
 <body>
 
-<!-- TOPBAR PLACEHOLDER (LOAD FROM LAYOUT) -->
+<!-- TOPBAR PLACEHOLDER (LOAD FROM LAYOUT.JS) -->
 <div id="header-placeholder"></div>
 
-<!-- CONTENT -->
+<!-- CONTENT MAIN CONTAINER -->
 <div class="container">
 
   <!-- BREADCRUMB ROW -->
@@ -289,6 +289,7 @@ tbody tr:hover {
       <input type="checkbox" id="cat-primer" />
       สีพื้น
     </label>
+    <!-- แก้ไข id ของ label ตรงนี้จาก cat-spray เป็น chip-spray เพื่อไม่ให้ชนกับ input -->
     <label class="cat-chip" id="chip-spray">
       <input type="checkbox" id="cat-spray" />
       สีพ่น
@@ -319,19 +320,17 @@ tbody tr:hover {
         </tr>
       </thead>
       <tbody id="table-body">
-        <tr><td colspan="3">Loading...</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading...</td></tr>
       </tbody>
     </table>
   </div>
 
 </div>
 
-<!-- FLOAT TOP -->
+<!-- FLOAT TOP BUTTON -->
 <div id="toTop">↑</div>
 
-<!-- EXTERNAL LAYOUT LOADER -->
-<script src="layout.js"></script>
-
+<!-- SYSTEM SCRIPTS -->
 <script>
 const API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
 
@@ -339,8 +338,8 @@ const API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_uk
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์พ่นสีรถยนต์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว",            chipId: "chip-tape"    },
-  { id: "cat-primer",  keyword: "สีรองพื้น",             chipId: "chip-primer"  },
-  { id: "cat-spray",   keyword: "สีพ่น",                chipId: "chip-spray"   },
+  { id: "cat-primer",  keyword: "สีรองพื้น",              chipId: "chip-primer"  },
+  { id: "cat-spray",   keyword: "สีพ่น",                chipId: "chip-spray"   }, // แก้ไข chipId ให้ตรงกับ HTML ด้านบน
   { id: "cat-putty",   keyword: "สีโป๊ว",               chipId: "chip-putty"   },
 ];
 
@@ -359,18 +358,18 @@ async function loadTable(){
     applyAll();
   } catch(e) {
     document.getElementById("table-body").innerHTML =
-      '<tr><td colspan="3">Failed to load data.</td></tr>';
+      '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">Failed to load data.</td></tr>';
   }
 }
 
 /* =========================
-   APPLY ALL
+   APPLY ALL FILTERS
 ========================= */
 function applyAll(){
   const q        = document.getElementById("searchBox").value.toLowerCase().trim();
   const hideZero = document.getElementById("hideZero").checked;
 
-  const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id).checked);
+  const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
 
   let result = rawData;
 
@@ -417,7 +416,7 @@ function applyAll(){
 }
 
 /* =========================
-   SORT
+   SORT TABLES
 ========================= */
 function sortTable(key){
   if(sortState.key === key){
@@ -451,7 +450,7 @@ function applySortOnFiltered(){
 }
 
 /* =========================
-   RENDER
+   RENDER TABLE DATA
 ========================= */
 function renderTable(data){
   const tbody = document.getElementById("table-body");
@@ -477,7 +476,7 @@ function updateResultCount(n){
 }
 
 /* =========================
-   ARROWS
+   SORT ARROWS MANAGEMENT
 ========================= */
 function updateArrows(active, dir){
   ["gbarcode", "name", "Onhand_All"].forEach(k => {
@@ -488,40 +487,49 @@ function updateArrows(active, dir){
 }
 
 /* =========================
-   CHIP ACTIVE STATE
+   CHIP ACTIVE STATE STYLES
 ========================= */
 function updateChipStyles(){
   CAT_FILTERS.forEach(f => {
-    const checked = document.getElementById(f.id).checked;
-    const chip    = document.getElementById(f.chipId);
-    if(checked) chip.classList.add("active");
-    else        chip.classList.remove("active");
+    const checkbox = document.getElementById(f.id);
+    const chip     = document.getElementById(f.chipId);
+    if(checkbox && chip) {
+      if(checkbox.checked) chip.classList.add("active");
+      else                 chip.classList.remove("active");
+    }
   });
 }
 
 /* =========================
-   INIT
+   INITIALIZE EVENT LISTENERS
 ========================= */
 window.addEventListener("load", () => {
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
 
   CAT_FILTERS.forEach(f => {
-    document.getElementById(f.id).addEventListener("change", () => {
-      updateChipStyles();
-      applyAll();
-    });
+    const checkbox = document.getElementById(f.id);
+    if(checkbox) {
+      checkbox.addEventListener("change", () => {
+        updateChipStyles();
+        applyAll();
+      });
+    }
   });
 
   loadTable();
 });
 
 /* =========================
-   TOP BUTTON
+   BACK TO TOP BUTTON
 ========================= */
 document.getElementById("toTop").onclick = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 </script>
+
+<!-- ASYNC LAYOUT LOADER (FETCHES HEADER.HTML) -->
+<script src="layout.js"></script>
+
 </body>
 </html>
