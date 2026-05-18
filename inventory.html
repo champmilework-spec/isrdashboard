@@ -289,7 +289,6 @@ tbody tr:hover {
       <input type="checkbox" id="cat-primer" />
       สีพื้น
     </label>
-    <!-- แก้ไข id ของ label ตรงนี้จาก cat-spray เป็น chip-spray เพื่อไม่ให้ชนกับ input -->
     <label class="cat-chip" id="chip-spray">
       <input type="checkbox" id="cat-spray" />
       สีพ่น
@@ -339,8 +338,8 @@ const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์พ่นสีรถยนต์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว",            chipId: "chip-tape"    },
   { id: "cat-primer",  keyword: "สีรองพื้น",              chipId: "chip-primer"  },
-  { id: "cat-spray",   keyword: "สีพ่น",                chipId: "chip-spray"   }, // แก้ไข chipId ให้ตรงกับ HTML ด้านบน
-  { id: "cat-putty",   keyword: "สีโป๊ว",               chipId: "chip-putty"   },
+  { id: "cat-spray",   keyword: "สีพ่น",                 chipId: "chip-spray"   }, 
+  { id: "cat-putty",   keyword: "สีโป๊ว",                chipId: "chip-putty"   },
 ];
 
 let rawData      = [];
