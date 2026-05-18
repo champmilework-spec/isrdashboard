@@ -1,52 +1,95 @@
-/* ==========================================================
-   SUPERPART LAYOUT LOADER & INTERACTION SYSTEM
-   ========================================================== */
+// =========================
+// LAYOUT CONTROLLER (CLEAN VERSION)
+// =========================
 
 document.addEventListener("DOMContentLoaded", () => {
-  const headerPlaceholder = document.getElementById("header-placeholder");
-
-  if (headerPlaceholder) {
-    // 1. ดึงไฟล์ header.html เข้ามาแทนที่ใน Placeholder บล็อก
-    fetch("header.html")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok for header.html");
-        }
-        return response.text();
-      })
-      .then(data => {
-        headerPlaceholder.innerHTML = data;
-
-        // 2. เรียกใช้งานระบบ Event Listeners หลังจาก Element โหลดเสร็จแล้ว
-        initHeaderInteractions();
-      })
-      .catch(error => {
-        console.error("Error loading the header layout:", error);
-      });
-  }
+  initLayout();
 });
 
-function initHeaderInteractions() {
+let layoutInitialized = false;
+
+async function initLayout() {
+
+  // กัน init ซ้ำทั้งระบบ (สำคัญมาก)
+  if (layoutInitialized) return;
+  layoutInitialized = true;
+
+  // =========================
+  // LOAD HEADER
+  // =========================
+  const headerPlaceholder = document.getElementById("header-placeholder");
+
+  if (headerPlaceholder && !headerPlaceholder.dataset.loaded) {
+
+    const headerRes = await fetch("header.html");
+    const headerHtml = await headerRes.text();
+
+    headerPlaceholder.innerHTML = headerHtml;
+    headerPlaceholder.dataset.loaded = "true";
+  }
+
+  // =========================
+  // LOAD FOOTER
+  // =========================
+  const footerPlaceholder = document.getElementById("footer-placeholder");
+
+  if (footerPlaceholder && !footerPlaceholder.dataset.loaded) {
+
+    const footerRes = await fetch("footer.html");
+    const footerHtml = await footerRes.text();
+
+    footerPlaceholder.innerHTML = footerHtml;
+    footerPlaceholder.dataset.loaded = "true";
+  }
+
+  // =========================
+  // INIT INTERACTIONS (AFTER INJECT)
+  // =========================
+  initHamburgerMenu();
+}
+
+
+// =========================
+// HAMBURGER MENU (SAFE VERSION)
+// =========================
+
+let hamburgerBound = false;
+let outsideClickBound = false;
+
+function initHamburgerMenu() {
+
   const menuBtn = document.getElementById("menuBtn");
   const menuDropdown = document.getElementById("menuDropdown");
 
-  if (menuBtn && menuDropdown) {
-    // จับการคลิกที่ปุ่มแฮมเบอร์เกอร์เพื่อ Toggle คลาส active
-    menuBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // กันไม่ให้ event ไหลไปโดน window
-      menuDropdown.classList.toggle("active");
-    });
+  if (!menuBtn || !menuDropdown) return;
 
-    // ตรวจจับการคลิกที่อื่นภายนอกเมนู (Outside Click) เพื่อหุบเมนูเก็บลงไป
+  // กัน bind ซ้ำ
+  if (hamburgerBound) return;
+  hamburgerBound = true;
+
+  // toggle menu
+  menuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menuDropdown.classList.toggle("active");
+  });
+
+  // กัน bind window click ซ้ำ
+  if (!outsideClickBound) {
+
     window.addEventListener("click", (e) => {
-      if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
-        menuDropdown.classList.remove("active");
+      const menuBtnLive = document.getElementById("menuBtn");
+      const menuDropdownLive = document.getElementById("menuDropdown");
+
+      if (!menuBtnLive || !menuDropdownLive) return;
+
+      if (
+        !menuBtnLive.contains(e.target) &&
+        !menuDropdownLive.contains(e.target)
+      ) {
+        menuDropdownLive.classList.remove("active");
       }
     });
 
-    // ป้องกันการปิดเมนูเมื่อผู้ใช้ทำการคลิกด้านในกล่อง dropdown
-    menuDropdown.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
+    outsideClickBound = true;
   }
 }
