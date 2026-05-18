@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SUPERPART | Promotions</title>
+
+<style>
+/* =========================
+   GLOBAL & LAYOUT COMPACT
+========================= */
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#fafafa;
+  color:#111;
+  padding-top: 20px;
+}
+
+/* =========================
+   HEADER & STATUS TOGGLE
+========================= */
+.header-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 20px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.breadcrumb{
+  font-size:12px;
+  color:#888;
+  margin-bottom:4px;
+  letter-spacing: 1px;
+}
+
+.title{
+  font-size:26px;
+  font-weight:bold;
+  letter-spacing:0.5px;
+  margin: 0;
+}
+
+.status-toggle-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+.status-toggle-box:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+.status-toggle-box input {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+}
+
+/* =========================
+   BRAND FILTER BAR
+========================= */
+.category-filter-bar {
+  max-width: 1100px;
+  margin: 10px auto 15px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.category-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  background: #fff;
+  padding: 6px 14px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+.category-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  height: 14px;
+  width: 14px;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.category-label:hover {
+  border-color: #2f5ea8;
+  background: #f0f5ff;
+}
+
+.category-label input:checked ~ .checkmark {
+  background-color: #2f5ea8;
+  border-color: #2f5ea8;
+}
+
+.category-label:has(input:checked) {
+  border-color: #2f5ea8;
+  background: #f0f5ff;
+  color: #2f5ea8;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 3px;
+  left: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: white;
+}
+
+.category-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* =========================
+   GRID LAYOUT
+========================= */
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:10px 20px 20px;
+  box-sizing: border-box;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:20px;
+  align-items:start;
+}
+
+/* =========================
+   STATIC INTRO CARD
+========================= */
+.promo-card{
+  background: linear-gradient(135deg, #0b111e, #1a2536);
+  color:#fff;
+  border-radius:18px;
+  padding:20px;
+  min-height:360px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  box-sizing:border-box;
+  break-inside: avoid;
+  width:100%;
+}
+
+.promo-tag{
+  font-size:11px;
+  letter-spacing:2px;
+  opacity:0.7;
+  margin-bottom:14px;
+}
+
+.promo-main-title{
+  font-size:24px;
+  font-weight:700;
+  line-height:1.2;
+  word-break:break-word;
+  margin-bottom:12px;
+}
+
+.promo-desc{
+  font-size:13px;
+  line-height:1.6;
+  opacity:0.8;
+}
+
+/* =========================
+   DYNAMIC CARD
+========================= */
+.card{
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+  border:1px solid #eee;
+  transition:0.2s ease;
+  width:100%;
+  box-sizing:border-box;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 24px rgba(0,0,0,0.10);
+}
+
+.img-wrap {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #f3f3f3;
+  overflow: hidden;
+  position: relative;
+}
+
+.card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* ป้ายสถานะ ตัวอักษรสีขาวสว่าง มองเห็นได้เด่นชัดขึ้น (ข้อ 2) */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px; /* ย้ายมามุมบนซ้ายตามรายละเอียด */
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #fff !important; 
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* แท็ก PromoType ในรูป มุมล่างขวา (ข้อ 1) */
+.promo-type-overlay {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(11, 17, 30, 0.75);
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.content{
+  padding:14px;
+  box-sizing: border-box;
+}
+
+/* =========================
+   CARD DETAILS & BRAND UI
+========================= */
+.top-info{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  gap:6px;
+}
+
+.promo-code{
+  font-size:11px;
+  font-weight:700;
+  color:#4a5568;
+  background: #edf2f7;
+  padding:2px 6px;
+  border-radius:4px;
+}
+
+.brand-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: #2f5ea8;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+}
+
+.condition-text{
+  font-size:13px;
+  font-weight:500;
+  line-height:1.4;
+  margin-bottom:10px;
+  color: #4a5568;
+  word-break: break-word;
+}
+
+/* ปรับระยะและสัดส่วน Promo1 ให้เหมาะสมตามปกติ ไม่อ้วนเตี้ย (ข้อ 3) */
+.promo1-highlight {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+.promo-bullets {
+  font-size: 12px;
+  color: #4a5568;
+  margin: 0 0 12px 0;
+  padding-left: 14px;
+  line-height: 1.5;
+}
+.promo-bullets li {
+  margin-bottom: 2px;
+}
+
+.price-container {
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
+
+.sale-price-label {
+  font-size: 11px;
+  color: #718096;
+}
+
+.sale-price-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #d90429;
+  line-height: 1.1;
+}
+
+.date-zone {
+  border-top: 1px solid #f7fafc;
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: #718096;
+}
+.date-line {
+  display: flex;
+  justify-content: space-between;
+}
+.date-line span:first-child {
+  color: #a0aec0;
+}
+
+/* =========================
+   PAGINATION BAR
+========================= */
+.pagination-bar {
+  max-width: 1100px;
+  margin: 20px auto 10px auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+  background: #f0f0f0;
+  border-color: #bbb;
+}
+
+.page-btn.active {
+  background: #2f5ea8;
+  color: #fff;
+  border-color: #2f5ea8;
+}
+
+.page-btn:disabled {
+  background: #f5f5f5;
+  color: #ccc;
+  border-color: #eaeaea;
+  cursor: not-allowed;
+}
+
+/* =========================
+   LOADING & ERROR
+========================= */
+.loading{
+  text-align:center;
+  color:#888;
+  padding:60px;
+  grid-column:1/-1;
+  font-size: 15px;
+}
+
+/* =========================
+   RESPONSIVE MOBILE
+========================= */
+@media(max-width:768px){
+  body {
+    padding-top: 10px;
+  }
+
+  .header-wrapper {
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 16px;
+  }
+
+  .title{
+    font-size:20px;
+  }
+
+  .status-toggle-box {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .category-filter-bar {
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .category-label {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .container{
+    padding:8px 16px 16px;
+  }
+
+  .grid{
+    column-count:2;
+    column-gap:10px;
+    display:block;
+  }
+
+  .card, .promo-card{
+    break-inside: avoid;
+    margin-bottom:12px;
+    display:inline-block;
+    width:100%;
+  }
+
+  .promo-card{
+    min-height:180px;
+    border-radius:14px;
+    padding:16px;
+  }
+
+  .promo-main-title{
+    font-size:18px;
+    margin-bottom:6px;
+  }
+
+  .promo-desc{
+    font-size:11px;
+  }
+
+  .content{
+    padding:10px;
+  }
+
+  .promo1-highlight {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .promo-bullets {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .sale-price-value{
+    font-size:20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="header-placeholder"></div>
+
+<div class="header-wrapper">
+  <div class="header-left">
+    <div class="breadcrumb">HOME / PROMOTIONS</div>
+    <div class="title">Campaigns</div>
+  </div>
+  
+  <label class="status-toggle-box">
+    <input type="checkbox" id="active-only-checkbox" checked />
+    <span>Show Active Only</span>
+  </label>
+</div>
+
+<div class="category-filter-bar" id="brand-filter-bar">
+  <label class="category-label">
+    <input type="checkbox" class="brand-checkbox" value="Nippon P" />
+    <span class="checkmark"></span> นิปปอน
+  </label>
+  <label class="category-label">
+    <input type="checkbox" class="brand-checkbox" value="3M" />
+    <span class="checkmark"></span> 3M
+  </label>
+  <label class="category-label">
+    <input type="checkbox" class="brand-checkbox" value="CROMAX" />
+    <span class="checkmark"></span> CROMAX
+  </label>
+  <label class="category-label">
+    <input type="checkbox" class="brand-checkbox" value="DOMAC" />
+    <span class="checkmark"></span> DOMAC
+  </label>
+</div>
+
+<div class="container">
+  <div id="promo-grid" class="grid">
+    <div class="loading">Loading promotions...</div>
+  </div>
+</div>
+
+<div id="pagination-controls" class="pagination-bar"></div>
+
+<script>
+const SHEET_API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/promo";
+
+let allPromotions = [];
+let currentPage = 1;
+const itemsPerPage = 11; 
+
+fetch("header.html").then(res => res.text()).then(data => {
+  document.getElementById("header-placeholder").innerHTML = data;
+  initMenuFix();
+}).catch(e => {});
+
+fetch("footer.html").then(res => res.text()).then(data => {
+  document.body.insertAdjacentHTML("beforeend", data);
+}).catch(e => {});
+
+function initMenuFix() {
+  let attempts = 0;
+  const maxAttempts = 30;
+
+  const bindInterval = setInterval(() => {
+    const menuBtn = document.getElementById("menuBtn");
+    const menuDropdown = document.getElementById("menuDropdown");
+    attempts++;
+
+    if (menuBtn && menuDropdown) {
+      clearInterval(bindInterval);
+      
+      menuBtn.replaceWith(menuBtn.cloneNode(true));
+      const newMenuBtn = document.getElementById("menuBtn");
+
+      newMenuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menuDropdown.classList.toggle("active");
+      });
+
+      window.addEventListener("click", (e) => {
+        if (!newMenuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+          menuDropdown.classList.remove("active");
+        }
+      });
+      console.log("Hamburger Menu Bound Successfully!");
+    }
+
+    if (attempts >= maxAttempts) {
+      clearInterval(bindInterval);
+    }
+  }, 100);
+}
+
+async function fetchPromotions() {
+  try {
+    const res = await fetch(SHEET_API);
+    allPromotions = await res.json();
+    processAndRender();
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    document.getElementById("promo-grid").innerHTML = `
+      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบการแชร์ลิงก์ชีต</div>
+    `;
+  }
+}
+
+function processAndRender() {
+  const grid = document.getElementById("promo-grid");
+  const showActiveOnly = document.getElementById("active-only-checkbox").checked;
+  const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
+  
+  let targetData = allPromotions;
+
+  if (showActiveOnly) {
+    targetData = targetData.filter(item => {
+      const status = String(item.PromoStatus || "").trim().toLowerCase();
+      return status === "active";
+    });
+  } else {
+    targetData = targetData.filter(item => item.PromoCode);
+  }
+
+  if (checkedBrands.length > 0) {
+    targetData = targetData.filter(p => {
+      const bName = String(p.Brand || "").trim();
+      return checkedBrands.some(b => bName.toLowerCase() === b.toLowerCase());
+    });
+  }
+
+  const totalItems = targetData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = targetData.slice(startIndex, endIndex);
+
+  const staticIntroCard = `
+    <div class="promo-card">
+      <div class="promo-tag">SUPERPART SYSTEM</div>
+      <div class="promo-main-title">Automotive<br>Refinish &<br>Exclusive Offers</div>
+      <div class="promo-desc">รวมโปรโมชั่นสีพ่นรถยนต์ เคมีภัณฑ์ และอุปกรณ์ซ่อมบำรุงราคาพิเศษสำหรับอู่และศูนย์บริการคาร์แคร์</div>
+    </div>
+  `;
+
+  const promoCards = paginatedData.map(p => {
+    const code = p.PromoCode || 'PROMO';
+    const type = p.promotype || 'SPECIAL';
+    const condition = p.Promo_Condition || 'เงื่อนไขพิเศษแคมเปญ';
+    const imgUrl = (p.PhotoLink || "").trim();
+    const status = p.PromoStatus || 'Active';
+    const brand = p.Brand || 'SUPERPART';
+    
+    const rawPrice = p["ราคาขาย"] || "";
+    let displayPrice = 'ราคาพิเศษ';
+    if(rawPrice) {
+      const parsed = parseFloat(rawPrice);
+      displayPrice = !isNaN(parsed) ? `฿${parsed.toLocaleString()}` : rawPrice;
+    }
+
+    // ปรับสีตัวอักษร Active/Inactive เป็นสีขาวสว่างให้อ่านออกง่าย (ข้อ 2)
+    const isAct = status.toLowerCase() === 'active';
+    const badgeStyle = isAct 
+      ? `background: rgba(22, 163, 74, 0.65); border: 1px solid rgba(22, 163, 74, 0.2);` 
+      : `background: rgba(100, 116, 139, 0.7); border: 1px solid rgba(100, 116, 139, 0.2);`;
+
+    const cleanPromo1 = p.Promo1 ? String(p.Promo1).trim() : "";
+    const cleanPromo2 = p.Promo2 ? String(p.Promo2).trim() : "";
+    const cleanPromo3 = p.Promo3 ? String(p.Promo3).trim() : "";
+
+    let extraBulletsHtml = '';
+    if (cleanPromo2 !== "") extraBulletsHtml += `<li>${cleanPromo2}</li>`;
+    if (cleanPromo3 !== "") extraBulletsHtml += `<li>${cleanPromo3}</li>`;
+
+    return `
+      <div class="card">
+        <div class="img-wrap">
+          <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/500x500?text=SUPERPART+PROMO'" alt="Promotion Image">
+          <!-- ย้ายตัวหนังสือ Active มาฝั่งบนซ้าย พร้อมตัวอักษรขาวสว่าง -->
+          <span class="status-badge" style="${badgeStyle}">${status}</span>
+          <!-- ย้ายประเภทโปรโมชั่นมาซ้อนอยู่มุมขวาล่างของรูปภาพ (ข้อ 1) -->
+          <div class="promo-type-overlay">${type}</div>
+        </div>
+        <div class="content">
+          <div class="top-info">
+            <span class="promo-code">${code}</span>
+            <span class="brand-badge">${brand}</span>
+          </div>
+          
+          <div class="condition-text">${condition}</div>
+          
+          <!-- ปรับฟอนต์ให้สัดส่วนสมบูรณ์ปกติอ่านง่าย (ข้อ 3) -->
+          ${cleanPromo1 ? `<div class="promo1-highlight">${cleanPromo1}</div>` : ''}
+          
+          ${extraBulletsHtml ? `<ul class="promo-bullets">${extraBulletsHtml}</ul>` : ''}
+          
+          <div class="price-container">
+            <div class="sale-price-label">ราคาพิเศษเฉพาะแคมเปญ</div>
+            <div class="sale-price-value">${displayPrice}</div>
+          </div>
+          
+          <div class="date-zone">
+            <div class="date-line">
+              <span>เริ่มแคมเปญ:</span>
+              <span>${p.StartDate || '-'}</span>
+            </div>
+            <div class="date-line">
+              <span>สิ้นสุดแคมเปญ:</span>
+              <span>${p.EndDate || 'จนกว่าจะเปลี่ยนแปลง'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  grid.innerHTML = staticIntroCard + promoCards;
+  renderPaginationControls(totalPages);
+}
+
+function renderPaginationControls(totalPages) {
+  const container = document.getElementById("pagination-controls");
+  if (!container || totalPages <= 1) {
+    if(container) container.innerHTML = "";
+    return;
+  }
+
+  let html = ``;
+  html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">ก่อนหน้า</button>`;
+
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+  }
+
+  html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">ถัดไป</button>`;
+
+  container.innerHTML = html;
+}
+
+window.changePage = function(page) {
+  currentPage = page;
+  processAndRender();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+document.getElementById("active-only-checkbox").addEventListener("change", () => {
+  currentPage = 1;
+  processAndRender();
+});
+
+document.querySelectorAll('.brand-checkbox').forEach(cb => {
+  cb.addEventListener('change', () => {
+    currentPage = 1; 
+    processAndRender();
+  });
+});
+
+fetchPromotions();
+</script>
+
+</body>
+</html>
