@@ -1,147 +1,130 @@
-<!-- STYLES FOR TOPBAR & DROPDOWN -->
+<!-- ===================================================
+     HEADER COMPONENT (header.html)
+     =================================================== -->
+
 <style>
 /* =========================
-   TOP BAR (SUPERPART STYLE)
+   TOPBAR
 ========================= */
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 18px 28px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid #eee;
-  z-index: 100;
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:18px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #eee;
+  z-index:100;
+  box-sizing:border-box;
 }
 
-.logo {
-  font-size: 12px;
-  letter-spacing: 3px;
-  color: #111;
-  text-decoration: none;
-  display: inline-block;
+.logo{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#111;
+  text-decoration:none;
 }
 
-/* blue accent line under logo */
-.logo span {
-  display: block;
-  height: 2px;
-  width: 0;
-  background: #2f5ea8;
-  margin-top: 3px;
-  transition: width 0.3s ease;
+.menu{
+  width:28px;
+  height:14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
 }
 
-.logo:hover span { 
-  width: 100%; 
-}
-
-.menu {
-  width: 28px;
-  height: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-}
-
-.menu span {
-  height: 2px;
-  background: #111;
-  width: 100%;
-  border-radius: 999px;
-  transition: 0.3s ease;
-}
-
-/* First line is blue accent */
-.menu span:first-child { 
-  background: #2f5ea8; 
+.menu span{
+  height:2px;
+  background:#111;
+  width:100%;
+  border-radius:999px;
+  transition:0.3s;
 }
 
 /* =========================
    MENU DROPDOWN
 ========================= */
-.menu-dropdown {
-  position: fixed;
-  top: 70px;
-  right: 24px;
-  width: 240px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid #eee;
-  border-radius: 18px;
-  padding: 14px;
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-  z-index: 200;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+.menu-dropdown{
+  position:fixed;
+  top:70px;
+  right:24px;
+  width:240px;
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(14px);
+  border:1px solid #eee;
+  border-radius:18px;
+  padding:14px;
+  display:none;
+  flex-direction:column;
+  gap:4px;
+  z-index:200;
+  box-shadow:0 18px 40px rgba(0,0,0,0.08);
 }
 
-.menu-dropdown.active {
-  display: flex;
-  animation: fadeDown 0.25s ease forwards;
+.menu-dropdown.active{
+  display:flex;
+  animation:fadeDown 0.25s ease;
 }
 
-.menu-dropdown a {
-  text-decoration: none;
-  color: #111;
-  font-size: 14px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  transition: 0.2s ease;
+.menu-dropdown a{
+  text-decoration:none;
+  color:#111;
+  font-size:14px;
+  padding:12px 14px;
+  border-radius:12px;
+  transition:0.2s;
+  letter-spacing:1px;
 }
 
-.menu-dropdown a:hover {
-  background: #f0f5ff;
-  color: #2f5ea8;
-  transform: translateX(3px);
+.menu-dropdown a:hover{
+  background:#f5f5f5;
+  transform:translateX(3px);
 }
 
-@keyframes fadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+@keyframes fadeDown{
+  from{
+    opacity:0;
+    transform:translateY(-10px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  to{
+    opacity:1;
+    transform:translateY(0);
   }
 }
 
-/* Mobile Responsive adjustment for dropdown */
-@media(max-width: 768px) {
-  .menu-dropdown {
-    width: calc(100% - 32px);
-    right: 16px;
-    top: 72px;
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media(max-width:768px){
+  .menu-dropdown{
+    width:calc(100% - 32px);
+    right:16px;
+    top:72px;
   }
 }
 </style>
 
-<!-- TOPBAR HTML STRUCTURE -->
+<!-- TOP NAVIGATION BAR -->
 <div class="topbar">
   <a class="logo" href="index.html">
     SUPERPART
-    <span></span>
   </a>
+
   <div class="menu" id="menuBtn">
     <span></span>
     <span></span>
   </div>
 </div>
 
-<!-- DROPDOWN MENU INTERFACE -->
+<!-- HAMBURGER DROPDOWN MENU -->
 <div class="menu-dropdown" id="menuDropdown">
   <a href="index.html">HOME</a>
   <a href="products.html">ALL PRODUCTS</a>
+  <a href="promo.html">PROMOTIONS</a>
   <a href="inventory.html">INVENTORY</a>
-  <a href="promotions.html">PROMOTIONS</a>
-  <a href="sales.html">SALES DASHBOARD</a>
 </div>
