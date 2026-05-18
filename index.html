@@ -1,351 +1,796 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/png" href="favicon.png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SUPERPART GROUP</title>
+<title>SUPERPART</title>
+
 <style>
+
 /* =========================
    BASE
 ========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Kanit", Arial, sans-serif;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Kanit", Arial, sans-serif;
 }
-body {
-  background: #ffffff;
-  color: #111;
-  overflow-x: hidden;
-  padding-top: 60px;
+
+body{
+  background:#ffffff;
+  color:#111;
+  overflow-x:hidden;
 }
-.bg {
-  position: fixed;
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(circle, rgba(47,94,168,0.04), transparent 70%);
-  top: -250px;
-  right: -250px;
-  z-index: -1;
+
+/* subtle background */
+.bg{
+  position:fixed;
+  width:700px;
+  height:700px;
+  background:radial-gradient(circle, rgba(0,0,0,0.04), transparent 70%);
+  top:-250px;
+  right:-250px;
+  z-index:-1;
+}
+
+/* =========================
+   TOP BAR (minimal)
+========================= */
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:18px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #eee;
+  z-index:100;
+}
+
+.logo{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#111;
+  text-decoration:none;
+}
+
+.menu{
+  width:28px;
+  height:14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
+}
+
+.menu span{
+  height:2px;
+  background:#111;
+  width:100%;
+  border-radius:999px;
+  transition:0.3s;
+}
+
+/* =========================
+   MENU DROPDOWN
+========================= */
+.menu-dropdown{
+  position:fixed;
+  top:70px;
+  right:24px;
+  width:240px;
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(14px);
+  border:1px solid #eee;
+  border-radius:18px;
+  padding:14px;
+  display:none;
+  flex-direction:column;
+  gap:4px;
+  z-index:200;
+  box-shadow:0 18px 40px rgba(0,0,0,0.08);
+}
+
+.menu-dropdown.active{
+  display:flex;
+  animation:fadeDown 0.25s ease;
+}
+
+.menu-dropdown a{
+  text-decoration:none;
+  color:#111;
+  font-size:14px;
+  padding:12px 14px;
+  border-radius:12px;
+  transition:0.2s;
+}
+
+.menu-dropdown a:hover{
+  background:#f5f5f5;
+  transform:translateX(3px);
+}
+
+@keyframes fadeDown{
+  from{
+    opacity:0;
+    transform:translateY(-10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 /* =========================
    HERO
 ========================= */
-.hero {
-  min-height: 70vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 80px 20px 60px;
+.hero{
+  min-height:70vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:100px 20px 60px;
 }
-.tag {
-  font-size: 11px;
-  letter-spacing: 4px;
-  color: #2f5ea8;
-  margin-bottom: 18px;
+
+.tag{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#666;
 }
-h1 {
-  font-size: 78px;
-  letter-spacing: 16px;
-  margin: 0 0 18px;
-  text-align: center;
-  width: 100%;
-  color: #111;
+
+h1{
+  font-size:84px;
+  letter-spacing:18px;
+  margin:30px 0;
+  text-align:center;
+  width:100%;
 }
-.sub {
-  max-width: 600px;
-  font-size: 16px;
-  color: #777;
-  line-height: 1.8;
-  margin-bottom: 40px;
+
+.sub{
+  max-width:720px;
+  font-size:18px;
+  color:#555;
+  line-height:1.8;
 }
 
 /* =========================
-   HERO BUTTONS — 2×2 grid
+   HERO CTA (GRID 2 COLUMNS)
 ========================= */
-.hero-action {
-  width: 100%;
-  max-width: 480px;
-}
-.hero-grid {
+.hero-action{
+  margin-top:28px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.hero-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  font-weight: 500;
-  transition: 0.22s;
-  border: 1px solid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 460px; /* คุมขนาดความกว้างของการวางปุ่มรวมกัน */
 }
 
-/* Simple Button — ขอบดำ ตัวหนังสือดำ สำหรับปุ่มทั่วไป */
-.hero-btn.simple {
-  background: #ffffff;
-  color: #111111;
-  border-color: #111111;
-}
-.hero-btn.simple:hover {
-  background: #f5f5f5;
-  transform: translateY(-2px);
-}
-
-/* Blue Button — สีน้ำเงินเด่นสำหรับปุ่ม INVENTORY */
-.hero-btn.blue {
-  background: #2f5ea8;
-  color: #ffffff;
-  border-color: #2f5ea8;
-}
-.hero-btn.blue:hover {
-  background: #244a86;
-  border-color: #244a86;
-  transform: translateY(-2px);
+.hero-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 22px;
+  border-radius:999px;
+  background:#111;
+  color:#fff;
+  text-decoration:none;
+  font-size:12px;
+  letter-spacing:1px;
+  border:1px solid #111;
+  transition:0.25s;
 }
 
-.btn-label {
-  font-size: 10px;
-  letter-spacing: 1.5px;
+.hero-btn:hover{
+  background:#fff;
+  color:#111;
+  transform:translateY(-2px);
+}
+
+/* ปุ่มสไตล์ขวาล่าง (Inventory เดิม) */
+.hero-btn-blue {
+  background:#2f5ea8;
+  border-color:#2f5ea8;
+}
+.hero-btn-blue:hover {
+  background:#fff;
+  color:#2f5ea8;
+}
+
+/* ปุ่มสไตล์ซ้ายล่าง: ขาว ตัวหนังสือดำ ตามสั่ง */
+.hero-btn-white {
+  background:#ffffff;
+  color:#111;
+  border-color:#ddd;
+}
+.hero-btn-white:hover {
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+
+/* บังคับปุ่ม All Products เดิมขยายให้เต็มพื้นที่แถวแรก */
+.hero-btn-full {
+  grid-column: span 2;
 }
 
 /* =========================
    SECTION SYSTEM
 ========================= */
-.section {
-  padding: 60px 20px;
+.section{
+  padding:60px 20px;
 }
-.title {
-  text-align: center;
-  font-size: 13px;
-  letter-spacing: 4px;
-  color: #999;
-  margin-bottom: 30px;
-}
-.title .accent { color: #2f5ea8; }
 
-/* =========================
-   PROMOTIONS ZONE
-========================= */
-.promotions {
-  background: #fafafa;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+.title{
+  text-align:center;
+  font-size:24px;
+  margin-bottom:30px;
+  letter-spacing:2px;
 }
-.promo-empty {
-  max-width: 900px;
-  margin: 0 auto;
-  min-height: 160px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: 1px dashed #ddd;
-  border-radius: 14px;
-  padding: 40px;
-}
-.promo-empty-label {
-  font-size: 11px;
-  letter-spacing: 3px;
-  color: #ccc;
-}
-.promo-empty-sub {
-  font-size: 12px;
-  color: #ddd;
+
+.textblock{
+  max-width:720px;
+  margin:0 auto;
+  line-height:1.8;
+  color:#444;
 }
 
 /* =========================
-   OUR BRANDS
+   SHOP (MINIMAL BUTTON ROW)
 ========================= */
-.brands {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+.shopbar{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
 }
-.brandtag {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  border: 1px solid #e0e0e0;
-  padding: 7px 14px;
-  border-radius: 999px;
-  color: #555;
-  transition: 0.2s;
+
+.shopbtn{
+  font-size:12px;
+  padding:8px 14px;
+  border:1px solid #ddd;
+  border-radius:999px;
+  text-decoration:none;
+  color:#111;
+  transition:0.2s;
 }
-.brandtag:hover {
-  border-color: #2f5ea8;
-  color: #2f5ea8;
-  background: #f0f5ff;
+
+.shopbtn:hover{
+  background:#111;
+  color:#fff;
+}
+
+/* =========================
+   ALL PRODUCT LINK
+========================= */
+.allproduct-link-wrap{
+  text-align:center;
+  margin-top:18px;
+}
+
+.allproduct-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  color:#666;
+  font-size:13px;
+  transition:0.2s;
+}
+
+.allproduct-link:hover{
+  color:#111;
+  transform:translateX(3px);
+}
+
+/* =========================
+   GRID
+========================= */
+.grid{
+  max-width:1100px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+}
+
+.card{
+  border:1px solid #eee;
+  border-radius:16px;
+  padding:22px;
+  transition:0.25s;
+  background:#fff;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  border-color:#ddd;
+  background:#f5f5f5;
+}
+
+.card h3{
+  font-size:16px;
+  margin-bottom:8px;
+}
+
+.card p{
+  font-size:13px;
+  color:#666;
+  line-height:1.6;
+}
+
+/* =========================
+   CATEGORY BUTTONS
+========================= */
+.category-btn{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
+
+/* =========================
+   CATEGORIES ZONE
+========================= */
+.categories-section{
+  background:#fafafa;
+}
+
+/* =========================
+   RECOMMENDED ZONE
+========================= */
+.recommend{
+  background:#fff;
+  border-top:1px solid #eee;
+  border-bottom:1px solid #eee;
+}
+
+/* =========================
+   BRANDS
+========================= */
+.brands{
+  max-width:900px;
+  margin:0 auto;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+}
+
+.brandtag{
+  font-size:12px;
+  border:1px solid #ddd;
+  padding:6px 12px;
+  border-radius:999px;
 }
 
 /* =========================
    CONTACT
 ========================= */
-.contact {
-  padding: 60px 20px 40px;
-  text-align: center;
-  border-top: 1px solid #eee;
+.contact{
+  padding:60px 20px;
+  text-align:center;
 }
-.contact-email {
-  font-size: 13px;
-  color: #555;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-.contact-email a {
-  color: #2f5ea8;
-  text-decoration: none;
-}
-.contact-email a:hover { text-decoration: underline; }
 
 /* =========================
-   FOOTER SIGN-OFF
+   SOCIAL BASE
 ========================= */
-.footer-signoff {
-  padding: 20px 20px 40px;
-  text-align: center;
+
+.social{
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
 }
-.footer-signoff p {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: #ccc;
-  line-height: 1.9;
+
+.social a{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  text-decoration:none;
+  font-weight:500;
+  transition:0.2s;
 }
-.footer-signoff .dot {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  background: #2f5ea8;
-  border-radius: 50%;
-  margin: 0 8px;
-  vertical-align: middle;
-  opacity: 0.5;
+
+/* =========================
+   BRAND COLORS
+========================= */
+
+/* LINE */
+.social a.li{
+  background:#00C300;
+  color:#fff;
+  border:1px solid #00C300;
+}
+
+/* Facebook */
+.social a.fb{
+  background:#1877F2;
+  color:#fff;
+  border:1px solid #1877F2;
+}
+
+/* TikTok */
+.social a.tt{
+  background:#000;
+  color:#fff;
+  border:1px solid #000;
+}
+
+/* Instagram */
+.social a.ig{
+  background:radial-gradient(circle at 30% 110%,
+    #fdf497 0%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285AEB 90%);
+  color:#fff;
+  border:1px solid transparent;
+}
+
+/* YouTube */
+.social a.yt{
+  background:#FF0000;
+  color:#fff;
+  border:1px solid #FF0000;
+}
+
+/* X (Twitter / X) */
+.social a.x{
+  background:#000;
+  color:#fff;
+  border:1px solid #000;
+}
+
+/* =========================
+   HOVER
+========================= */
+
+.social a:hover{
+  transform:translateY(-2px);
+  opacity:0.9;
+}
+
+/* =========================
+   LUXURY FOOTER
+========================= */
+.footer{
+  background:#111;
+  color:#ddd;
+  padding:70px 24px 40px;
+  margin-top:80px;
+  position:relative;
+  overflow:hidden;
+}
+
+.footer::before{
+  content:"";
+  position:absolute;
+  width:500px;
+  height:500px;
+  background:radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%);
+  top:-200px;
+  right:-200px;
+}
+
+.footer-inner{
+  max-width:1100px;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr;
+  gap:40px;
+}
+
+.footer-logo{
+  font-size:14px;
+  letter-spacing:4px;
+  margin-bottom:20px;
+  color:#fff;
+}
+
+.footer-text{
+  font-size:14px;
+  line-height:1.9;
+  color:#aaa;
+  max-width:420px;
+}
+
+.footer-title{
+  font-size:13px;
+  letter-spacing:2px;
+  color:#fff;
+  margin-bottom:18px;
+}
+
+.footer-links{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.footer-links a{
+  text-decoration:none;
+  color:#aaa;
+  font-size:14px;
+  transition:0.2s;
+}
+
+.footer-links a:hover{
+  color:#fff;
+  transform:translateX(3px);
+}
+
+.footer-bottom{
+  margin-top:50px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.footer-copy{
+  font-size:12px;
+  color:#777;
+}
+
+.footer-social{
+  display:flex;
+  gap:10px;
+}
+
+.footer-social a{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  text-decoration:none;
+  font-size:11px;
+  transition:0.25s;
+}
+
+.footer-social a:hover{
+  background:#fff;
+  color:#111;
+  transform:translateY(-2px);
 }
 
 /* =========================
    MOBILE
 ========================= */
 @media(max-width:768px){
-  h1 {
-    font-size: 42px;
-    letter-spacing: 8px;
-    line-height: 1.2;
+
+  h1{
+    font-size:44px;
+    letter-spacing:8px;
+    line-height:1.2;
+    text-align:center;
   }
-  .hero {
-    padding: 100px 24px 60px;
+
+  .hero{
+    padding:120px 24px 60px;
   }
-  .sub {
-    font-size: 14px;
+
+  .sub{
+    font-size:15px;
   }
+
+  /* ปรับแต่ง Grid ปุ่มบนมือถือให้สมดุล */
   .hero-action {
     max-width: 100%;
-    padding: 0 4px;
+    padding: 0 10px;
   }
-  .hero-grid {
-    gap: 8px;
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+    gap:12px;
   }
-  .hero-btn {
-    padding: 13px 12px;
+
+  .card{
+    padding:18px;
+    border-radius:14px;
   }
+
+  .card h3{
+    font-size:14px;
+  }
+
+  .card p{
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  .menu-dropdown{
+    width:calc(100% - 32px);
+    right:16px;
+    top:72px;
+  }
+
+  .footer-grid{
+    grid-template-columns:1fr;
+    gap:34px;
+  }
+
+  .footer{
+    padding:60px 20px 34px;
+  }
+
+  .footer-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
 }
+
 </style>
 </head>
+
 <body>
+
 <div class="bg"></div>
 
-<!-- ================= TOPBAR PLACEHOLDER (LOAD FROM LAYOUT) ================= -->
+<!-- ================= HEADER LOAD ================= -->
 <div id="header-placeholder"></div>
 
 <!-- ================= HERO ================= -->
 <section class="hero">
-  <div class="tag">AUTOMOTIVE PARTS DISTRIBUTION</div>
+
+  <div class="tag">AUTOMOTIVE COATING & PARTS SYSTEM</div>
+
   <h1>SUPERPART</h1>
+
   <div class="sub">
-    Multi-channel distribution system for automotive parts and coatings —<br>
-    built for speed, precision, and scale.
+    ศูนย์รวมสีพ่นรถยนต์และชิ้นส่วนอะไหล่คุณภาพสูง คัดสรรเพื่อประสิทธิภาพและความทนทานสูงสุดสำหรับยานยนต์คุณ
   </div>
 
-  <!-- 4 BUTTONS — 2×2 GRID -->
+  <!-- HERO BUTTON GRID 2 COLUMNS -->
   <div class="hero-action">
-    <div class="hero-grid">
-      <a class="hero-btn simple" href="products.html">
-        <span class="btn-label">ALL PRODUCTS</span>
-      </a>
-      <a class="hero-btn blue" href="inventory.html">
-        <span class="btn-label">INVENTORY</span>
-      </a>
-      <a class="hero-btn simple" href="promotions.html">
-        <span class="btn-label">PROMOTIONS</span>
-      </a>
-      <a class="hero-btn simple" href="sales.html">
-        <span class="btn-label">SALES DASHBOARD</span>
-      </a>
-    </div>
+    <a class="hero-btn hero-btn-full" href="products.html">
+      ALL PRODUCTS
+    </a>
+    <!-- ปุ่ม PROMOTIONS อยู่ด้านล่างซ้าย (สีขาว อักษรดำ) -->
+    <a class="hero-btn hero-btn-white" href="promo.html">
+      PROMOTIONS
+    </a>
+    <!-- ปุ่ม INVENTORY อยู่ด้านล่างขวา (สีน้ำเงิน) -->
+    <a class="hero-btn hero-btn-blue" href="inventory.html">
+      INVENTORY
+    </a>
   </div>
+
 </section>
 
-<!-- ================= PROMOTIONS (empty zone) ================= -->
-<section class="section promotions">
-  <div class="title"><span class="accent">—</span> PROMOTIONS <span class="accent">—</span></div>
-  <div class="promo-empty">
-    <div class="promo-empty-label">COMING SOON</div>
-    <div class="promo-empty-sub">โปรโมชันจะแสดงในส่วนนี้</div>
+<!-- ================= PROMOTIONS ================= -->
+<section class="section recommend">
+
+  <div class="title">PROMOTIONS</div>
+
+  <div class="textblock">
+    <!-- EMPTY ZONE -->
   </div>
+
 </section>
 
 <!-- ================= OUR BRANDS ================= -->
 <section class="section">
+
   <div class="title">OUR BRANDS</div>
+
   <div class="brands">
-    <div class="brandtag">Nippon Paint</div>
-    <div class="brandtag">3M</div>
-    <div class="brandtag">Cromax</div>
-    <div class="brandtag">Nason</div>
-    <div class="brandtag">SOLAR</div>
-    <div class="brandtag">LEZZON</div>
-    <div class="brandtag">DOMAC</div>
-    <div class="brandtag">NORBIN</div>
+
+    <div class="brandtag">
+      CROMAX
+    </div>
+
+    <div class="brandtag">
+      NIPPON PAINT
+    </div>
+
+    <div class="brandtag">
+      DOMAC
+    </div>
+
+    <div class="brandtag">
+      3M
+    </div>
+
+    <div class="brandtag">
+      LEZZON
+    </div>
+
+    <div class="brandtag">
+      SOLAR
+    </div>
+
   </div>
+
 </section>
 
 <!-- ================= CONTACT ================= -->
 <section class="contact">
+
   <div class="title">CONTACT</div>
-  <div class="contact-email">
-    <a href="mailto:supalerk.k@superpart.co.th">supalerk.k@superpart.co.th</a>
-  </div>
+
+  <p>Email: supalerk.k@superpart.co.th</p>
+
 </section>
 
-<!-- ================= FOOTER SIGN-OFF ================= -->
-<div class="footer-signoff">
-  <p>
-    SUPERPART GROUP
-    <span class="dot"></span>
-    AUTOMOTIVE DISTRIBUTION
-    <span class="dot"></span>
-    THAILAND
-  </p>
-  <p style="margin-top:6px; font-size:10px; color:#ddd; letter-spacing:1px;">
-    parts move. business follows.
-  </p>
-</div>
+<!-- ================= FOOTER LOAD ================= -->
+<div id="footer-placeholder"></div>
 
-<!-- ================= LAYOUT LOADER SCRIPT ================= -->
-<script src="layout.js"></script>
+<script>
+
+/* =========================
+   LOAD HEADER
+========================= */
+fetch("header.html")
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById("header-placeholder").innerHTML = data;
+
+    const menuBtn = document.getElementById("menuBtn");
+    const menuDropdown = document.getElementById("menuDropdown");
+
+    if(menuBtn && menuDropdown){
+      
+      // ตรวจสอบและแทรกหน้า PROMOTIONS เข้าไปใน Hamburger Menu ถ้ายังไม่มี
+      if (!menuDropdown.querySelector('a[href="promo.html"]')) {
+        const promoLink = document.createElement("a");
+        promoLink.href = "promo.html";
+        promoLink.textContent = "PROMOTIONS";
+        
+        // แทรกไว้ต่อจากหน้าแรก หรือเพิ่มไว้จุดที่ต้องการ (ตัวอย่างนี้เลือกใส่เพิ่มไว้ด้านบน)
+        menuDropdown.insertBefore(promoLink, menuDropdown.firstChild);
+      }
+
+      menuBtn.addEventListener("click", () => {
+        menuDropdown.classList.toggle("active");
+      });
+
+      window.addEventListener("click", (e) => {
+        if(
+          !menuBtn.contains(e.target) &&
+          !menuDropdown.contains(e.target)
+        ){
+          menuDropdown.classList.remove("active");
+        } 
+      });
+    }
+  });
+
+/* =========================
+   LOAD FOOTER
+========================= */
+fetch("footer.html")
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById("footer-placeholder").innerHTML = data;
+  });
+
+</script>
 
 </body>
 </html>
