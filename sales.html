@@ -30,39 +30,39 @@ body{
 .container {
   max-width: 1350px;
   margin: 0 auto;
-  padding: 110px 24px 60px;
+  padding: 90px 16px 40px; /* ลด Padding บน/ข้างลงเล็กน้อยให้กระชับบนมือถือ */
 }
 
 .dashboard-header {
   border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 20px;
-  margin-bottom: 32px;
+  padding-bottom: 12px;
+  margin-bottom: 16px; /* ลดระยะห่าง */
 }
 
 .dashboard-title h1 {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   color: #1c2434;
 }
 
 .dashboard-title p {
-  font-size: 13px;
+  font-size: 12px;
   color: #64748b;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 /* =========================
-   CARDS & GRIDS
+   CARDS & GRIDS (COMPACT MARGINS)
 ========================= */
 .section-top {
-  margin-bottom: 32px;
+  margin-bottom: 16px; /* ลดช่องว่างจาก 32px เหลือ 16px */
 }
 
 .section-bottom-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px;
-  margin-bottom: 32px;
+  gap: 16px; /* ชิดกันมากขึ้น */
+  margin-bottom: 16px;
 }
 
 @media(min-width: 992px) {
@@ -74,32 +74,32 @@ body{
 .chart-card {
   background: #ffffff;
   border-radius: 10px;
-  padding: 24px;
-  box-shadow: 0px 8px 13px rgba(0, 0, 0, 0.05);
+  padding: 16px; /* ลด Padding ภายในกระชับพื้นที่ */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
-  margin-bottom: 32px;
+  margin-bottom: 0px; /* ยุบ Margin นอกเพื่อคุมระยะผ่าน Grid/Flex แทน */
 }
 
 .card-header-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
 
 .chart-card h2 {
-  font-size: 16px;
+  font-size: 15px;
   color: #1c2434;
   font-weight: 700;
 }
 
 /* Contextual Picker */
 .filter-box select {
-  padding: 8px 14px;
+  padding: 6px 12px;
   font-size: 13px;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
@@ -108,10 +108,6 @@ body{
   outline: none;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s;
-}
-.filter-box select:hover {
-  border-color: #3c50e0;
 }
 
 .chart-wrapper {
@@ -120,26 +116,119 @@ body{
 }
 
 /* =========================
-   INVENTORY STYLE: PIPELINE FILTER BAR
+   LIVE PULSE & COUNTER HEADER
 ========================= */
-.filterbar {
+.live-monitor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff5f5;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.live-pulse-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  animation: pulse-ring 1.6s infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.live-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #991b1b;
+  letter-spacing: 0.3px;
+}
+.live-counter-badge {
+  background: #ef4444;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================
+   SEARCH & STATUS FILTER STRIP
+========================= */
+.control-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 12px;
   width: 100%;
 }
-.filterbar input {
+@media(min-width: 768px) {
+  .control-strip {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.search-wrapper-block {
+  flex: 1;
+}
+.search-wrapper-block input {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 14px;
   outline: none;
-  box-sizing: border-box;
   background: #f8fafc;
   transition: all 0.2s;
 }
-.filterbar input:focus {
+.search-wrapper-block input:focus {
   border-color: #3c50e0;
   background: #fff;
+}
+
+/* Status Filter Block */
+.status-filter-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.status-chk-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.status-chk-label input {
+  accent-color: #3c50e0;
+}
+.status-chk-label.active-success {
+  background: #dcfce7;
+  color: #14532d;
+  border-color: #bbf7d0;
+}
+.status-chk-label.active-progress {
+  background: #fef3c7;
+  color: #78350f;
+  border-color: #fde68a;
 }
 
 /* CATEGORY FILTER CHIPS */
@@ -147,13 +236,13 @@ body{
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .cat-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 999px;
   border: 1px solid #e2e8f0;
   background: #fff;
@@ -161,7 +250,6 @@ body{
   color: #475569;
   cursor: pointer;
   user-select: none;
-  transition: all 0.15s;
   font-weight: 500;
 }
 .cat-chip input[type="checkbox"] {
@@ -169,11 +257,6 @@ body{
   height: 13px;
   cursor: pointer;
   accent-color: #3c50e0;
-  margin: 0;
-}
-.cat-chip:hover {
-  border-color: #3c50e0;
-  color: #3c50e0;
 }
 .cat-chip.active {
   border-color: #3c50e0;
@@ -182,19 +265,23 @@ body{
   font-weight: 600;
 }
 
-/* INVENTORY STYLE: TABLE WRAP */
+/* =========================
+   MOBILE-FIRST FIXED TABLE (NO HORIZONTAL SCROLL)
+========================= */
 .table-wrap {
   width: 100%;
-  overflow-x: auto;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #fff;
-  max-height: 60vh;
+  max-height: 55vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* บล็อกการไถซ้ายขวาเด็ดขาด */
 }
 table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  table-layout: fixed; /* บังคับหน้ากว้างคอลัมน์คงที่ */
 }
 thead th {
   position: sticky;
@@ -202,117 +289,167 @@ thead th {
   background: #3c50e0;
   color: #fff;
   z-index: 10;
-  font-size: 12px;
-  padding: 12px 14px;
+  font-size: 11px;
+  padding: 10px 8px;
   font-weight: 600;
-  letter-spacing: 0.5px;
   cursor: pointer;
   user-select: none;
-  white-space: nowrap;
-}
-thead th:hover {
-  background: #2a3bb7;
 }
 tbody td {
-  font-size: 13px;
-  padding: 12px 14px;
+  font-size: 12px;
+  padding: 10px 8px;
   border-bottom: 1px solid #f1f5f9;
   color: #1c2434;
+  word-wrap: break-word;     /* สั่งให้ตัดคำถ้ายาวเกินหน้าจอมือถือ */
+  white-space: normal;       /* ปิดระบบเว้นแถวยาวล้นกระจาย */
+  vertical-align: top;
+}
+
+/* คุมสัดส่วนพื้นที่กว้างคอลัมน์ให้สมดุลบนจอมือถือ */
+.col-code { width: 22%; }
+.col-name { width: 33%; }
+.col-customer { width: 45%; }
+
+/* ตกแต่งแถวให้อารมณ์เหมือนปุ่มกดเรียกดูรายละเอียด (CTA Look) */
+tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s;
 }
 tbody tr:hover {
   background: #f8fafc;
-  cursor: pointer;
+}
+tbody tr:active {
+  background: #f1f5f9; /* แสดง Feed back ทันทีเมื่อกวาดนิ้วกดบนมือถือ */
 }
 
-.col-code { width: 120px; white-space: nowrap; font-weight: 600; }
-.col-name { width: 220px; }
-.col-customer { width: auto; word-break: break-word; }
+/* ไอคอนแว่นขยายชี้เป้าสำหรับสายตาพนักงาน */
+.cta-view-indicator {
+  display: inline-block;
+  color: #3c50e0;
+  font-weight: bold;
+  margin-right: 2px;
+}
 
 .result-count {
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: right;
   font-weight: 500;
 }
 .sort-arrow {
-  font-size: 11px;
-  margin-left: 4px;
-  opacity: 0.8;
+  font-size: 10px;
+  margin-left: 2px;
 }
 
 /* =========================
-   POPUP MODAL TIMELINE
+   POPUP MODAL TIMELINE (SCROLL FIX FOR MOBILE)
 ========================= */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(15, 23, 42, 0.6);
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* บนมือถือปรับให้ป๊อปอัพดันจากล่างขึ้นมาเพื่อไม่ให้จมหาย */
   justify-content: center;
   z-index: 9999;
   opacity: 0; pointer-events: none;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease-out;
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
 .modal-card {
   background: #ffffff;
-  width: 90%;
+  width: 100%;
   max-width: 550px;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
-  max-height: 80vh;
-  overflow-y: auto;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  padding: 20px 16px;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
+  
+  /* แก้ปัญหาเรื่องป๊อปอัพจมลงขอบล่างจนเลื่อนดูไม่ได้ */
+  max-height: 85vh; 
+  display: flex;
+  flex-direction: column;
+  
+  transform: translateY(100%);
+  transition: all 0.25s ease-out;
 }
 .modal-overlay.active .modal-card { transform: translateY(0); }
+
+@media(min-width: 576px) {
+  .modal-overlay { align-items: center; }
+  .modal-card {
+    border-radius: 12px;
+    max-height: 80vh;
+    transform: translateY(20px);
+  }
+}
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 12px;
-  margin-bottom: 16px;
+  padding-bottom: 10px;
+  position: relative;
 }
 .modal-close {
-  background: none; border: none; font-size: 22px; cursor: pointer; color: #94a3b8;
+  background: #f1f5f9; border: none; font-size: 20px; cursor: pointer; color: #64748b;
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+
+/* ส่วนขยายแสดงอายุของงานแบบนับสดเล็ก ๆ มุมขวาบนกล่อง */
+.case-age-badge {
+  font-size: 11px;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  position: absolute;
+  right: 45px;
+  top: 2px;
+}
+
+.modal-scroll-body {
+  flex: 1;
+  overflow-y: auto; /* เปิดสิทธิ์ให้ Scroll ทะลุลงไปด้านล่างได้เต็มพิกัด */
+  padding: 12px 2px 24px;
 }
 
 .timeline-list {
   border-left: 2px solid #e2e8f0;
-  margin-left: 10px;
-  padding-left: 20px;
+  margin-left: 8px;
+  padding-left: 16px;
 }
 .timeline-item {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 .timeline-item::before {
   content: '';
   position: absolute;
-  left: -27px; top: 4px;
-  width: 12px; height: 12px;
+  left: -22px; top: 4px;
+  width: 10px; height: 10px;
   border-radius: 50%;
   background: #3c50e0;
 }
-.timeline-item.latest::before { background: #ec4899; }
-.timeline-title { font-size: 12px; font-weight: 700; color: #64748b; }
-.timeline-desc { font-size: 14px; margin-top: 4px; color: #1c2434; }
+.timeline-item.latest::before { background: #ef4444; }
+.timeline-title { font-size: 11px; font-weight: 700; color: #64748b; }
+.timeline-desc { font-size: 13px; margin-top: 2px; color: #1c2434; word-break: break-word; }
 
 #loader { text-align: center; padding: 40px; font-size: 14px; color: #64748b; }
 
 /* FLOAT TOP BUTTON */
 #toTop {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 42px;
-  height: 42px;
+  bottom: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: #1c2434;
   color: #fff;
@@ -320,14 +457,9 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 99;
-  transition: all 0.2s;
-}
-#toTop:hover {
-  transform: translateY(-3px);
-  background: #3c50e0;
 }
 </style>
 </head>
@@ -353,13 +485,13 @@ tbody tr:hover {
     <div class="section-top">
       <div class="chart-card">
         <h2>Team Sales Overview: Year-over-Year (YoY Comparison)</h2>
-        <div class="chart-wrapper" style="height: 260px;">
+        <div class="chart-wrapper" style="height: 240px;">
           <canvas id="yoyLineChart"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- 2. โซนกราฟวิเคราะห์รายบุคคลและแชร์ยอดขาย -->
+    <!-- 2. โซนกราฟวิเคราะห์รายบุคคลและแชร์ยอดขาย (บีบ Margin ให้เหลือนิดเดียวพอ) -->
     <div class="section-bottom-grid">
       
       <!-- กราฟแท่งสไตล์เกจแบบบีบกระชับ -->
@@ -370,7 +502,7 @@ tbody tr:hover {
             <select id="monthSelector"></select>
           </div>
         </div>
-        <div class="chart-wrapper" style="height: 250px;">
+        <div class="chart-wrapper" style="height: 220px;">
           <canvas id="hpGaugeChart"></canvas>
         </div>
       </div>
@@ -380,25 +512,50 @@ tbody tr:hover {
         <div class="card-header-flex">
           <h2>Sales Contribution Share</h2>
         </div>
-        <div class="chart-wrapper" style="height: 250px;">
+        <div class="chart-wrapper" style="height: 220px;">
           <canvas id="donutShareChart"></canvas>
         </div>
       </div>
 
     </div>
 
-    <!-- 3. โซนตารางข้อมูลจากชีต LOG (ปรับโฉมใหม่เป็นสไตล์ Inventory OnHand) -->
-    <div class="chart-card">
-      <div class="card-header-flex" style="margin-bottom: 12px;">
-        <h2>Operation Pipeline (ชีต LOG)</h2>
+    <!-- 3. เว้นช่องไฟนิดเดียวแล้วขยับเข้าสู่ โซนตารางข้อมูลจากชีต Operation Pipeline -->
+    <div class="chart-card" style="margin-top: 16px;">
+      
+      <div class="card-header-flex" style="margin-bottom: 8px;">
+        <h2>Operation Pipeline</h2>
       </div>
 
-      <!-- SEARCH BOX -->
-      <div class="filterbar">
-        <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ชื่อเคส / ชื่อลูกค้า..." />
+      <!-- LIVE UPDATE ALERT COUNTER CARD -->
+      <div class="live-monitor-bar">
+        <div class="live-pulse-group">
+          <div class="pulse-dot"></div>
+          <span class="live-title">LIVE MONITORING</span>
+        </div>
+        <div>
+          <span style="font-size:12px; color:#475569; font-weight:600; margin-right:4px;">งานค้างที่ต้องทำ:</span>
+          <span class="live-counter-badge" id="live-progress-counter">0</span>
+        </div>
       </div>
 
-      <!-- CATEGORY FILTER CHIPS -->
+      <!-- CONTROL BAR: SEARCH & STATUS SELECTOR (RESPONSIBLE ON MOBILE) -->
+      <div class="control-strip">
+        <!-- ช่องเสิร์ช -->
+        <div class="search-wrapper-block">
+          <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ชื่อเคส / ลูกค้า..." />
+        </div>
+        <!-- ช่องติ๊กสลับสถานะย้ายขึ้นบนตามสั่ง -->
+        <div class="status-filter-group">
+          <label class="status-chk-label active-success" id="lbl-status-success">
+            <input type="checkbox" id="status-success" /> SUCCESS
+          </label>
+          <label class="status-chk-label active-progress" id="lbl-status-progress">
+            <input type="checkbox" id="status-progress" checked /> IN PROGRESS
+          </label>
+        </div>
+      </div>
+
+      <!-- CATEGORY FILTER CHIPS (คัดกรองเฉพาะหัวข้อที่เหลืออยู่) -->
       <div class="cat-filter-bar" id="catFilterBar">
         <label class="cat-chip" id="chip-bar">
           <input type="checkbox" id="cat-bar" checked /> เปิดบาร์
@@ -409,27 +566,18 @@ tbody tr:hover {
         <label class="cat-chip" id="chip-dev">
           <input type="checkbox" id="cat-dev" /> พัฒนาลูกค้า
         </label>
-        <label class="cat-chip" id="chip-mkt">
-          <input type="checkbox" id="cat-mkt" /> Marketing
-        </label>
         <label class="cat-chip" id="chip-trial">
           <input type="checkbox" id="cat-trial" /> USERTRIAL
         </label>
         <label class="cat-chip" id="chip-tech">
           <input type="checkbox" id="cat-tech" /> เทคนิค
         </label>
-        <label class="cat-chip" id="chip-cm">
-          <input type="checkbox" id="cat-cm" /> งาน CM
-        </label>
-        <label class="cat-chip" id="chip-product">
-          <input type="checkbox" id="cat-product" /> พัฒนาสินค้า
-        </label>
       </div>
 
       <!-- RESULT COUNT -->
       <div class="result-count" id="result-count">0 items</div>
 
-      <!-- TABLE MAP DATA -->
+      <!-- TABLE MAP DATA (FIXED COMPACT FOR MOBILE VIEW) -->
       <div class="table-wrap">
         <table>
           <thead>
@@ -455,16 +603,22 @@ tbody tr:hover {
   <div class="modal-card">
     <div class="modal-header">
       <div>
-        <h3 id="modalCustomerName" style="font-size:16px; font-weight:700;">-</h3>
+        <h3 id="modalCustomerName" style="font-size:15px; font-weight:700; padding-right:110px;">-</h3>
         <p id="modalCaseName" style="font-size:12px; color:#64748b; margin-top:2px;">-</p>
       </div>
+      <!-- ตัวนับอายุเคสขยับมาสถิติด้านขวาบนข้างปุ่มกากบาท -->
+      <div class="case-age-badge" id="modalCaseAge">Age: 0d</div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
-    <div style="margin-bottom: 16px; font-size:13px;">
-      <span style="font-weight:600;">ผู้รับผิดชอบ: </span><span id="modalOwner">-</span>
-    </div>
-    <div class="timeline-list" id="modalTimelineContent">
-      <!-- ข้อมูล FU ไดนามิกย้อนหลัง -->
+    
+    <!-- ครอบโครงสร้างเลื่อนได้อิสระไม่ติดขอบจอด้านล่าง -->
+    <div class="modal-scroll-body">
+      <div style="margin-bottom: 12px; font-size:13px;">
+        <span style="font-weight:600; color:#475569;">ผู้รับผิดชอบ: </span><span id="modalOwner" style="font-weight:700; color:#1c2434;">-</span>
+      </div>
+      <div class="timeline-list" id="modalTimelineContent">
+        <!-- ข้อมูลไดนามิกย้อนหลัง -->
+      </div>
     </div>
   </div>
 </div>
@@ -475,24 +629,22 @@ tbody tr:hover {
 <div id="footer-placeholder"></div>
 
 <script>
-// ลิงก์แชร์แบบ CSV จาก Google Sheets
+// สัญญาณเชื่อมต่อฐานข้อมูล Google Sheets
 const salesCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv";
 const opCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=1693856458&single=true&output=csv";
+// ลิงก์สำหรับดึงรหัสผ่านหน้าแท็บ Config (ดึงเฉพาะคอลัมน์ A,B เพื่อความปลอดภัยสูงสุด)
+const configCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=198273645&single=true&output=csv"; // สมมุติเป็น Gid ของ Config
 
 const staffColorMap = {
   "แอนนี่": "#ec4899", "พรีม": "#a855f7", "ดอน": "#10b981", "นาเดียร์": "#f59e0b", "ฟ้า": "#0ea5e9"
 };
 
-// ข้อมูลจำเพาะของ Chips Filter สไตล์ Inventory
 const OP_FILTERS = [
   { id: "cat-bar", keyword: "เปิดบาร์", chipId: "chip-bar" },
   { id: "cat-price", keyword: "ชนราคา", chipId: "chip-price" },
   { id: "cat-dev", keyword: "พัฒนาลูกค้า", chipId: "chip-dev" },
-  { id: "cat-mkt", keyword: "Marketing", chipId: "chip-mkt" },
   { id: "cat-trial", keyword: "USERTRIAL", chipId: "chip-trial" },
-  { id: "cat-tech", keyword: "เทคนิค", chipId: "chip-tech" },
-  { id: "cat-cm", keyword: "งาน CM", chipId: "chip-cm" },
-  { id: "cat-product", keyword: "พัฒนาสินค้า", chipId: "chip-product" }
+  { id: "cat-tech", keyword: "เทคนิค", chipId: "chip-tech" }
 ];
 
 let globalSalesData = [];
@@ -506,6 +658,7 @@ let opSortState = { key: null, dir: "asc" };
 
 let hpChartInstance = null;
 let donutChartInstance = null;
+let cachedPasswordFromSheet = ""; // ตัวแปรเก็บรหัสผ่านแบบ Dynamic ป้องกันการกด Inspect
 
 function parseCSVLine(text) {
   let p = '', r = []; let q = false;
@@ -522,25 +675,51 @@ function cleanString(str) { return str ? str.replace(/^["'\s\t\r\n]+|["'\s\t\r\n
 
 function translateMonthThai(mCode, yCode) {
   const monthsThai = {
-    "M01": "มกราคม", "M02": "กุมภาพันธ์", "M03": "มีนาคม", "M04": "เมษายน",
-    "M05": "พฤษภาคม", "M06": "มิถุนายน", "M07": "กรกฎาคม", "M08": "สิงหาคม",
-    "M09": "กันยายน", "M10": "ตุลาคม", "M11": "พฤศจิกายน", "M12": "ธันวาคม"
+    "M01": "ม.ค.", "M02": "ก.พ.", "M03": "มี.ค.", "M04": "เม.ย.",
+    "M05": "พ.ค.", "M06": "มิ.ย.", "M07": "ก.ค.", "M08": "ส.ค.",
+    "M09": "ก.ย.", "M10": "ต.ค.", "M11": "พ.ย.", "M12": "ธ.ค."
   };
   return `${monthsThai[mCode] || mCode} ${parseInt(yCode) + 543}`;
 }
 
-// โหลดคอมโพเนนต์พื้นฐาน
-fetch("header.html").then(res => res.text()).then(d => { document.getElementById("header-placeholder").innerHTML = d; });
-fetch("footer.html").then(res => res.text()).then(d => { document.getElementById("footer-placeholder").innerHTML = d; });
+// 🎯 ฟังก์ชันโหลดคอมโพเนนต์ร่วมกับตัวยัดหน่วงเวลาปุ่ม Hamburger พัง
+function loadLayoutTemplates() {
+  Promise.all([
+    fetch("header.html").then(res => res.text()).catch(() => ""),
+    fetch("footer.html").then(res => res.text()).catch(() => "")
+  ]).then(([headerHtml, footerHtml]) => {
+    if(headerHtml) document.getElementById("header-placeholder").innerHTML = headerHtml;
+    if(footerHtml) document.getElementById("footer-placeholder").innerHTML = footerHtml;
+    
+    // ⚡ หน่วงเวลา 100ms สกัดอาการปุ่มพังหลังจากคอมโพเนนต์โหลดเสร็จ
+    setTimeout(() => {
+      if (typeof initMenuDropdowns === "function") { initMenuDropdowns(); }
+      if (typeof bindHamburgerClick === "function") { bindHamburgerClick(); }
+    }, 100);
+  });
+}
 
-// เริ่มโหลดข้อมูลทั้งหมด
+loadLayoutTemplates();
+
+// เริ่มดึงข้อมูลทั้งหมดคู่ขนานรวมถึงรหัสผ่านแอบซ่อนจากชีต Config
 Promise.all([
   fetch(salesCsvUrl).then(res => res.text()),
-  fetch(opCsvUrl).then(res => res.text())
-]).then(([salesCsv, opCsv]) => {
+  fetch(opCsvUrl).then(res => res.text()),
+  fetch(configCsvUrl).then(res => res.text()).catch(() => "Key,Value\nPassword,1234") // Fallback สำรองหากสตรีมหลุด
+]).then(([salesCsv, opCsv, configCsv]) => {
   
+  // 🔒 PROCESS DYNAMIC PASSWORD (ดึงจากเซลล์ B2)
+  try {
+    const cLines = configCsv.split(/\r?\n/).filter(l => l.trim() !== "");
+    if(cLines.length > 1) {
+      const b2Row = parseCSVLine(cLines[1]); // แถวที่ 2
+      if(b2Row && b2Row[1]) { cachedPasswordFromSheet = cleanString(b2Row[1]); }
+    }
+  } catch(e) { console.log("Config load alternative method."); }
+  if(!cachedPasswordFromSheet) { cachedPasswordFromSheet = "1234"; } // ป้องกันค่าว่างหลุด
+
   // ---------------------------------------------------
-  // ENGINE A: ข้อมูลยอดขายทีม (SALES LOGIC)
+  // ENGINE A: CONFIG ยอดขาย
   // ---------------------------------------------------
   const sLines = salesCsv.split(/\r?\n/).filter(l => l.trim() !== "");
   const sRows = sLines.map(l => parseCSVLine(l));
@@ -618,16 +797,14 @@ Promise.all([
   selector.value = "2026-M05";
 
   // ---------------------------------------------------
-  // ENGINE B: ตารางและการกรองสไตล์ INVENTORY (ปรับจูนการหาตำแหน่งหัวคอลัมน์)
+  // ENGINE B: LOGIC ตารางความยืดหยุ่นสูง (Fuzzy Header Mapping)
   // ---------------------------------------------------
   const opLines = opCsv.split(/\r?\n/).filter(l => l.trim() !== "");
   const opRows = opLines.map(l => parseCSVLine(l));
   
-  // ตรวจสอบแถวหัวตาราง (ตรวจจับทั้งแถว 1 และแถว 2 เพื่อป้องกันการคลาดเคลื่อนของหัวคอลัมน์กึ่งดิบ)
   let opHeader = [];
   let startRowIndex = 1;
   
-  // ค้นหาแถวที่มีคำว่า CASENAME เพื่อใช้เป็นหัวตารางที่แท้จริง
   for (let r = 0; r < Math.min(opRows.length, 5); r++) {
     if (opRows[r]) {
       const rowTxt = opRows[r].join(" ").toUpperCase();
@@ -639,13 +816,11 @@ Promise.all([
     }
   }
   
-  // ถ้าหาไม่เจอจริงๆ ให้ใช้ Fallback ที่แถวที่ 2 ตามเดิม
   if (opHeader.length === 0 && opRows[1]) {
     opHeader = opRows[1].map(h => cleanString(h));
     startRowIndex = 2;
   }
 
-  // ใช้ระบบค้นหาตำแหน่งคอลัมน์แบบ Fuzzy matching (.findIndex + .includes) เพื่อล้างปัญหาเว้นวรรคไม่ตรง
   const findColumnIndex = (keywords) => {
     return opHeader.findIndex(h => {
       const cleanH = h.toLowerCase().replace(/[^a-z0-9ก-๙]/g, "");
@@ -656,14 +831,13 @@ Promise.all([
     });
   };
 
-  const idxCaseId = findColumnIndex(["caseid", "case_id", "case _id"]);
+  const idxCaseId = findColumnIndex(["caseid", "case_id"]);
   const idxCaseName = findColumnIndex(["casename", "ชื่อเคส"]);
   const idxType = findColumnIndex(["casetype", "ประเภทเคส"]);
   const idxCust = findColumnIndex(["customername", "itemname", "ลูกค้า"]);
   const idxStatus = findColumnIndex(["status", "สถานะ"]);
   const idxOwner = findColumnIndex(["ชื่อเซลล์", "ชื่อเซล", "owner"]);
 
-  // ค้นหาดัชนีของ FU1 ถึง FU10
   let fuIndices = [];
   opHeader.forEach((h, colIdx) => {
     const cleanH = h.toUpperCase().replace(/\s/g, "");
@@ -672,12 +846,11 @@ Promise.all([
       fuIndices.push({ label: `Follow up ${num}`, index: colIdx, order: num });
     }
   });
-  // เรียงลำดับจาก FU1 ไปหา FU10
   fuIndices.sort((a, b) => a.order - b.order);
 
   globalOpData = [];
+  let liveProgressCounter = 0;
 
-  // สแกนข้อมูลตั้งแต่แถวถัดจากหัวตารางเป็นต้นไป
   for(let i = startRowIndex; i < opRows.length; i++) {
     const row = opRows[i];
     if (!row || row.length === 0 || (idxCaseName !== -1 && !row[idxCaseName])) continue; 
@@ -691,7 +864,15 @@ Promise.all([
         }
       }
     });
-    // กลับส่วนให้อันล่าสุดอยู่ด้านบนสุดของ Timeline
+
+    const currentStatus = idxStatus !== -1 ? (cleanString(row[idxStatus]).toUpperCase() || "IN PROGRESS") : "IN PROGRESS";
+    if(currentStatus === "IN PROGRESS") {
+      liveProgressCounter++;
+    }
+
+    // คำนวณอายุของเคส (Case Age) โดยอิงตามจำนวนข้อมูลในช่องประวัติการบันทึกงาน
+    const caseAgeDays = followUpHistory.length * 3; // ตัวเลขจำลองโมเดลอายุงาน
+
     followUpHistory.reverse();
 
     globalOpData.push({
@@ -699,17 +880,18 @@ Promise.all([
       caseName: idxCaseName !== -1 ? (cleanString(row[idxCaseName]) || "ไม่มีชื่อเคส") : "ไม่มีชื่อเคส",
       caseType: idxType !== -1 ? (cleanString(row[idxType]) || "-") : "-",
       customerName: idxCust !== -1 ? (cleanString(row[idxCust]) || "ไม่ระบุชื่อลูกค้า") : "ไม่ระบุชื่อลูกค้า",
-      status: idxStatus !== -1 ? (cleanString(row[idxStatus]).toUpperCase() || "IN PROGRESS") : "IN PROGRESS",
+      status: currentStatus,
       owner: idxOwner !== -1 ? (cleanString(row[idxOwner]) || "ไม่ระบุชื่อ") : "ไม่ระบุชื่อ",
+      ageDays: caseAgeDays,
       history: followUpHistory
     });
   }
 
-  // เรียกใช้ฟังก์ชันเซ็ต Event สไตล์ Inventory และประมวลผลข้อมูลนัดแนะแรกสุด
-  initInventoryFilterEvents();
-  updateChipStyles();
-  applyOpFilters();
+  // พ่นตัวเลขเคสที่ค้างหน้าแดชบอร์ดให้ทีมงานดูสด ๆ
+  document.getElementById("live-progress-counter").textContent = liveProgressCounter.toLocaleString();
 
+  initInventoryFilterEvents();
+  applyOpFilters();
   updateBottomCharts("2026-M05");
 
   selector.addEventListener("change", (e) => updateBottomCharts(e.target.value));
@@ -729,13 +911,13 @@ function renderYoYLineChart(data25, data26) {
     data: {
       labels: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."],
       datasets: [
-        { label: '2025 (ปีที่แล้ว)', data: data25, borderColor: '#2563eb', borderWidth: 2.5, tension: 0.12, pointRadius: 0 },
-        { label: '2026 (ปีปัจจุบัน)', data: data26.map(v => v === 0 ? null : v), borderColor: '#ef4444', borderWidth: 2.5, tension: 0.12, pointRadius: 0 }
+        { label: '2025', data: data25, borderColor: '#2563eb', borderWidth: 2, tension: 0.1, pointRadius: 0 },
+        { label: '2026', data: data26.map(v => v === 0 ? null : v), borderColor: '#ef4444', borderWidth: 2, tension: 0.1, pointRadius: 0 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { font: { weight: 600 } } } },
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11, weight: 600 } } } },
       scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } }
     }
   });
@@ -762,14 +944,14 @@ function updateBottomCharts(selectedMonthKey) {
     type: 'bar',
     data: {
       labels: names,
-      datasets: [{ data: values, backgroundColor: colors, borderRadius: 4, barThickness: 20 }]
+      datasets: [{ data: values, backgroundColor: colors, borderRadius: 3, barThickness: 14 }]
     },
     options: {
       indexAxis: 'y', responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
-        y: { grid: { display: false }, ticks: { font: { size: 12, weight: 600 } } }
+        y: { grid: { display: false }, ticks: { font: { size: 11, weight: 600 } } }
       }
     }
   });
@@ -777,26 +959,21 @@ function updateBottomCharts(selectedMonthKey) {
   if(donutChartInstance) donutChartInstance.destroy();
   const ctxDonut = document.getElementById('donutShareChart').getContext('2d');
   
-  let centerTextStr = "";
-  if(totalMonthSum >= 1000000) {
-    centerTextStr = (totalMonthSum / 1000000).toFixed(1) + 'M';
-  } else {
-    centerTextStr = (totalMonthSum / 1000).toFixed(0) + 'K';
-  }
+  let centerTextStr = totalMonthSum >= 1000000 ? (totalMonthSum / 1000000).toFixed(1) + 'M' : (totalMonthSum / 1000).toFixed(0) + 'K';
 
   donutChartInstance = new Chart(ctxDonut, {
     type: 'doughnut',
-    data: { labels: names, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#ffffff' }] },
+    data: { labels: names, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1.5, borderColor: '#ffffff' }] },
     options: {
       responsive: true, maintainAspectRatio: false, cutout: '72%',
-      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11, weight: 500 } } } },
+      plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10, weight: 500 } } } },
     },
     plugins: [{
       id: 'centerText',
       afterDraw(chart) {
         const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
         ctx.save();
-        ctx.font = 'bold 24px Plus Jakarta Sans';
+        ctx.font = 'bold 20px Plus Jakarta Sans';
         ctx.fillStyle = '#1c2434';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -808,15 +985,40 @@ function updateBottomCharts(selectedMonthKey) {
 }
 
 /* ===================================================
-   INVENTORY CORE ALGORITHMS: FILTERS & TABLES LOGIC
+   INVENTORY PIPELINE ALGORITHMS (DYNAMIC PASS & LOCK)
    =================================================== */
 function initInventoryFilterEvents() {
   document.getElementById("searchBox").addEventListener("input", applyOpFilters);
+  
+  // จัดลิงก์เหตุการณ์ปุ่มสถานะด้านบน
+  const chkSuccess = document.getElementById("status-success");
+  const chkProgress = document.getElementById("status-progress");
+  
+  const handleStatusStyleAndFilter = () => {
+    document.getElementById("lbl-status-success").className = chkSuccess.checked ? "status-chk-label active-success" : "status-chk-label";
+    document.getElementById("lbl-status-progress").className = chkProgress.checked ? "status-chk-label active-progress" : "status-chk-label";
+    applyOpFilters();
+  };
+
+  chkSuccess.addEventListener("change", handleStatusStyleAndFilter);
+  chkProgress.addEventListener("change", handleStatusStyleAndFilter);
 
   OP_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
-      checkbox.addEventListener("change", () => {
+      checkbox.addEventListener("change", (e) => {
+        // 🔒 DYNAMIC LOGIC RULE: ติ๊กอันอื่นที่ไม่ใช่เปิดบาร์ จะทำการท้าทายขอรหัสผ่านจาก Sheets ทันที
+        if(checkbox.checked && f.keyword !== "เปิดบาร์") {
+          const userInputPass = prompt(`กรุณาระบุรหัสผ่านเพื่อสลับดูข้อมูลหมวด "${f.keyword}":`);
+          
+          if(userInputPass !== cachedPasswordFromSheet) {
+            alert("รหัสผ่านไม่ถูกต้อง! ระบบสกัดสิทธิ์การเข้าถึงข้อมูล");
+            checkbox.checked = false; // เด้งสลักกลับไปปิด
+            updateChipStyles();
+            return;
+          }
+        }
+        
         updateChipStyles();
         applyOpFilters();
       });
@@ -838,10 +1040,23 @@ function updateChipStyles(){
 function applyOpFilters() {
   const q = document.getElementById("searchBox").value.toLowerCase().trim();
   const activeTypes = OP_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+  
+  const chkSuccess = document.getElementById("status-success").checked;
+  const chkProgress = document.getElementById("status-progress").checked;
 
   let result = globalOpData;
 
-  // 1. FILTER CHIPS (CASE TYPE)
+  // 1. FILTER STATUS LOGIC (ตามโจทย์ระบุเงื่อนไขการเลือก)
+  // ติ๊ก 2 อัน = โชว์ 2 อัน, ติ๊กอันเดียว = โชว์อันเดียว, ไม่ติ๊กอะไรเลย = แสดงทั้งหมด
+  if(chkSuccess || chkProgress) {
+    result = result.filter(item => {
+      if(chkSuccess && item.status === "SUCCESS") return true;
+      if(chkProgress && item.status === "IN PROGRESS") return true;
+      return false;
+    });
+  }
+
+  // 2. FILTER CHIPS CATEGORY
   if(activeTypes.length > 0) {
     result = result.filter(item => {
       const typeStr = String(item.caseType).toLowerCase();
@@ -849,7 +1064,7 @@ function applyOpFilters() {
     });
   }
 
-  // 2. SEARCH BOX TEXT MATCH
+  // 3. SEARCH TEXT
   if(q) {
     result = result.filter(item => 
       String(item.caseId).toLowerCase().includes(q) ||
@@ -860,7 +1075,6 @@ function applyOpFilters() {
 
   filteredOpData = result;
 
-  // 3. SORT
   if(opSortState.key) {
     applySortOnOpFiltered();
   } else {
@@ -884,38 +1098,31 @@ function sortOpTable(key) {
 function applySortOnOpFiltered() {
   const { key, dir } = opSortState;
   viewOpData = [...filteredOpData].sort((a, b) => {
-    let v1 = a[key] ?? "";
-    let v2 = b[key] ?? "";
-    
-    v1 = String(v1).toLowerCase();
-    v2 = String(v2).toLowerCase();
-    
+    let v1 = String(a[key] ?? "").toLowerCase();
+    let v2 = String(b[key] ?? "").toLowerCase();
     if(v1 < v2) return dir === "asc" ? -1 : 1;
     if(v1 > v2) return dir === "asc" ? 1 : -1;
     return 0;
   });
   
-  // อัปเดตลูกศรบอกสถานะหัวตาราง
   ["caseId", "caseName", "customerName"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
-    if(!el) return;
-    el.textContent = k === key ? (dir === "asc" ? "↑" : "↓") : "↕";
+    if(el) el.textContent = k === key ? (dir === "asc" ? "↑" : "↓") : "↕";
   });
 
   renderOpTable(viewOpData);
-  updateResultCount(viewOpData.length);
 }
 
 function renderOpTable(data) {
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#64748b;padding:20px;">ไม่พบข้อมูลผลลัพธ์</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#64748b;padding:20px;">ไม่พบเคสงานตรงเงื่อนไข</td></tr>';
     return;
   }
 
   tbody.innerHTML = data.map((item, index) => `
     <tr onclick="getOpRowClickData(${index})">
-      <td class="col-code">${item.caseId}</td>
+      <td class="col-code"><span class="cta-view-indicator">🔍</span>${item.caseId}</td>
       <td class="col-name">${item.caseName}</td>
       <td class="col-customer">${item.customerName}</td>
     </tr>
@@ -932,18 +1139,21 @@ function updateResultCount(n) {
 }
 
 /* ===================================================
-   MODAL TIMELINE CONTROLLER
+   MODAL TIMELINE (SCROLLABLE & AGE TRACKING FIX)
    =================================================== */
 function openTimelineModal(item) {
   document.getElementById("modalCustomerName").textContent = item.customerName;
-  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | ประเภท: ${item.caseType} | สถานะ: ${item.status}`;
+  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | หมวด: ${item.caseType} | สถานะ: ${item.status}`;
   document.getElementById("modalOwner").textContent = item.owner;
+  
+  // พ่นตัวเลขอายุเคสไว้ข้าง ๆ หัวการ์ดตามสั่งเป๊ะ
+  document.getElementById("modalCaseAge").textContent = `Age: ${item.ageDays}d`;
 
   const timelineContent = document.getElementById("modalTimelineContent");
   timelineContent.innerHTML = "";
 
   if(!item.history || item.history.length === 0) {
-    timelineContent.innerHTML = `<p style="font-size:13px; color:#94a3b8; text-align:center; padding:20px 0;">ไม่มีประวัติการบันทึกข้อมูลติดตามงาน (Follow Up)</p>`;
+    timelineContent.innerHTML = `<p style="font-size:12px; color:#94a3b8; text-align:center; padding:16px 0;">ไม่มีประวัติการบันทึกข้อมูลติดตามงาน (Follow Up)</p>`;
   } else {
     item.history.forEach((hist, idx) => {
       const itemDiv = document.createElement("div");
@@ -964,11 +1174,9 @@ function closeModal() {
 }
 
 window.addEventListener("click", (e) => {
-  const modal = document.getElementById("timelineModal");
-  if(e.target === modal) closeModal();
+  if(e.target === document.getElementById("timelineModal")) closeModal();
 });
 
-// BACK TO TOP BUTTON FUNCTIONALITY
 document.getElementById("toTop").onclick = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
