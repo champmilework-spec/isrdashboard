@@ -99,21 +99,32 @@ body {
 }
 .dropdown-wrapper label {
   font-size: 12px;
-  font-weight: bold;
-  color: #444;
+  font-weight: normal;
+  color: #666;
   white-space: nowrap;
 }
+/* ปรับแต่ง Dropdown ให้สวยงาม มินิมอล บางลง และเล็กลง */
 .dropdown-wrapper select {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 24px;
+  padding: 6px 28px 6px 12px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
   background: #fff;
-  color: #111;
+  color: #4a5568;
   outline: none;
   cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  font-weight: normal;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  transition: all 0.2s;
+}
+.dropdown-wrapper select:focus {
+  border-color: #2f5ea8;
+  box-shadow: 0 0 0 2px rgba(47, 94, 168, 0.1);
 }
 
 /* =========================
@@ -190,7 +201,7 @@ body {
 ========================= */
 .table-wrap {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden; /* ล็อกไม่ให้เลื่อนซ้ายขวาเพื่อ UX ที่นิ่งสนิท */
   overflow-y: auto;
   border: 1px solid #eef0f5;
   border-radius: 12px;
@@ -201,6 +212,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* บังคับควบคุมความกว้างคอลัมน์ไม่ให้หลุดจอ */
 }
 
 /* =========================
@@ -210,7 +222,7 @@ thead th {
   position: sticky;
   top: 0;
   background: #2f5ea8;
-  color: #fff;
+  color: #fff !important; /* บังคับหัวตารางเป็นสีขาวล้วน */
   z-index: 50;
   text-align: left;
   font-size: 12px;
@@ -223,23 +235,45 @@ thead th {
 thead th:hover {
   background: #244a86;
 }
+thead th, thead th span {
+  color: #fff !important; /* คุมให้ลูกศรจัดเรียงเป็นสีขาวด้วย */
+}
 tbody td {
   font-size: 13px;
   padding: 10px 12px;
   border-bottom: 1px solid #f5f5f5;
   vertical-align: top;
 }
+tbody tr {
+  cursor: pointer; /* ทำสัญลักษณ์ให้รู้ว่ากดจิ้มเพื่อก๊อปปี้ได้ */
+  transition: background 0.15s;
+}
 tbody tr:hover {
-  background: #f9fbfd;
+  background: #f1f5f9; /* ไฮไลท์แถวเข้มขึ้นนิดหน่อยตอนชี้ */
+}
+tbody tr:active {
+  background: #e2e8f0; /* แสดงสีตอบสนองตอนกดจิ้ม */
 }
 
 /* =========================
-   DYNAMIC COLUMN WIDTHS
+   DYNAMIC COLUMN WIDTHS (จัดการระยะช่องตารางใหม่)
 ========================= */
-.col-code { width: 110px; white-space: nowrap; font-weight: 600; color: #333; }
-.col-match { width: 110px; white-space: nowrap; color: #2f5ea8; font-weight: 600; }
-.col-desc { width: auto; word-break: break-word; white-space: normal; }
-.col-dynamic { width: 110px; text-align: right; white-space: nowrap; font-weight: bold; color: #111; }
+.col-barcode { 
+  width: 22%; /* แคบลงสำหรับรองรับ 7 digit */
+  word-break: break-all; 
+}
+.col-desc { 
+  width: auto; /* กว้างสุดสำหรับโชว์เนื้อหาหลักรายละเอียดสินค้า */
+  word-break: break-word; 
+  white-space: normal; 
+}
+.col-dynamic { 
+  width: 22%; /* ขนาดพอดีสั้นๆ สำหรับตัวเลขหลักสแตนดาร์ด */
+  text-align: right; 
+  word-break: break-all; /* ถ้าหลักเลขยาวเกินพิกัดให้ wrap ลงล่างป้องกันตารางพัง */
+  font-weight: bold; 
+  color: #111; 
+}
 
 /* =========================
    SORT ICON
@@ -247,7 +281,26 @@ tbody tr:hover {
 .sort-arrow {
   font-size: 10px;
   margin-left: 4px;
-  opacity: 0.8;
+  opacity: 0.9;
+}
+
+/* =========================
+   TOAST NOTIFICATION (แจ้งเตือนตอนก๊อปปี้)
+========================= */
+.copy-toast {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 24, 39, 0.85);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 10000;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 /* =========================
@@ -313,7 +366,7 @@ tbody tr:hover {
   body { padding-top: 54px; }
   .container { padding: 8px 10px; }
   .cat-chip { font-size: 11px; padding: 5px 12px; }
-  tbody td { padding: 8px 10px; font-size: 12.5px; }
+  tbody td { padding: 10px 6px; font-size: 12px; } /* ปรับกระชับบนมือถือเพิ่ม */
 }
 </style>
 </head>
@@ -345,7 +398,7 @@ tbody tr:hover {
       <input id="searchBox" type="text" placeholder="ค้นหา Code / CodeMatch / Barcode / Name..." />
     </div>
     <div class="dropdown-wrapper">
-      <label for="columnSelector">แสดงคอลัมน์ขวาสุด:</label>
+      <label for="columnSelector">แสดงข้อมูล:</label>
       <select id="columnSelector">
         <option value="AvgSalecost" selected>AvgSalecost</option>
         <option value="Salecost">Salecost</option>
@@ -384,15 +437,13 @@ tbody tr:hover {
     <table>
       <thead>
         <tr>
-          <th onclick="sortTable('code')" class="col-code">Code <span class="sort-arrow" id="arrow-code">↕</span></th>
-          <th onclick="sortTable('CodeMatch')" class="col-match">CodeMatch <span class="sort-arrow" id="arrow-CodeMatch">↕</span></th>
-          <th onclick="sortTable('gbarcode')" style="width:110px;">gbarcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
-          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
+          <th onclick="sortTable('gbarcode')" class="col-barcode">gbarcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
+          <th onclick="sortTable('name')" class="col-desc">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
           <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">AvgSalecost <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
         </tr>
       </thead>
       <tbody id="table-body">
-        <tr><td colspan="5" style="text-align:center; padding:20px; color:#777;">กำลังเตรียมข้อมูลสิทธิ์การเข้าถึง...</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังเตรียมข้อมูลสิทธิ์การเข้าถึง...</td></tr>
       </tbody>
     </table>
   </div>
@@ -400,6 +451,7 @@ tbody tr:hover {
 </div>
 
 <div id="toTop">↑</div>
+<div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <script>
 const dataApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
@@ -427,7 +479,6 @@ async function fetchPasswordConfig() {
   try {
     const res = await fetch(configApiUrl);
     const configData = await res.json();
-    // ดึงค่าแถวที่ 2 (อินเด็กซ์ 1 เพราะแถวแรกคือหัวตาราง) คอลัมน์ B (หรือคีย์ตัวที่ 2)
     if (configData && configData[1]) {
       const rowValues = Object.values(configData[1]);
       cachedSecretPassword = String(rowValues[1] || "").trim(); 
@@ -435,7 +486,7 @@ async function fetchPasswordConfig() {
   } catch (e) {
     console.error("Failed to fetch password from Config Sheet. Defaulting backup.");
   }
-  if (!cachedSecretPassword) { cachedSecretPassword = "1234"; } // ป้องกันค้าง
+  if (!cachedSecretPassword) { cachedSecretPassword = "1234"; }
 }
 
 function handleKeyPress(e) {
@@ -447,7 +498,7 @@ function verifyPassword() {
   if (userPass === cachedSecretPassword) {
     document.getElementById("lock-screen").style.display = "none";
     document.getElementById("main-content-area").style.display = "block";
-    loadTable(); // โหลดข้อมูลจริงหลังจากใส่รหัสผ่านถูกต้องเพื่อความปลอดภัยสูงสุด
+    loadTable();
   } else {
     alert("❌ รหัสผ่านไม่ถูกต้อง! ระบบปฏิเสธการเข้าถึงข้อมูล");
     document.getElementById("passInput").value = "";
@@ -458,14 +509,14 @@ function verifyPassword() {
    LOAD MASTER DATA
 ========================= */
 async function loadTable(){
-  document.getElementById("table-body").innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#777;">Loading CodeMatch System...</td></tr>';
+  document.getElementById("table-body").innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading CodeMatch System...</td></tr>';
   try {
     const res = await fetch(dataApiUrl);
     rawData = await res.json();
     applyAll();
   } catch(e) {
     document.getElementById("table-body").innerHTML =
-      '<tr><td colspan="5" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบลิงก์สิทธิ์เข้าถึง</td></tr>';
+      '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบลิงก์สิทธิ์เข้าถึง</td></tr>';
   }
 }
 
@@ -480,7 +531,7 @@ function applyAll(){
 
   let result = rawData;
 
-  // 1. CATEGORY FILTER (ตรวจสอบจาก gnamechr)
+  // 1. CATEGORY FILTER
   if(activeCats.length > 0){
     result = result.filter(i => {
       const gname = String(i.gnamechr || "").toLowerCase();
@@ -539,8 +590,6 @@ function sortTable(key){
 
 function applySortOnFiltered(){
   const { key, dir } = sortState;
-  
-  // แปลงคีย์เสมือนเพื่อเรียงลำดับคอลัมน์ไดนามิกขวาสุด
   const targetKey = key === "dynamic" ? currentDynamicColumn : key;
 
   viewData = [...filteredData].sort((a, b) => {
@@ -565,28 +614,53 @@ function applySortOnFiltered(){
 }
 
 /* =========================
-   RENDER TABLE DATA (DYNAMIC GENERATION)
+   COPY ROW DATA TO CLIPBOARD
+========================= */
+function copyRowToClipboard(index) {
+  const item = viewData[index];
+  if (!item) return;
+
+  let rawVal = item[currentDynamicColumn] || "-";
+  let formattedVal = rawVal;
+  if (currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+    formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+
+  const textToCopy = `Code: ${item.code || "-"} | Match: ${item.CodeMatch || "-"} | Barcode: ${item.gbarcode || "-"} | ชื่อ: ${item.name || "-"} | ${currentDynamicColumn}: ${formattedVal}`;
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    const toast = document.getElementById("copyToast");
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 1800);
+  }).catch(err => {
+    console.error("Could not copy text: ", err);
+  });
+}
+
+/* =========================
+   RENDER TABLE DATA (DYNAMIC GENERATION - 3 COLUMNS)
 ========================= */
 function renderTable(data){
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px;">ไม่พบรายการข้อมูลที่ค้นหา...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">ไม่พบรายการข้อมูลที่ค้นหา...</td></tr>';
     return;
   }
   
-  tbody.innerHTML = data.map(p => {
-    // ฟอร์แมตตัวเลขถ้าคอลัมน์ไดนามิกเป็นราคา/จำนวน เพื่อความสวยงาม ยกเว้น StockStatus
+  tbody.innerHTML = data.map((p, index) => {
     let rawVal = p[currentDynamicColumn] || "-";
     let formattedVal = rawVal;
+    
+    // บังคับเปลี่ยนรูปแบบให้เป็น Float ทศนิยม 2 ตำแหน่ง พร้อมลูกน้ำคอมมาเสมอ ยกเว้นคอลัมน์ StockStatus
     if (currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
-      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     return `
-      <tr>
-        <td class="col-code">${p.code || "-"}</td>
-        <td class="col-match">${p.CodeMatch || "-"}</td>
-        <td>${p.gbarcode || "-"}</td>
+      <tr onclick="copyRowToClipboard(${index})">
+        <td class="col-barcode">${p.gbarcode || "-"}</td>
         <td class="col-desc">${p.name || "-"}</td>
         <td class="col-dynamic">${formattedVal}</td>
       </tr>
@@ -603,13 +677,16 @@ function updateResultCount(n){
 }
 
 function updateArrows(active, dir){
-  ["code", "CodeMatch", "gbarcode", "name", "dynamic"].forEach(k => {
+  ["gbarcode", "name", "dynamic"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(!el) return;
     el.textContent = k === active ? (dir === "asc" ? "↑" : "↓") : "↕";
   });
 }
 
+/* =========================
+   UPDATE CHIP STYLES
+========================= */
 function updateChipStyles(){
   CAT_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
@@ -625,17 +702,16 @@ function updateChipStyles(){
    INITIALIZE EVENTS
 ========================= */
 window.addEventListener("DOMContentLoaded", () => {
-  fetchPasswordConfig(); // เรียกดึงรหัสผ่านมารอไว้ทันทีตอนเปิดหน้าจอ
+  fetchPasswordConfig();
 
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
 
-  // ควบคุมการเปลี่ยน Dropdown คอลัมน์ขวาสุด
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
     currentDynamicColumn = e.target.value;
     document.getElementById("dynamic-th-label").innerHTML = `${currentDynamicColumn} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
-    sortState = { key: null, dir: "asc" }; // รีเซ็ตสถานะการจัดเรียงเพื่อป้องกันบั๊ก
+    sortState = { key: null, dir: "asc" }; 
     applyAll();
   });
 
