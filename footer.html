@@ -5,76 +5,80 @@
 /* =========================
    FOOTER BASE
 ========================= */
-.footer{
+.footer {
   background: #0b111e; /* Midnight Blue ดำอมน้ำเงินเข้มลึก */
-  color:#ddd;
-  padding:70px 24px 40px;
-  margin-top:80px;
-  position:relative;
-  overflow:hidden;
+  color: #ddd;
+  padding: 70px 24px 40px;
+  margin-top: 80px;
+  position: relative;
+  overflow: hidden; /* ล็อคไม่ให้แสงเอฟเฟกต์หรือคอนเทนเนอร์ล้นจอมือถือ */
+  box-sizing: border-box; /* คำนวณขอบให้แม่นยำ ป้องกันการแสดงผลขาดหาย */
 }
 
-.footer::before{
-  content:"";
-  position:absolute;
-  width:500px;
-  height:500px;
-  /* แสงเหลือบโทนน้ำเงิน */
-  background:radial-gradient(circle, rgba(47, 94, 168, 0.12), transparent 70%); 
-  top:-200px;
-  right:-200px;
+/* แสงเหลือบโทนน้ำเงินสไตล์มินิมอล */
+.footer::before {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(47, 94, 168, 0.12), transparent 70%); 
+  top: -200px;
+  right: -200px;
+  pointer-events: none; /* เพื่อไม่ให้บังการคลิกลิงก์ */
 }
 
-.footer-inner{
-  max-width:1100px;
-  margin:0 auto;
-  position:relative;
-  z-index:2;
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
-.footer-grid{
-  display:grid;
-  grid-template-columns:1.2fr 1fr 1fr;
-  gap:40px;
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 40px;
 }
 
-.footer-logo{
-  font-size:14px;
-  letter-spacing:4px;
-  margin-bottom:20px;
-  color:#fff;
+.footer-logo {
+  font-size: 14px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  color: #fff;
+  font-weight: bold;
 }
 
-.footer-text{
-  font-size:14px;
-  line-height:1.9;
-  color:#a5b1c2; /* โทนตัวหนังสือนวลตา */
-  max-width:420px;
+.footer-text {
+  font-size: 14px;
+  line-height: 1.9;
+  color: #a5b1c2; /* โทนตัวหนังสือนวลตา */
+  max-width: 420px;
 }
 
-.footer-title{
-  font-size:13px;
-  letter-spacing:2px;
-  color:#fff;
-  margin-bottom:18px;
+.footer-title {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 18px;
+  font-weight: 600;
 }
 
-.footer-links{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.footer-links a, .footer-links .partner-item{
-  text-decoration:none;
-  color:#a5b1c2;
-  font-size:14px;
-  transition:0.2s;
+.footer-links a, .footer-links .partner-item {
+  text-decoration: none;
+  color: #a5b1c2;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-.footer-links a:hover{
-  color:#fff;
-  transform:translateX(3px);
+.footer-links a:hover {
+  color: #fff;
+  transform: translateX(4px);
 }
 
 /* สไตล์เฉพาะสำหรับรายชื่อแบรนด์พาร์ทเนอร์ */
@@ -83,46 +87,55 @@
   align-items: center;
 }
 
-/* เอฟเฟกต์พิเศษสำหรับพาร์ทเนอร์ที่มีลิงก์แชนเนล */
+/* เอฟเฟกต์พิเศษสำหรับพาร์ทเนอร์ที่เป็นลิงก์คลิกได้ */
+a.partner-item {
+  cursor: pointer;
+}
 a.partner-item:hover {
   color: #fff;
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
-.footer-bottom{
-  margin-top:50px;
-  padding-top:24px;
-  border-top:1px solid rgba(255,255,255,0.06);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
+.footer-bottom {
+  margin-top: 50px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.footer-copy{
-  font-size:12px;
-  color:#67748b;
+.footer-copy {
+  font-size: 12px;
+  color: #67748b;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* =========================
-   MOBILE RESPONSIVE
+   MOBILE RESPONSIVE (ปรับแต่งพิเศษ)
 ========================= */
 @media(max-width:768px){
 
-  .footer-grid{
-    grid-template-columns:1fr;
-    gap:34px;
+  .footer {
+    padding: 50px 20px 30px; /* กระชับพื้นที่ขอบสัดส่วนบนมือถือ */
+    margin-top: 50px;
   }
 
-  .footer{
-    padding:60px 20px 34px;
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 34px;
   }
 
-  .footer-bottom{
-    flex-direction:column;
-    align-items:flex-start;
+  .footer-bottom {
+    margin-top: 40px;
+    padding-top: 20px;
+    flex-direction: column;
+    align-items: flex-start; /* จัดเรียงเครดิตให้ชิดซ้ายอ่านง่ายบนมือถือ */
     gap: 10px;
   }
 
@@ -146,7 +159,7 @@ a.partner-item:hover {
         </div>
       </div>
 
-      <!-- COLUMN 2: UPDATED NAVIGATION -->
+      <!-- COLUMN 2: NAVIGATION -->
       <div>
         <div class="footer-title">
           NAVIGATION
@@ -160,7 +173,7 @@ a.partner-item:hover {
         </div>
       </div>
 
-      <!-- COLUMN 3: PARTNERS & LINKS -->
+      <!-- COLUMN 3: PARTNERS & LINKS (เพิ่มลิงก์ DOMAC เรียบร้อย) -->
       <div>
         <div class="footer-title">
           OUR PARTNERS
@@ -168,19 +181,18 @@ a.partner-item:hover {
         <div class="footer-links">
           <span class="partner-item">Nippon Paint</span>
           <span class="partner-item">3M</span>
-          <!-- แก้ไข DOMAC เป็นลิงก์สำหรับคลิกไปหน้า Landing Page ตามสั่งครับ -->
-          <a href="domac.html" class="partner-item">DOMAC</a>
+          <a href="domac.html" class="partner-item">DOMAC SYSTEM</a>
           <span class="partner-item">Cromax</span>
         </div>
       </div>
 
     </div>
 
-    <!-- FOOTER BOTTOM & NEW CREDIT -->
+    <!-- FOOTER BOTTOM & NEW CREDIT WITH COPYRIGHT ICON -->
     <div class="footer-bottom">
 
       <div class="footer-copy">
-        Handcrafted by CHAMP CM &mdash; Digital Automotive Systems v2.4
+        &copy; 2026 CHAMP CM &mdash; Digital Automotive Systems v2.4
       </div>
 
     </div>
