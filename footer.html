@@ -109,6 +109,17 @@ a.partner-item:hover {
   letter-spacing: 0.5px;
 }
 
+/* สไตล์สำหรับลิงก์เครดิต Champ CM */
+.credit-link {
+  text-decoration: none;
+  color: #67748b; /* ใช้สีเทาเดิมเพื่อให้ดูกลืนไปกับข้อความรอบข้าง */
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+.credit-link:hover {
+  color: #a5b1c2; /* เวลาชี้จะสว่างขึ้นนิดหน่อยให้เรารู้ว่ากดได้ */
+}
+
 /* =========================
    MOBILE RESPONSIVE
 ========================= */
@@ -175,7 +186,7 @@ a.partner-item:hover {
     <!-- FOOTER BOTTOM -->
     <div class="footer-bottom">
       <div class="footer-copy">
-        &copy; 2026 CHAMP CM &mdash; Digital Automotive Systems v2.4
+        &copy; 2026 <a href="cm.html" class="credit-link">CHAMP CM</a> &mdash; Digital Automotive Systems v2.4
       </div>
     </div>
 
