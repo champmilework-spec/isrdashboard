@@ -79,6 +79,7 @@ body{
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
+  margin-bottom: 32px;
 }
 
 .card-header-flex {
@@ -119,94 +120,126 @@ body{
 }
 
 /* =========================
-   OPERATION SECTION (เปิดบาร์)
+   INVENTORY STYLE: PIPELINE FILTER BAR
 ========================= */
-.op-filter-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+.filterbar {
+  margin-bottom: 12px;
+  width: 100%;
 }
-
-/* Round Checkbox Filter */
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding-left: 28px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  user-select: none;
-}
-.checkbox-container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 18px;
-  width: 18px;
-  background-color: #e2e8f0;
-  border-radius: 50%;
-  transition: all 0.2s;
-}
-.checkbox-container:hover input ~ .checkmark {
-  background-color: #cbd5e1;
-}
-.checkbox-container input:checked ~ .checkmark {
-  background-color: #3c50e0;
-}
-.checkbox-container input:checked ~ span {
-  color: #1c2434;
-}
-
-.card-list-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-@media(min-width: 768px) {
-  .card-list-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media(min-width: 1100px) {
-  .card-list-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-.bar-card {
-  background: #ffffff;
+.filterbar input {
+  width: 100%;
+  padding: 10px 14px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 18px;
-  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  background: #f8fafc;
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
 }
-.bar-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0px 10px 15px -3px rgba(59, 130, 246, 0.1);
+.filterbar input:focus {
   border-color: #3c50e0;
+  background: #fff;
 }
 
-.badge-status {
-  display: inline-block;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 20px;
-  text-transform: uppercase;
-  margin-top: 8px;
+/* CATEGORY FILTER CHIPS */
+.cat-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
 }
-.status-inprogress { background: #e0f2fe; color: #0369a1; }
-.status-success { background: #dcfce7; color: #15803d; }
-.status-other { background: #f1f5f9; color: #475569; }
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 12px;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.cat-chip input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: #3c50e0;
+  margin: 0;
+}
+.cat-chip:hover {
+  border-color: #3c50e0;
+  color: #3c50e0;
+}
+.cat-chip.active {
+  border-color: #3c50e0;
+  background: #eff6ff;
+  color: #3c50e0;
+  font-weight: 600;
+}
+
+/* INVENTORY STYLE: TABLE WRAP */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  max-height: 60vh;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  background: #3c50e0;
+  color: #fff;
+  z-index: 10;
+  font-size: 12px;
+  padding: 12px 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+thead th:hover {
+  background: #2a3bb7;
+}
+tbody td {
+  font-size: 13px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1c2434;
+}
+tbody tr:hover {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.col-code { width: 120px; white-space: nowrap; font-weight: 600; }
+.col-name { width: 220px; }
+.col-customer { width: auto; word-break: break-word; }
+
+.result-count {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+  text-align: right;
+  font-weight: 500;
+}
+.sort-arrow {
+  font-size: 11px;
+  margin-left: 4px;
+  opacity: 0.8;
+}
 
 /* =========================
    POPUP MODAL TIMELINE
@@ -272,6 +305,30 @@ body{
 .timeline-desc { font-size: 14px; margin-top: 4px; color: #1c2434; }
 
 #loader { text-align: center; padding: 40px; font-size: 14px; color: #64748b; }
+
+/* FLOAT TOP BUTTON */
+#toTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1c2434;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 99;
+  transition: all 0.2s;
+}
+#toTop:hover {
+  transform: translateY(-3px);
+  background: #3c50e0;
+}
 </style>
 </head>
 
@@ -288,7 +345,7 @@ body{
     </div>
   </div>
 
-  <div id="loader">กำลังเชื่อมต่อข้อมูลและจัดตำแหน่งหัวตารางแถวที่ 2...</div>
+  <div id="loader">กำลังเชื่อมต่อข้อมูลและจัดตำแหน่งระบบค้นหา...</div>
 
   <div id="dashboardContent" style="display: none;">
     
@@ -330,25 +387,64 @@ body{
 
     </div>
 
-    <!-- 3. โซนตารางข้อมูลงานเปิดบาร์ (List Cards จากชีต LOG) -->
+    <!-- 3. โซนตารางข้อมูลจากชีต LOG (ปรับโฉมใหม่เป็นสไตล์ Inventory OnHand) -->
     <div class="chart-card">
-      <div class="card-header-flex">
-        <h2>งานเปิดบาร์ประจำเดือน (ชีต LOG - Operation Pipeline)</h2>
-        <div class="op-filter-header">
-          <label class="checkbox-container">
-            <input type="checkbox" id="chkInprogress" checked>
-            <span class="checkmark"></span> <span>INPROGRESS</span>
-          </label>
-          <label class="checkbox-container">
-            <input type="checkbox" id="chkSuccess">
-            <span class="checkmark"></span> <span>SUCCESS</span>
-          </label>
-        </div>
+      <div class="card-header-flex" style="margin-bottom: 12px;">
+        <h2>Operation Pipeline (ชีต LOG)</h2>
       </div>
-      
-      <div class="card-list-grid" id="barCardsContainer">
-        <!-- ไดนามิกการ์ดจะถูกเรนเดอร์เข้าที่นี่ -->
+
+      <!-- SEARCH BOX -->
+      <div class="filterbar">
+        <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ชื่อเคส / ชื่อลูกค้า..." />
       </div>
+
+      <!-- CATEGORY FILTER CHIPS -->
+      <div class="cat-filter-bar" id="catFilterBar">
+        <label class="cat-chip" id="chip-bar">
+          <input type="checkbox" id="cat-bar" checked /> เปิดบาร์
+        </label>
+        <label class="cat-chip" id="chip-price">
+          <input type="checkbox" id="cat-price" /> ชนราคา
+        </label>
+        <label class="cat-chip" id="chip-dev">
+          <input type="checkbox" id="cat-dev" /> พัฒนาลูกค้า
+        </label>
+        <label class="cat-chip" id="chip-mkt">
+          <input type="checkbox" id="cat-mkt" /> Marketing
+        </label>
+        <label class="cat-chip" id="chip-trial">
+          <input type="checkbox" id="cat-trial" /> USERTRIAL
+        </label>
+        <label class="cat-chip" id="chip-tech">
+          <input type="checkbox" id="cat-tech" /> เทคนิค
+        </label>
+        <label class="cat-chip" id="chip-cm">
+          <input type="checkbox" id="cat-cm" /> งาน CM
+        </label>
+        <label class="cat-chip" id="chip-product">
+          <input type="checkbox" id="cat-product" /> พัฒนาสินค้า
+        </label>
+      </div>
+
+      <!-- RESULT COUNT -->
+      <div class="result-count" id="result-count">0 items</div>
+
+      <!-- TABLE MAP DATA -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortOpTable('caseId')" class="col-code">CASE_id <span class="sort-arrow" id="arrow-caseId">↕</span></th>
+              <th onclick="sortOpTable('caseName')" class="col-name">CASENAME <span class="sort-arrow" id="arrow-caseName">↕</span></th>
+              <th onclick="sortOpTable('customerName')" class="col-customer">CustomerName/Item Name <span class="sort-arrow" id="arrow-customerName">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr><td colspan="3" style="text-align:center; padding:20px; color:#64748b;">กำลังดึงข้อมูล...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
 
   </div>
@@ -373,21 +469,40 @@ body{
   </div>
 </div>
 
+<!-- FLOAT TOP BUTTON -->
+<div id="toTop">↑</div>
+
 <div id="footer-placeholder"></div>
 
 <script>
 // ลิงก์แชร์แบบ CSV จาก Google Sheets
 const salesCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv";
-const opCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS6y_G7K156N4b_2M4e1BvJ39Y5G7-I6-U99O2mO6V01BwRREHCHyYlC7v4G536HwSgqKIdbLdWhjQO/pub?gid=1693856458&single=true&output=csv";
+const opCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=1693856458&single=true&output=csv";
 
 const staffColorMap = {
   "แอนนี่": "#ec4899", "พรีม": "#a855f7", "ดอน": "#10b981", "นาเดียร์": "#f59e0b", "ฟ้า": "#0ea5e9"
 };
 
+// ข้อมูลจำเพาะของ Chips Filter สไตล์ Inventory
+const OP_FILTERS = [
+  { id: "cat-bar", keyword: "เปิดบาร์", chipId: "chip-bar" },
+  { id: "cat-price", keyword: "ชนราคา", chipId: "chip-price" },
+  { id: "cat-dev", keyword: "พัฒนาลูกค้า", chipId: "chip-dev" },
+  { id: "cat-mkt", keyword: "Marketing", chipId: "chip-mkt" },
+  { id: "cat-trial", keyword: "USERTRIAL", chipId: "chip-trial" },
+  { id: "cat-tech", keyword: "เทคนิค", chipId: "chip-tech" },
+  { id: "cat-cm", keyword: "งาน CM", chipId: "chip-cm" },
+  { id: "cat-product", keyword: "พัฒนาสินค้า", chipId: "chip-product" }
+];
+
 let globalSalesData = [];
 let uniqueTimelineKeys = [];
 let monthOptions = [];
+
 let globalOpData = [];
+let filteredOpData = [];
+let viewOpData = [];
+let opSortState = { key: null, dir: "asc" };
 
 let hpChartInstance = null;
 let donutChartInstance = null;
@@ -405,10 +520,6 @@ function parseCSVLine(text) {
 
 function cleanString(str) { return str ? str.replace(/^["'\s\t\r\n]+|["'\s\t\r\n]+$/g, '').trim() : ""; }
 
-function formatMoneyK(val) {
-  return (val / 1000).toLocaleString(undefined, {maximumFractionDigits:0}) + 'K';
-}
-
 function translateMonthThai(mCode, yCode) {
   const monthsThai = {
     "M01": "มกราคม", "M02": "กุมภาพันธ์", "M03": "มีนาคม", "M04": "เมษายน",
@@ -422,7 +533,7 @@ function translateMonthThai(mCode, yCode) {
 fetch("header.html").then(res => res.text()).then(d => { document.getElementById("header-placeholder").innerHTML = d; });
 fetch("footer.html").then(res => res.text()).then(d => { document.getElementById("footer-placeholder").innerHTML = d; });
 
-// เริ่มต้นโหลดข้อมูลทั้งหมด
+// เริ่มโหลดข้อมูลทั้งหมด
 Promise.all([
   fetch(salesCsvUrl).then(res => res.text()),
   fetch(opCsvUrl).then(res => res.text())
@@ -507,58 +618,101 @@ Promise.all([
   selector.value = "2026-M05";
 
   // ---------------------------------------------------
-  // ENGINE B: ข้อมูลงานเปิดบาร์ (แก้ไขให้อ่าน Row 2 เป็นหัวตาราง)
+  // ENGINE B: ตารางและการกรองสไตล์ INVENTORY (ปรับจูนการหาตำแหน่งหัวคอลัมน์)
   // ---------------------------------------------------
   const opLines = opCsv.split(/\r?\n/).filter(l => l.trim() !== "");
   const opRows = opLines.map(l => parseCSVLine(l));
   
-  // ชี้เป้าไปที่ แถวที่ 2 (index 1) เพื่อทำเป็นหัวตารางหลัก
-  const opHeader = opRows[1] ? opRows[1].map(h => cleanString(h)) : [];
-
-  const idxType = opHeader.indexOf("ประเภทงาน");
-  const idxCust = opHeader.indexOf("CustomerName/Item Name");
-  const idxStatus = opHeader.indexOf("STATUS");
-  const idxCaseName = opHeader.indexOf("CASENAME");
-  const idxOwner = opHeader.indexOf("ชื่อเซลล์");
-
-  // ค้นหากลุ่มคอมเมนต์คอลัมน์ FU1 - FU10
-  let fuIndices = [];
-  for(let j=1; j<=10; j++) {
-    let fIdx = opHeader.indexOf(`FU${j}`);
-    if(fIdx !== -1) fuIndices.push({ label: `Follow up ${j}`, index: fIdx });
+  // ตรวจสอบแถวหัวตาราง (ตรวจจับทั้งแถว 1 และแถว 2 เพื่อป้องกันการคลาดเคลื่อนของหัวคอลัมน์กึ่งดิบ)
+  let opHeader = [];
+  let startRowIndex = 1;
+  
+  // ค้นหาแถวที่มีคำว่า CASENAME เพื่อใช้เป็นหัวตารางที่แท้จริง
+  for (let r = 0; r < Math.min(opRows.length, 5); r++) {
+    if (opRows[r]) {
+      const rowTxt = opRows[r].join(" ").toUpperCase();
+      if (rowTxt.includes("CASENAME") || rowTxt.includes("CASE_")) {
+        opHeader = opRows[r].map(h => cleanString(h));
+        startRowIndex = r + 1;
+        break;
+      }
+    }
+  }
+  
+  // ถ้าหาไม่เจอจริงๆ ให้ใช้ Fallback ที่แถวที่ 2 ตามเดิม
+  if (opHeader.length === 0 && opRows[1]) {
+    opHeader = opRows[1].map(h => cleanString(h));
+    startRowIndex = 2;
   }
 
-  // เนื่องจากหัวตารางอยู่แถว 2 (index 1) ข้อมูลจริงจึงต้องเริ่มสแกนตั้งแต่แถวที่ 3 (index 2) เป็นต้นไป
-  for(let i=2; i<opRows.length; i++) {
-    if(!opRows[i][idxType]) continue;
-    const typeVal = cleanString(opRows[i][idxType]);
+  // ใช้ระบบค้นหาตำแหน่งคอลัมน์แบบ Fuzzy matching (.findIndex + .includes) เพื่อล้างปัญหาเว้นวรรคไม่ตรง
+  const findColumnIndex = (keywords) => {
+    return opHeader.findIndex(h => {
+      const cleanH = h.toLowerCase().replace(/[^a-z0-9ก-๙]/g, "");
+      return keywords.some(kw => {
+        const cleanKw = kw.toLowerCase().replace(/[^a-z0-9ก-๙]/g, "");
+        return cleanH.includes(cleanKw) || cleanKw.includes(cleanH);
+      });
+    });
+  };
+
+  const idxCaseId = findColumnIndex(["caseid", "case_id", "case _id"]);
+  const idxCaseName = findColumnIndex(["casename", "ชื่อเคส"]);
+  const idxType = findColumnIndex(["casetype", "ประเภทเคส"]);
+  const idxCust = findColumnIndex(["customername", "itemname", "ลูกค้า"]);
+  const idxStatus = findColumnIndex(["status", "สถานะ"]);
+  const idxOwner = findColumnIndex(["ชื่อเซลล์", "ชื่อเซล", "owner"]);
+
+  // ค้นหาดัชนีของ FU1 ถึง FU10
+  let fuIndices = [];
+  opHeader.forEach((h, colIdx) => {
+    const cleanH = h.toUpperCase().replace(/\s/g, "");
+    if (cleanH.startsWith("FU") && !isNaN(cleanH.replace("FU", ""))) {
+      const num = parseInt(cleanH.replace("FU", ""));
+      fuIndices.push({ label: `Follow up ${num}`, index: colIdx, order: num });
+    }
+  });
+  // เรียงลำดับจาก FU1 ไปหา FU10
+  fuIndices.sort((a, b) => a.order - b.order);
+
+  globalOpData = [];
+
+  // สแกนข้อมูลตั้งแต่แถวถัดจากหัวตารางเป็นต้นไป
+  for(let i = startRowIndex; i < opRows.length; i++) {
+    const row = opRows[i];
+    if (!row || row.length === 0 || (idxCaseName !== -1 && !row[idxCaseName])) continue; 
     
-    if(typeVal.includes("เปิดบาร์")) {
-      let followUpHistory = [];
-      fuIndices.forEach(fu => {
-        let commentText = cleanString(opRows[i][fu.index]);
+    let followUpHistory = [];
+    fuIndices.forEach(fu => {
+      if (row[fu.index]) {
+        let commentText = cleanString(row[fu.index]);
         if(commentText && commentText !== "" && commentText !== "-") {
           followUpHistory.push({ stage: fu.label, text: commentText });
         }
-      });
-      followUpHistory.reverse(); // เอาล่าสุดขึ้นก่อน
+      }
+    });
+    // กลับส่วนให้อันล่าสุดอยู่ด้านบนสุดของ Timeline
+    followUpHistory.reverse();
 
-      globalOpData.push({
-        customerName: cleanString(opRows[i][idxCust]) || "ไม่ระบุชื่อลูกค้า",
-        caseName: cleanString(opRows[i][idxCaseName]) || "ไม่มีชื่อเคส",
-        status: cleanString(opRows[i][idxStatus]).toUpperCase() || "INPROGRESS",
-        owner: cleanString(opRows[i][idxOwner]) || "ไม่ระบุชื่อ",
-        history: followUpHistory
-      });
-    }
+    globalOpData.push({
+      caseId: idxCaseId !== -1 ? (cleanString(row[idxCaseId]) || "-") : "-",
+      caseName: idxCaseName !== -1 ? (cleanString(row[idxCaseName]) || "ไม่มีชื่อเคส") : "ไม่มีชื่อเคส",
+      caseType: idxType !== -1 ? (cleanString(row[idxType]) || "-") : "-",
+      customerName: idxCust !== -1 ? (cleanString(row[idxCust]) || "ไม่ระบุชื่อลูกค้า") : "ไม่ระบุชื่อลูกค้า",
+      status: idxStatus !== -1 ? (cleanString(row[idxStatus]).toUpperCase() || "IN PROGRESS") : "IN PROGRESS",
+      owner: idxOwner !== -1 ? (cleanString(row[idxOwner]) || "ไม่ระบุชื่อ") : "ไม่ระบุชื่อ",
+      history: followUpHistory
+    });
   }
 
+  // เรียกใช้ฟังก์ชันเซ็ต Event สไตล์ Inventory และประมวลผลข้อมูลนัดแนะแรกสุด
+  initInventoryFilterEvents();
+  updateChipStyles();
+  applyOpFilters();
+
   updateBottomCharts("2026-M05");
-  renderOperationCards();
 
   selector.addEventListener("change", (e) => updateBottomCharts(e.target.value));
-  document.getElementById("chkInprogress").addEventListener("change", renderOperationCards);
-  document.getElementById("chkSuccess").addEventListener("change", renderOperationCards);
 
 }).catch(err => {
   document.getElementById("loader").textContent = "โครงสร้างเซิร์ฟเวอร์ฐานข้อมูลขัดข้อง กรุณาตรวจสอบการเข้าถึงไฟล์ชีต";
@@ -635,7 +789,7 @@ function updateBottomCharts(selectedMonthKey) {
     data: { labels: names, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#ffffff' }] },
     options: {
       responsive: true, maintainAspectRatio: false, cutout: '72%',
-      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11, weight: 500 } } } }
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11, weight: 500 } } } },
     },
     plugins: [{
       id: 'centerText',
@@ -653,54 +807,142 @@ function updateBottomCharts(selectedMonthKey) {
   });
 }
 
-function renderOperationCards() {
-  const container = document.getElementById("barCardsContainer");
-  container.innerHTML = "";
+/* ===================================================
+   INVENTORY CORE ALGORITHMS: FILTERS & TABLES LOGIC
+   =================================================== */
+function initInventoryFilterEvents() {
+  document.getElementById("searchBox").addEventListener("input", applyOpFilters);
 
-  const chkInprogress = document.getElementById("chkInprogress").checked;
-  const chkSuccess = document.getElementById("chkSuccess").checked;
-
-  let filteredData = globalOpData.filter(item => {
-    if (!chkInprogress && !chkSuccess) return true; 
-    if (chkInprogress && item.status.includes("INPROGRESS")) return true;
-    if (chkSuccess && item.status.includes("SUCCESS")) return true;
-    return false;
-  });
-
-  if(filteredData.length === 0) {
-    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:#94a3b8; font-size:13px;">ไม่พบรายการงานเปิดบาร์ภายใต้สถานะที่เลือก</div>`;
-    return;
-  }
-
-  filteredData.forEach((item, index) => {
-    const card = document.createElement("div");
-    card.className = "bar-card";
-    
-    let statusClass = "status-other";
-    if(item.status.includes("INPROGRESS")) statusClass = "status-inprogress";
-    else if(item.status.includes("SUCCESS")) statusClass = "status-success";
-
-    card.innerHTML = `
-      <h4 style="font-size:14px; font-weight:700; color:#1c2434; margin-bottom:4px;">${item.customerName}</h4>
-      <p style="font-size:12px; color:#64748b;">เคส: ${item.caseName}</p>
-      <p style="font-size:11px; color:#94a3b8; margin-top:6px;">ผู้ดูแล: ${item.owner}</p>
-      <span class="badge-status ${statusClass}">${item.status || 'UNKNOWN'}</span>
-    `;
-    
-    card.addEventListener("click", () => openTimelineModal(item));
-    container.appendChild(card);
+  OP_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    if(checkbox) {
+      checkbox.addEventListener("change", () => {
+        updateChipStyles();
+        applyOpFilters();
+      });
+    }
   });
 }
 
+function updateChipStyles(){
+  OP_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    const chip = document.getElementById(f.chipId);
+    if(checkbox && chip) {
+      if(checkbox.checked) chip.classList.add("active");
+      else chip.classList.remove("active");
+    }
+  });
+}
+
+function applyOpFilters() {
+  const q = document.getElementById("searchBox").value.toLowerCase().trim();
+  const activeTypes = OP_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+
+  let result = globalOpData;
+
+  // 1. FILTER CHIPS (CASE TYPE)
+  if(activeTypes.length > 0) {
+    result = result.filter(item => {
+      const typeStr = String(item.caseType).toLowerCase();
+      return activeTypes.some(f => typeStr.includes(f.keyword.toLowerCase()));
+    });
+  }
+
+  // 2. SEARCH BOX TEXT MATCH
+  if(q) {
+    result = result.filter(item => 
+      String(item.caseId).toLowerCase().includes(q) ||
+      String(item.caseName).toLowerCase().includes(q) ||
+      String(item.customerName).toLowerCase().includes(q)
+    );
+  }
+
+  filteredOpData = result;
+
+  // 3. SORT
+  if(opSortState.key) {
+    applySortOnOpFiltered();
+  } else {
+    viewOpData = filteredOpData;
+    renderOpTable(viewOpData);
+  }
+
+  updateResultCount(viewOpData.length);
+}
+
+function sortOpTable(key) {
+  if(opSortState.key === key) {
+    opSortState.dir = opSortState.dir === "asc" ? "desc" : "asc";
+  } else {
+    opSortState.key = key;
+    opSortState.dir = "asc";
+  }
+  applySortOnOpFiltered();
+}
+
+function applySortOnOpFiltered() {
+  const { key, dir } = opSortState;
+  viewOpData = [...filteredOpData].sort((a, b) => {
+    let v1 = a[key] ?? "";
+    let v2 = b[key] ?? "";
+    
+    v1 = String(v1).toLowerCase();
+    v2 = String(v2).toLowerCase();
+    
+    if(v1 < v2) return dir === "asc" ? -1 : 1;
+    if(v1 > v2) return dir === "asc" ? 1 : -1;
+    return 0;
+  });
+  
+  // อัปเดตลูกศรบอกสถานะหัวตาราง
+  ["caseId", "caseName", "customerName"].forEach(k => {
+    const el = document.getElementById("arrow-" + k);
+    if(!el) return;
+    el.textContent = k === key ? (dir === "asc" ? "↑" : "↓") : "↕";
+  });
+
+  renderOpTable(viewOpData);
+  updateResultCount(viewOpData.length);
+}
+
+function renderOpTable(data) {
+  const tbody = document.getElementById("table-body");
+  if(!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#64748b;padding:20px;">ไม่พบข้อมูลผลลัพธ์</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map((item, index) => `
+    <tr onclick="getOpRowClickData(${index})">
+      <td class="col-code">${item.caseId}</td>
+      <td class="col-name">${item.caseName}</td>
+      <td class="col-customer">${item.customerName}</td>
+    </tr>
+  `).join("");
+}
+
+function getOpRowClickData(index) {
+  const targetItem = viewOpData[index];
+  if(targetItem) openTimelineModal(targetItem);
+}
+
+function updateResultCount(n) {
+  document.getElementById("result-count").textContent = n.toLocaleString() + " items";
+}
+
+/* ===================================================
+   MODAL TIMELINE CONTROLLER
+   =================================================== */
 function openTimelineModal(item) {
   document.getElementById("modalCustomerName").textContent = item.customerName;
-  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | สถานะ: ${item.status}`;
+  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | ประเภท: ${item.caseType} | สถานะ: ${item.status}`;
   document.getElementById("modalOwner").textContent = item.owner;
 
   const timelineContent = document.getElementById("modalTimelineContent");
   timelineContent.innerHTML = "";
 
-  if(item.history.length === 0) {
+  if(!item.history || item.history.length === 0) {
     timelineContent.innerHTML = `<p style="font-size:13px; color:#94a3b8; text-align:center; padding:20px 0;">ไม่มีประวัติการบันทึกข้อมูลติดตามงาน (Follow Up)</p>`;
   } else {
     item.history.forEach((hist, idx) => {
@@ -725,6 +967,11 @@ window.addEventListener("click", (e) => {
   const modal = document.getElementById("timelineModal");
   if(e.target === modal) closeModal();
 });
+
+// BACK TO TOP BUTTON FUNCTIONALITY
+document.getElementById("toTop").onclick = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 </script>
 
 </body>
