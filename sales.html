@@ -4,86 +4,55 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>EXECUTIVE SALES DASHBOARD - SUPERPART</title>
+<title>EXECUTIVE SALES & OPERATION DASHBOARD</title>
 
-<!-- รวม Chart.js -->
+<!-- รวม Chart.js และ Google Font -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* =========================
-   BASE & BIG 4 THEME
+   TAILADMIN & BIG 4 PREMIUM THEME
 ========================= */
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:"Kanit", Arial, sans-serif;
+  font-family:"Plus Jakarta Sans", "Kanit", sans-serif;
 }
 
 body{
-  background:#f9fbfd;
-  color:#1e293b;
+  background:#f1f5f9;
+  color:#1c2434;
   overflow-x:hidden;
 }
 
 .container {
-  max-width: 1300px;
+  max-width: 1350px;
   margin: 0 auto;
   padding: 110px 24px 60px;
 }
 
 .dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 24px;
+  padding-bottom: 20px;
   margin-bottom: 32px;
 }
 
 .dashboard-title h1 {
-  font-size: 28px;
-  letter-spacing: 2px;
-  font-weight: 600;
-  color: #0f172a;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1c2434;
 }
 
 .dashboard-title p {
   font-size: 13px;
   color: #64748b;
   margin-top: 4px;
-  letter-spacing: 1px;
-}
-
-/* Dropdown สไตล์มินิมอล */
-.filter-box select {
-  padding: 10px 16px;
-  font-size: 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #334155;
-  outline: none;
-  cursor: pointer;
-  min-width: 200px;
-  font-weight: 500;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  transition: all 0.2s;
-}
-.filter-box select:hover {
-  border-color: #94a3b8;
-}
-
-#loader {
-  text-align: center;
-  padding: 60px;
-  font-size: 15px;
-  color: #64748b;
-  letter-spacing: 2px;
 }
 
 /* =========================
-   LAYOUT GRID
+   CARDS & GRIDS
 ========================= */
 .section-top {
   margin-bottom: 32px;
@@ -93,6 +62,7 @@ body{
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px;
+  margin-bottom: 32px;
 }
 
 @media(min-width: 992px) {
@@ -103,177 +73,340 @@ body{
 
 .chart-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0px 8px 13px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
+  border: 1px solid #e2e8f0;
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .chart-card h2 {
-  font-size: 15px;
-  letter-spacing: 1px;
-  margin-bottom: 24px;
-  color: #0f172a;
+  font-size: 16px;
+  color: #1c2434;
+  font-weight: 700;
+}
+
+/* Contextual Picker */
+.filter-box select {
+  padding: 8px 14px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #1c2434;
+  outline: none;
+  cursor: pointer;
   font-weight: 600;
-  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.filter-box select:hover {
+  border-color: #3c50e0;
 }
 
 .chart-wrapper {
   position: relative;
   width: 100%;
-  height: 350px;
-}
-
-/* ข้อมูลสรุปเพิ่มเติมด้านล่างกราฟโดนัท */
-.contribution-badge {
-  margin-top: 20px;
-  padding: 14px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border-left: 4px solid #10b981;
-  font-size: 13px;
-  color: #334155;
-}
-.contribution-badge strong {
-  color: #0f172a;
 }
 
 /* =========================
-   MOBILE RESPONSIVE
+   OPERATION SECTION (เปิดบาร์)
 ========================= */
-@media(max-width: 768px){
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  .container {
-    padding: 90px 16px 40px;
-  }
-  .chart-wrapper {
-    height: 280px;
-  }
+.op-filter-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
+
+/* Round Checkbox Filter */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  user-select: none;
+}
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #e2e8f0;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #cbd5e1;
+}
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #3c50e0;
+}
+.checkbox-container input:checked ~ span {
+  color: #1c2434;
+}
+
+.card-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media(min-width: 768px) {
+  .card-list-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(min-width: 1100px) {
+  .card-list-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.bar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+.bar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 10px 15px -3px rgba(59, 130, 246, 0.1);
+  border-color: #3c50e0;
+}
+
+.badge-status {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.status-inprogress { background: #e0f2fe; color: #0369a1; }
+.status-success { background: #dcfce7; color: #15803d; }
+.status-other { background: #f1f5f9; color: #475569; }
+
+/* =========================
+   POPUP MODAL TIMELINE
+========================= */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0; pointer-events: none;
+  transition: all 0.3s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+.modal-card {
+  background: #ffffff;
+  width: 90%;
+  max-width: 550px;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+.modal-overlay.active .modal-card { transform: translateY(0); }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.modal-close {
+  background: none; border: none; font-size: 22px; cursor: pointer; color: #94a3b8;
+}
+
+.timeline-list {
+  border-left: 2px solid #e2e8f0;
+  margin-left: 10px;
+  padding-left: 20px;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -27px; top: 4px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #3c50e0;
+}
+.timeline-item.latest::before { background: #ec4899; }
+.timeline-title { font-size: 12px; font-weight: 700; color: #64748b; }
+.timeline-desc { font-size: 14px; margin-top: 4px; color: #1c2434; }
+
+#loader { text-align: center; padding: 40px; font-size: 14px; color: #64748b; }
 </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER LOAD ================= -->
 <div id="header-placeholder"></div>
 
-<!-- ================= MAIN CONTENT ================= -->
 <div class="container">
   
   <div class="dashboard-header">
     <div class="dashboard-title">
-      <h1>SALES PERFORMANCE EXECUTIVE</h1>
-      <p>YOY TRENDS & INDIVIDUAL METRICS</p>
-    </div>
-    <!-- Dropdown เลือกเดือน -->
-    <div class="filter-box" id="filterArea" style="display: none;">
-      <select id="monthSelector"></select>
+      <h1>SALES & OPs MONITOR</h1>
+      <p>EXECUTIVE SUMMARY & LOGISTICS TRACKING</p>
     </div>
   </div>
 
-  <div id="loader">LOADING FINANCIAL DATA FROM GOOGLE SHEETS...</div>
+  <div id="loader">กำลังเชื่อมต่อข้อมูลและจัดตำแหน่งหัวตารางแถวที่ 2...</div>
 
   <div id="dashboardContent" style="display: none;">
     
-    <!-- 1. กราฟด้านบนสุด: ยอดรวมทั้งทีม YoY (2025 vs 2026) -->
+    <!-- 1. กราฟด้านบนสุด: ยอดรวมทั้งทีม YoY -->
     <div class="section-top">
       <div class="chart-card">
         <h2>Team Sales Overview: Year-over-Year (YoY Comparison)</h2>
-        <div class="chart-wrapper" style="height: 300px;">
+        <div class="chart-wrapper" style="height: 260px;">
           <canvas id="yoyLineChart"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- 2. โซนด้านล่างแบบแยกสองฝั่ง -->
+    <!-- 2. โซนกราฟวิเคราะห์รายบุคคลและแชร์ยอดขาย -->
     <div class="section-bottom-grid">
       
-      <!-- กราฟแท่งแนวนอน สไตล์เกจ HP เกมส์ -->
+      <!-- กราฟแท่งสไตล์เกจแบบบีบกระชับ -->
       <div class="chart-card">
-        <h2>Individual Sales Performance (Selected Month)</h2>
-        <div class="chart-wrapper">
+        <div class="card-header-flex">
+          <h2>Individual Sales Performance</h2>
+          <div class="filter-box">
+            <select id="monthSelector"></select>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 250px;">
           <canvas id="hpGaugeChart"></canvas>
         </div>
       </div>
 
-      <!-- กราฟโดนัท สัดส่วน Contribute -->
+      <!-- กราฟโดนัทพ่นตัวเลขตรงกลางวงแหวน -->
       <div class="chart-card">
-        <h2>Sales Contribution Share (%)</h2>
-        <div class="chart-wrapper" style="height: 280px;">
-          <canvas id="donutShareChart"></canvas>
+        <div class="card-header-flex">
+          <h2>Sales Contribution Share</h2>
         </div>
-        <div class="contribution-badge" id="topContributorBox">
-          Top Contributor: <strong>Calculating...</strong>
+        <div class="chart-wrapper" style="height: 250px;">
+          <canvas id="donutShareChart"></canvas>
         </div>
       </div>
 
     </div>
 
+    <!-- 3. โซนตารางข้อมูลงานเปิดบาร์ (List Cards จากชีต LOG) -->
+    <div class="chart-card">
+      <div class="card-header-flex">
+        <h2>งานเปิดบาร์ประจำเดือน (ชีต LOG - Operation Pipeline)</h2>
+        <div class="op-filter-header">
+          <label class="checkbox-container">
+            <input type="checkbox" id="chkInprogress" checked>
+            <span class="checkmark"></span> <span>INPROGRESS</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" id="chkSuccess">
+            <span class="checkmark"></span> <span>SUCCESS</span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="card-list-grid" id="barCardsContainer">
+        <!-- ไดนามิกการ์ดจะถูกเรนเดอร์เข้าที่นี่ -->
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- ================= FOOTER LOAD ================= -->
+<!-- POPUP MODAL TIMELINE -->
+<div class="modal-overlay" id="timelineModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalCustomerName" style="font-size:16px; font-weight:700;">-</h3>
+        <p id="modalCaseName" style="font-size:12px; color:#64748b; margin-top:2px;">-</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div style="margin-bottom: 16px; font-size:13px;">
+      <span style="font-weight:600;">ผู้รับผิดชอบ: </span><span id="modalOwner">-</span>
+    </div>
+    <div class="timeline-list" id="modalTimelineContent">
+      <!-- ข้อมูล FU ไดนามิกย้อนหลัง -->
+    </div>
+  </div>
+</div>
+
 <div id="footer-placeholder"></div>
 
-
 <script>
-/* ===================================================
-   1. SYSTEM COMPONENT LOADING (HEADER/FOOTER)
-   =================================================== */
-fetch("header.html")
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById("header-placeholder").innerHTML = data;
-    const menuBtn = document.getElementById("menuBtn");
-    const menuDropdown = document.getElementById("menuDropdown");
-    if(menuBtn && menuDropdown){
-      menuBtn.addEventListener("click", () => menuDropdown.classList.toggle("active"));
-      window.addEventListener("click", (e) => {
-        if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
-          menuDropdown.classList.remove("active");
-        }
-      });
-    }
-  });
+// ลิงก์แชร์แบบ CSV จาก Google Sheets
+const salesCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv";
+const opCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS6y_G7K156N4b_2M4e1BvJ39Y5G7-I6-U99O2mO6V01BwRREHCHyYlC7v4G536HwSgqKIdbLdWhjQO/pub?gid=1693856458&single=true&output=csv";
 
-fetch("footer.html")
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById("footer-placeholder").innerHTML = data;
-  });
+const staffColorMap = {
+  "แอนนี่": "#ec4899", "พรีม": "#a855f7", "ดอน": "#10b981", "นาเดียร์": "#f59e0b", "ฟ้า": "#0ea5e9"
+};
 
-
-/* ===================================================
-   2. DATA ENGINE & CHART MANAGEMENT
-   =================================================== */
-const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv"; 
-
-// สีประจำตัวพนักงานขายแต่ละคน
-const staffColors = [
-  '#0f172a', // ดำสเลท (แอนนี่)
-  '#2563eb', // น้ำเงินรอยัล (พรีม)
-  '#64748b', // เทากลาง (ดอน)
-  '#94a3b8', // เทาอ่อน (นาเดียร์)
-  '#b45309'  // น้ำตาลทอง (ฟ้า)
-];
-
-let globalSalesData = []; 
-let uniqueTimelineKeys = [];  // คีย์ที่ไม่ซ้ำกัน เช่น ["2025-M01", "2025-M02"...]
-let monthOptions = [];    
+let globalSalesData = [];
+let uniqueTimelineKeys = [];
+let monthOptions = [];
+let globalOpData = [];
 
 let hpChartInstance = null;
 let donutChartInstance = null;
 
-function cleanString(str) {
-  if(!str) return "";
-  return str.replace(/^["'\s\t]+|["'\s\t]+$/g, '').trim();
+function parseCSVLine(text) {
+  let p = '', r = []; let q = false;
+  for (let i = 0; i < text.length; i++) {
+    let c = text[i];
+    if (c === '"') { q = !q; }
+    else if (c === ',' && !q) { r.push(p); p = ''; }
+    else { p += c; }
+  }
+  r.push(p); return r;
+}
+
+function cleanString(str) { return str ? str.replace(/^["'\s\t\r\n]+|["'\s\t\r\n]+$/g, '').trim() : ""; }
+
+function formatMoneyK(val) {
+  return (val / 1000).toLocaleString(undefined, {maximumFractionDigits:0}) + 'K';
 }
 
 function translateMonthThai(mCode, yCode) {
@@ -282,256 +415,316 @@ function translateMonthThai(mCode, yCode) {
     "M05": "พฤษภาคม", "M06": "มิถุนายน", "M07": "กรกฎาคม", "M08": "สิงหาคม",
     "M09": "กันยายน", "M10": "ตุลาคม", "M11": "พฤศจิกายน", "M12": "ธันวาคม"
   };
-  const thaiYear = parseInt(yCode) + 543; 
-  return `${monthsThai[mCode] || mCode} ${thaiYear}`;
+  return `${monthsThai[mCode] || mCode} ${parseInt(yCode) + 543}`;
 }
 
-if(csvUrl) {
-  fetch(csvUrl)
-    .then(response => response.text())
-    .then(csvText => {
-      // แตกบรรทัด
-      const lines = csvText.split(/\r?\n/);
-      const rows = lines.map(line => line.split(","));
-      
-      // ดึงหัวตารางล้างข้อมูลขยะ
-      const rawYears = rows[0].map(y => cleanString(y));
-      const rawMonths = rows[1].map(m => cleanString(m));
-      
-      // หาตำแหน่งคอลัมน์ที่ข้อมูลตัวเลขเริ่มต้นจริง (เริ่มต้นที่คอลัมน์ดัชนีเลข 2 เป็นต้นไป)
-      // ตรวจสอบและคัดกรองคอลัมน์ที่ซ้ำออกเพื่อป้องกันกราฟพัง
-      let validColumnIndices = [];
-      let seenKeys = new Set();
+// โหลดคอมโพเนนต์พื้นฐาน
+fetch("header.html").then(res => res.text()).then(d => { document.getElementById("header-placeholder").innerHTML = d; });
+fetch("footer.html").then(res => res.text()).then(d => { document.getElementById("footer-placeholder").innerHTML = d; });
 
-      for(let col = 2; col < rawMonths.length; col++) {
-        const m = rawMonths[col];
-        if(!m || m === "" || m.indexOf("M") === -1) continue; 
-        
-        // ค้นหาปีที่สัมพันธ์กับคอลัมน์นั้นๆ (หากช่องปีว่าง ให้ย้อนกลับไปใช้ปีล่าสุดก่อนหน้า)
-        let y = "";
-        for(let s = col; s >= 2; s--) {
-          if(rawYears[s] && rawYears[s] !== "") {
-            y = rawYears[s];
-            break;
-          }
-        }
-        
-        const combinedKey = `${y}-${m}`;
-        // ป้องกันกรณีมีคอลัมน์ M05 ซ้ำที่ปลายตาราง
-        if(!seenKeys.has(combinedKey)) {
-          seenKeys.add(combinedKey);
-          validColumnIndices.push(col);
-          uniqueTimelineKeys.push(combinedKey);
-          
-          monthOptions.push({
-            key: combinedKey,
-            text: translateMonthThai(m, y),
-            year: y,
-            monthCode: m
-          });
-        }
-      }
+// เริ่มต้นโหลดข้อมูลทั้งหมด
+Promise.all([
+  fetch(salesCsvUrl).then(res => res.text()),
+  fetch(opCsvUrl).then(res => res.text())
+]).then(([salesCsv, opCsv]) => {
+  
+  // ---------------------------------------------------
+  // ENGINE A: ข้อมูลยอดขายทีม (SALES LOGIC)
+  // ---------------------------------------------------
+  const sLines = salesCsv.split(/\r?\n/).filter(l => l.trim() !== "");
+  const sRows = sLines.map(l => parseCSVLine(l));
+  
+  const rawYears = sRows[0].map(y => cleanString(y));
+  const rawMonths = sRows[1].map(m => cleanString(m));
+  
+  let validColumnIndices = [];
+  let seenKeys = new Set();
 
-      // ดึงข้อมูลรายบุคคลตามคอลัมน์ที่คัดกรองแล้ว
-      let colorIdx = 0;
-      for (let i = 2; i < rows.length; i++) {
-        const salePerson = cleanString(rows[i][1]);
-        if (!salePerson || salePerson === "" || salePerson === "SalePerson") continue;
-        
-        // ดึงค่าตามคอลัมน์ที่มีสิทธิ์เท่านั้น
-        const salesNumbers = validColumnIndices.map(colIdx => {
-          const numStr = rows[i][colIdx] ? rows[i][colIdx] : "0";
-          return parseFloat(numStr.replace(/[^0-9.-]+/g, "")) || 0;
-        });
+  for(let col = 2; col < rawMonths.length; col++) {
+    const m = rawMonths[col];
+    if(!m || m.indexOf("M") === -1) continue;
+    let y = "";
+    for(let s = col; s >= 2; s--) { if(rawYears[s]) { y = rawYears[s]; break; } }
+    
+    const combinedKey = `${y}-${m}`;
+    if(!seenKeys.has(combinedKey)) {
+      seenKeys.add(combinedKey);
+      validColumnIndices.push(col);
+      uniqueTimelineKeys.push(combinedKey);
+      monthOptions.push({ key: combinedKey, text: translateMonthThai(m, y), year: y, monthCode: m });
+    }
+  }
 
-        globalSalesData.push({
-          name: salePerson,
-          shortName: salePerson.split('(')[0].replace("ISR-", ""),
-          data: salesNumbers,
-          color: staffColors[colorIdx % staffColors.length]
-        });
-        colorIdx++;
-      }
+  monthOptions.reverse();
 
-      // คำนวณหายอดรวมทั้งทีมเพื่อทำกราฟ YoY บรรทัดบนสุด
-      let teamTotal2025 = Array(12).fill(0); 
-      let teamTotal2026 = Array(12).fill(0); 
+  for (let i = 2; i < sRows.length; i++) {
+    if(!sRows[i][1]) continue;
+    const person = cleanString(sRows[i][1]);
+    if(person === "" || person === "SalePerson") continue;
+    
+    let nick = "ทั่วไป";
+    if(person.includes("แอนนี่")) nick = "แอนนี่";
+    else if(person.includes("พรีม")) nick = "พรีม";
+    else if(person.includes("ดอน")) nick = "ดอน";
+    else if(person.includes("นาเดียร์")) nick = "นาเดียร์";
+    else if(person.includes("ฟ้า")) nick = "ฟ้า";
 
-      monthOptions.forEach((opt, idx) => {
-        const mIdx = parseInt(opt.monthCode.replace("M", "")) - 1; 
-        let monthlySum = 0;
-        globalSalesData.forEach(staff => {
-          monthlySum += staff.data[idx];
-        });
-
-        if(opt.year === "2025") {
-          teamTotal2025[mIdx] = monthlySum;
-        } else if(opt.year === "2026") {
-          teamTotal2026[mIdx] = monthlySum;
-        }
-      });
-
-      // สั่งแสดงผลหน้าจอหลัก
-      document.getElementById("loader").style.display = "none";
-      document.getElementById("filterArea").style.display = "block";
-      document.getElementById("dashboardContent").style.display = "block";
-
-      // วาดกราฟเส้นด้านบนสุด (YoY Team Sales)
-      renderYoYLineChart(teamTotal2025, teamTotal2026);
-
-      // จัดการระบบ Dropdown ตัวเลือกเดือน
-      const selector = document.getElementById("monthSelector");
-      monthOptions.forEach(opt => {
-        const el = document.createElement("option");
-        el.value = opt.key;
-        el.textContent = opt.text;
-        selector.appendChild(el);
-      });
-
-      // ตั้งค่า Default เป็น พฤษภาคม 2569 (2026-M05)
-      const defaultMonthKey = "2026-M05"; 
-      selector.value = defaultMonthKey;
-
-      updateBottomCharts(defaultMonthKey);
-
-      selector.addEventListener("change", (e) => {
-        updateBottomCharts(e.target.value);
-      });
-
-    })
-    .catch(err => {
-      document.getElementById("loader").textContent = "ERROR CONFIGURING GRAPHICAL DASHBOARD.";
-      console.error(err);
+    const nums = validColumnIndices.map(colIdx => {
+      const valStr = sRows[i][colIdx] || "0";
+      return parseFloat(valStr.replace(/[^0-9.-]+/g, "")) || 0;
     });
-}
+
+    globalSalesData.push({ name: person, shortName: person.replace("ISR-", ""), nickName: nick, data: nums, color: staffColorMap[nick] || "#cbd5e1" });
+  }
+
+  let teamTotal2025 = Array(12).fill(0);
+  let teamTotal2026 = Array(12).fill(0);
+  
+  uniqueTimelineKeys.forEach((key, rawIdx) => {
+    const parts = key.split("-");
+    const y = parts[0];
+    const mIdx = parseInt(parts[1].replace("M","")) - 1;
+    let sum = 0;
+    globalSalesData.forEach(st => { sum += st.data[rawIdx]; });
+    
+    if(y === "2025") teamTotal2025[mIdx] = sum;
+    else if(y === "2026") teamTotal2026[mIdx] = sum;
+  });
+
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("dashboardContent").style.display = "block";
+
+  renderYoYLineChart(teamTotal2025, teamTotal2026);
+
+  const selector = document.getElementById("monthSelector");
+  monthOptions.forEach(opt => {
+    const el = document.createElement("option");
+    el.value = opt.key;
+    el.textContent = opt.text;
+    selector.appendChild(el);
+  });
+  
+  selector.value = "2026-M05";
+
+  // ---------------------------------------------------
+  // ENGINE B: ข้อมูลงานเปิดบาร์ (แก้ไขให้อ่าน Row 2 เป็นหัวตาราง)
+  // ---------------------------------------------------
+  const opLines = opCsv.split(/\r?\n/).filter(l => l.trim() !== "");
+  const opRows = opLines.map(l => parseCSVLine(l));
+  
+  // ชี้เป้าไปที่ แถวที่ 2 (index 1) เพื่อทำเป็นหัวตารางหลัก
+  const opHeader = opRows[1] ? opRows[1].map(h => cleanString(h)) : [];
+
+  const idxType = opHeader.indexOf("ประเภทงาน");
+  const idxCust = opHeader.indexOf("CustomerName/Item Name");
+  const idxStatus = opHeader.indexOf("STATUS");
+  const idxCaseName = opHeader.indexOf("CASENAME");
+  const idxOwner = opHeader.indexOf("ชื่อเซลล์");
+
+  // ค้นหากลุ่มคอมเมนต์คอลัมน์ FU1 - FU10
+  let fuIndices = [];
+  for(let j=1; j<=10; j++) {
+    let fIdx = opHeader.indexOf(`FU${j}`);
+    if(fIdx !== -1) fuIndices.push({ label: `Follow up ${j}`, index: fIdx });
+  }
+
+  // เนื่องจากหัวตารางอยู่แถว 2 (index 1) ข้อมูลจริงจึงต้องเริ่มสแกนตั้งแต่แถวที่ 3 (index 2) เป็นต้นไป
+  for(let i=2; i<opRows.length; i++) {
+    if(!opRows[i][idxType]) continue;
+    const typeVal = cleanString(opRows[i][idxType]);
+    
+    if(typeVal.includes("เปิดบาร์")) {
+      let followUpHistory = [];
+      fuIndices.forEach(fu => {
+        let commentText = cleanString(opRows[i][fu.index]);
+        if(commentText && commentText !== "" && commentText !== "-") {
+          followUpHistory.push({ stage: fu.label, text: commentText });
+        }
+      });
+      followUpHistory.reverse(); // เอาล่าสุดขึ้นก่อน
+
+      globalOpData.push({
+        customerName: cleanString(opRows[i][idxCust]) || "ไม่ระบุชื่อลูกค้า",
+        caseName: cleanString(opRows[i][idxCaseName]) || "ไม่มีชื่อเคส",
+        status: cleanString(opRows[i][idxStatus]).toUpperCase() || "INPROGRESS",
+        owner: cleanString(opRows[i][idxOwner]) || "ไม่ระบุชื่อ",
+        history: followUpHistory
+      });
+    }
+  }
+
+  updateBottomCharts("2026-M05");
+  renderOperationCards();
+
+  selector.addEventListener("change", (e) => updateBottomCharts(e.target.value));
+  document.getElementById("chkInprogress").addEventListener("change", renderOperationCards);
+  document.getElementById("chkSuccess").addEventListener("change", renderOperationCards);
+
+}).catch(err => {
+  document.getElementById("loader").textContent = "โครงสร้างเซิร์ฟเวอร์ฐานข้อมูลขัดข้อง กรุณาตรวจสอบการเข้าถึงไฟล์ชีต";
+  console.error(err);
+});
 
 /* ===================================================
-   3. CHART RENDERING FUNCTIONS
+   CHART DRAWING & CONFIG
    =================================================== */
-
 function renderYoYLineChart(data25, data26) {
   const ctx = document.getElementById('yoyLineChart').getContext('2d');
-  const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: monthNamesShort,
+      labels: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."],
       datasets: [
-        {
-          label: '2025 (ปีที่แล้ว)',
-          data: data25,
-          borderColor: '#2563eb', 
-          borderWidth: 2.5,
-          tension: 0.15,
-          pointRadius: 0,       
-          pointHoverRadius: 5   
-        },
-        {
-          label: '2026 (ปีปัจจุบัน)',
-          data: data26.map(val => val === 0 ? null : val), 
-          borderColor: '#ef4444', 
-          borderWidth: 2.5,
-          tension: 0.15,
-          pointRadius: 0,
-          pointHoverRadius: 5
-        }
+        { label: '2025 (ปีที่แล้ว)', data: data25, borderColor: '#2563eb', borderWidth: 2.5, tension: 0.12, pointRadius: 0 },
+        { label: '2026 (ปีปัจจุบัน)', data: data26.map(v => v === 0 ? null : v), borderColor: '#ef4444', borderWidth: 2.5, tension: 0.12, pointRadius: 0 }
       ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top', labels: { boxWidth: 20, font: { size: 12, weight: 500 } } }
-      },
-      scales: {
-        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
-        x: { grid: { display: false } }
-      }
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { font: { weight: 600 } } } },
+      scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } }
     }
   });
 }
 
 function updateBottomCharts(selectedMonthKey) {
-  const timeIndex = uniqueTimelineKeys.indexOf(selectedMonthKey);
-  if(timeIndex === -1) return;
+  const rawIdx = uniqueTimelineKeys.indexOf(selectedMonthKey);
+  if(rawIdx === -1) return;
 
-  const names = [];
-  const monthlyValues = [];
-  const colors = [];
+  const names = []; const values = []; const colors = [];
+  let totalMonthSum = 0;
 
-  let highestSale = -1;
-  let topSellerName = "";
-
-  globalSalesData.forEach(staff => {
-    const saleVal = staff.data[timeIndex] || 0;
-    names.push(staff.shortName);
-    monthlyValues.push(saleVal);
-    colors.push(staff.color);
-
-    if(saleVal > highestSale) {
-      highestSale = saleVal;
-      topSellerName = staff.name;
-    }
+  globalSalesData.forEach(st => {
+    const val = st.data[rawIdx] || 0;
+    names.push(st.shortName);
+    values.push(val);
+    colors.push(st.color);
+    totalMonthSum += val;
   });
 
-  document.getElementById("topContributorBox").innerHTML = `Top Contributor: <strong>${topSellerName || 'No Data'}</strong>`;
-
-  // --- RE-RENDER: กราฟแท่งแนวนอนสไตล์หลอด HP ---
-  if(hpChartInstance) hpChartInstance.destroy(); 
-  
-  const ctxHp = document.getElementById('hpGaugeChart').getContext('2d');
-  hpChartInstance = new Chart(ctxHp, {
+  if(hpChartInstance) hpChartInstance.destroy();
+  const ctxBar = document.getElementById('hpGaugeChart').getContext('2d');
+  hpChartInstance = new Chart(ctxBar, {
     type: 'bar',
     data: {
       labels: names,
-      datasets: [{
-        data: monthlyValues,
-        backgroundColor: colors,
-        borderRadius: 5, 
-        barThickness: 24  
-      }]
+      datasets: [{ data: values, backgroundColor: colors, borderRadius: 4, barThickness: 20 }]
     },
     options: {
-      indexAxis: 'y', 
-      responsive: true,
-      maintainAspectRatio: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
-        y: { grid: { display: false }, ticks: { font: { size: 12, weight: 500 } } }
+        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 12, weight: 600 } } }
       }
     }
   });
 
-  // --- RE-RENDER: กราฟโดนัทเปรียบเทียบสัดส่วนแชร์ ---
   if(donutChartInstance) donutChartInstance.destroy();
-  
   const ctxDonut = document.getElementById('donutShareChart').getContext('2d');
+  
+  let centerTextStr = "";
+  if(totalMonthSum >= 1000000) {
+    centerTextStr = (totalMonthSum / 1000000).toFixed(1) + 'M';
+  } else {
+    centerTextStr = (totalMonthSum / 1000).toFixed(0) + 'K';
+  }
+
   donutChartInstance = new Chart(ctxDonut, {
     type: 'doughnut',
-    data: {
-      labels: names,
-      datasets: [{
-        data: monthlyValues,
-        backgroundColor: colors,
-        borderWidth: 2,
-        borderColor: '#ffffff'
-      }]
-    },
+    data: { labels: names, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#ffffff' }] },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '65%', 
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { boxWidth: 12, padding: 12, font: { size: 11 } }
-        }
+      responsive: true, maintainAspectRatio: false, cutout: '72%',
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11, weight: 500 } } } }
+    },
+    plugins: [{
+      id: 'centerText',
+      afterDraw(chart) {
+        const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+        ctx.save();
+        ctx.font = 'bold 24px Plus Jakarta Sans';
+        ctx.fillStyle = '#1c2434';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(centerTextStr, left + (width / 2), top + (height / 2));
+        ctx.restore();
       }
-    }
+    }]
   });
 }
+
+function renderOperationCards() {
+  const container = document.getElementById("barCardsContainer");
+  container.innerHTML = "";
+
+  const chkInprogress = document.getElementById("chkInprogress").checked;
+  const chkSuccess = document.getElementById("chkSuccess").checked;
+
+  let filteredData = globalOpData.filter(item => {
+    if (!chkInprogress && !chkSuccess) return true; 
+    if (chkInprogress && item.status.includes("INPROGRESS")) return true;
+    if (chkSuccess && item.status.includes("SUCCESS")) return true;
+    return false;
+  });
+
+  if(filteredData.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:#94a3b8; font-size:13px;">ไม่พบรายการงานเปิดบาร์ภายใต้สถานะที่เลือก</div>`;
+    return;
+  }
+
+  filteredData.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "bar-card";
+    
+    let statusClass = "status-other";
+    if(item.status.includes("INPROGRESS")) statusClass = "status-inprogress";
+    else if(item.status.includes("SUCCESS")) statusClass = "status-success";
+
+    card.innerHTML = `
+      <h4 style="font-size:14px; font-weight:700; color:#1c2434; margin-bottom:4px;">${item.customerName}</h4>
+      <p style="font-size:12px; color:#64748b;">เคส: ${item.caseName}</p>
+      <p style="font-size:11px; color:#94a3b8; margin-top:6px;">ผู้ดูแล: ${item.owner}</p>
+      <span class="badge-status ${statusClass}">${item.status || 'UNKNOWN'}</span>
+    `;
+    
+    card.addEventListener("click", () => openTimelineModal(item));
+    container.appendChild(card);
+  });
+}
+
+function openTimelineModal(item) {
+  document.getElementById("modalCustomerName").textContent = item.customerName;
+  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | สถานะ: ${item.status}`;
+  document.getElementById("modalOwner").textContent = item.owner;
+
+  const timelineContent = document.getElementById("modalTimelineContent");
+  timelineContent.innerHTML = "";
+
+  if(item.history.length === 0) {
+    timelineContent.innerHTML = `<p style="font-size:13px; color:#94a3b8; text-align:center; padding:20px 0;">ไม่มีประวัติการบันทึกข้อมูลติดตามงาน (Follow Up)</p>`;
+  } else {
+    item.history.forEach((hist, idx) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = `timeline-item ${idx === 0 ? 'latest' : ''}`;
+      itemDiv.innerHTML = `
+        <div class="timeline-title">${hist.stage} ${idx === 0 ? '(ล่าสุด)' : ''}</div>
+        <div class="timeline-desc">${hist.text}</div>
+      `;
+      timelineContent.appendChild(itemDiv);
+    });
+  }
+
+  document.getElementById("timelineModal").classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("timelineModal").classList.remove("active");
+}
+
+window.addEventListener("click", (e) => {
+  const modal = document.getElementById("timelineModal");
+  if(e.target === modal) closeModal();
+});
 </script>
 
 </body>
