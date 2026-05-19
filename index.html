@@ -128,30 +128,36 @@ body{
 }
 
 /* =========================
-   HERO
+   HERO & BRAND LOGO
 ========================= */
 .hero{
-  min-height:70vh;
+  min-height:75vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   text-align:center;
-  padding:100px 20px 60px;
+  padding:120px 20px 60px;
+}
+
+.brand-logo-wrap {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.brand-logo-img {
+  max-width: 240px;
+  height: auto;
+  object-fit: contain;
 }
 
 .tag{
   font-size:12px;
   letter-spacing:3px;
   color:#666;
-}
-
-h1{
-  font-size:84px;
-  letter-spacing:18px;
-  margin:30px 0;
-  text-align:center;
-  width:100%;
+  margin-top: 10px;
 }
 
 .sub{
@@ -159,30 +165,32 @@ h1{
   font-size:18px;
   color:#555;
   line-height:1.8;
+  margin-top: 20px;
 }
 
 /* =========================
-   HERO CTA (GRID 2 COLUMNS)
+   HERO CTA (GRID 2x2)
 ========================= */
 .hero-action{
-  margin-top:28px;
+  margin-top:35px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 14px;
   width: 100%;
-  max-width: 460px; /* คุมขนาดความกว้างของการวางปุ่มรวมกัน */
+  max-width: 500px;
 }
 
 .hero-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:12px 22px;
+  padding:14px 22px;
   border-radius:999px;
   background:#111;
   color:#fff;
   text-decoration:none;
-  font-size:12px;
+  font-size:13px;
+  font-weight: 500;
   letter-spacing:1px;
   border:1px solid #111;
   transition:0.25s;
@@ -192,9 +200,10 @@ h1{
   background:#fff;
   color:#111;
   transform:translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
 }
 
-/* ปุ่มสไตล์ขวาล่าง (Inventory เดิม) */
+/* สีน้ำเงิน (Inventory) */
 .hero-btn-blue {
   background:#2f5ea8;
   border-color:#2f5ea8;
@@ -202,9 +211,10 @@ h1{
 .hero-btn-blue:hover {
   background:#fff;
   color:#2f5ea8;
+  border-color:#2f5ea8;
 }
 
-/* ปุ่มสไตล์ซ้ายล่าง: ขาว ตัวหนังสือดำ ตามสั่ง */
+/* สีขาว อักษรดำ (Sales Dashboard & Promotions) */
 .hero-btn-white {
   background:#ffffff;
   color:#111;
@@ -214,11 +224,6 @@ h1{
   background:#111;
   color:#fff;
   border-color:#111;
-}
-
-/* บังคับปุ่ม All Products เดิมขยายให้เต็มพื้นที่แถวแรก */
-.hero-btn-full {
-  grid-column: span 2;
 }
 
 /* =========================
@@ -243,116 +248,6 @@ h1{
 }
 
 /* =========================
-   SHOP (MINIMAL BUTTON ROW)
-========================= */
-.shopbar{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
-
-.shopbtn{
-  font-size:12px;
-  padding:8px 14px;
-  border:1px solid #ddd;
-  border-radius:999px;
-  text-decoration:none;
-  color:#111;
-  transition:0.2s;
-}
-
-.shopbtn:hover{
-  background:#111;
-  color:#fff;
-}
-
-/* =========================
-   ALL PRODUCT LINK
-========================= */
-.allproduct-link-wrap{
-  text-align:center;
-  margin-top:18px;
-}
-
-.allproduct-link{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  text-decoration:none;
-  color:#666;
-  font-size:13px;
-  transition:0.2s;
-}
-
-.allproduct-link:hover{
-  color:#111;
-  transform:translateX(3px);
-}
-
-/* =========================
-   GRID
-========================= */
-.grid{
-  max-width:1100px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:18px;
-}
-
-.card{
-  border:1px solid #eee;
-  border-radius:16px;
-  padding:22px;
-  transition:0.25s;
-  background:#fff;
-}
-
-.card:hover{
-  transform:translateY(-5px);
-  border-color:#ddd;
-  background:#f5f5f5;
-}
-
-.card h3{
-  font-size:16px;
-  margin-bottom:8px;
-}
-
-.card p{
-  font-size:13px;
-  color:#666;
-  line-height:1.6;
-}
-
-/* =========================
-   CATEGORY BUTTONS
-========================= */
-.category-btn{
-  text-decoration:none;
-  color:inherit;
-  display:block;
-}
-
-/* =========================
-   CATEGORIES ZONE
-========================= */
-.categories-section{
-  background:#fafafa;
-}
-
-/* =========================
-   RECOMMENDED ZONE
-========================= */
-.recommend{
-  background:#fff;
-  border-top:1px solid #eee;
-  border-bottom:1px solid #eee;
-}
-
-/* =========================
    BRANDS
 ========================= */
 .brands{
@@ -361,6 +256,7 @@ h1{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
+  align-items:center;
   gap:10px;
 }
 
@@ -369,6 +265,18 @@ h1{
   border:1px solid #ddd;
   padding:6px 12px;
   border-radius:999px;
+  color:#111;
+  text-decoration:none;
+  display:inline-block;
+}
+
+/* เอฟเฟกต์โฮเวอร์สำหรับแบรนด์ที่มีลิงก์ เช่น DOMAC */
+a.brandtag:hover {
+  background:#111;
+  color:#fff;
+  border-color:#111;
+  transform:translateY(-1px);
+  transition: 0.2s;
 }
 
 /* =========================
@@ -380,267 +288,45 @@ h1{
 }
 
 /* =========================
-   SOCIAL BASE
+   FALLBACK FOOTER STYLE
 ========================= */
-
-.social{
-  margin-top:20px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-}
-
-.social a{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  text-decoration:none;
-  font-weight:500;
-  transition:0.2s;
+.fallback-footer {
+  background: #111;
+  color: #777;
+  text-align: center;
+  padding: 30px 20px;
+  font-size: 13px;
+  border-top: 1px solid #222;
 }
 
 /* =========================
-   BRAND COLORS
-========================= */
-
-/* LINE */
-.social a.li{
-  background:#00C300;
-  color:#fff;
-  border:1px solid #00C300;
-}
-
-/* Facebook */
-.social a.fb{
-  background:#1877F2;
-  color:#fff;
-  border:1px solid #1877F2;
-}
-
-/* TikTok */
-.social a.tt{
-  background:#000;
-  color:#fff;
-  border:1px solid #000;
-}
-
-/* Instagram */
-.social a.ig{
-  background:radial-gradient(circle at 30% 110%,
-    #fdf497 0%,
-    #fd5949 45%,
-    #d6249f 60%,
-    #285AEB 90%);
-  color:#fff;
-  border:1px solid transparent;
-}
-
-/* YouTube */
-.social a.yt{
-  background:#FF0000;
-  color:#fff;
-  border:1px solid #FF0000;
-}
-
-/* X (Twitter / X) */
-.social a.x{
-  background:#000;
-  color:#fff;
-  border:1px solid #000;
-}
-
-/* =========================
-   HOVER
-========================= */
-
-.social a:hover{
-  transform:translateY(-2px);
-  opacity:0.9;
-}
-
-/* =========================
-   LUXURY FOOTER
-========================= */
-.footer{
-  background:#111;
-  color:#ddd;
-  padding:70px 24px 40px;
-  margin-top:80px;
-  position:relative;
-  overflow:hidden;
-}
-
-.footer::before{
-  content:"";
-  position:absolute;
-  width:500px;
-  height:500px;
-  background:radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%);
-  top:-200px;
-  right:-200px;
-}
-
-.footer-inner{
-  max-width:1100px;
-  margin:0 auto;
-  position:relative;
-  z-index:2;
-}
-
-.footer-grid{
-  display:grid;
-  grid-template-columns:1.2fr 1fr 1fr;
-  gap:40px;
-}
-
-.footer-logo{
-  font-size:14px;
-  letter-spacing:4px;
-  margin-bottom:20px;
-  color:#fff;
-}
-
-.footer-text{
-  font-size:14px;
-  line-height:1.9;
-  color:#aaa;
-  max-width:420px;
-}
-
-.footer-title{
-  font-size:13px;
-  letter-spacing:2px;
-  color:#fff;
-  margin-bottom:18px;
-}
-
-.footer-links{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.footer-links a{
-  text-decoration:none;
-  color:#aaa;
-  font-size:14px;
-  transition:0.2s;
-}
-
-.footer-links a:hover{
-  color:#fff;
-  transform:translateX(3px);
-}
-
-.footer-bottom{
-  margin-top:50px;
-  padding-top:24px;
-  border-top:1px solid rgba(255,255,255,0.08);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.footer-copy{
-  font-size:12px;
-  color:#777;
-}
-
-.footer-social{
-  display:flex;
-  gap:10px;
-}
-
-.footer-social a{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,0.1);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  text-decoration:none;
-  font-size:11px;
-  transition:0.25s;
-}
-
-.footer-social a:hover{
-  background:#fff;
-  color:#111;
-  transform:translateY(-2px);
-}
-
-/* =========================
-   MOBILE
+   MOBILE RESPONSIVE
 ========================= */
 @media(max-width:768px){
 
-  h1{
-    font-size:44px;
-    letter-spacing:8px;
-    line-height:1.2;
-    text-align:center;
+  .hero{
+    padding:140px 20px 60px;
   }
 
-  .hero{
-    padding:120px 24px 60px;
+  .brand-logo-img {
+    max-width: 190px;
   }
 
   .sub{
     font-size:15px;
-  }
-
-  /* ปรับแต่ง Grid ปุ่มบนมือถือให้สมดุล */
-  .hero-action {
-    max-width: 100%;
     padding: 0 10px;
   }
 
-  .grid{
-    grid-template-columns:1fr 1fr;
-    gap:12px;
+  .hero-action {
+    max-width: 100%;
+    padding: 0 10px;
+    gap: 10px;
   }
 
-  .card{
-    padding:18px;
-    border-radius:14px;
-  }
-
-  .card h3{
-    font-size:14px;
-  }
-
-  .card p{
-    font-size:12px;
-    line-height:1.5;
-  }
-
-  .menu-dropdown{
-    width:calc(100% - 32px);
-    right:16px;
-    top:72px;
-  }
-
-  .footer-grid{
-    grid-template-columns:1fr;
-    gap:34px;
-  }
-
-  .footer{
-    padding:60px 20px 34px;
-  }
-
-  .footer-bottom{
-    flex-direction:column;
-    align-items:flex-start;
+  .hero-btn {
+    padding: 12px 10px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
   }
 
 }
@@ -658,38 +344,24 @@ h1{
 <!-- ================= HERO ================= -->
 <section class="hero">
 
-  <div class="tag">AUTOMOTIVE COATING & PARTS SYSTEM</div>
+  <div class="brand-logo-wrap">
+    <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779160379/Asset_1_kayj8w.png" alt="SUPERPART Logo" class="brand-logo-img">
+  </div>
 
-  <h1>SUPERPART</h1>
+  <div class="tag">AUTOMOTIVE COATING &amp; PARTS SYSTEM</div>
 
   <div class="sub">
     ศูนย์รวมสีพ่นรถยนต์และชิ้นส่วนอะไหล่คุณภาพสูง คัดสรรเพื่อประสิทธิภาพและความทนทานสูงสุดสำหรับยานยนต์คุณ
   </div>
 
-  <!-- HERO BUTTON GRID 2 COLUMNS -->
   <div class="hero-action">
-    <a class="hero-btn hero-btn-full" href="products.html">
-      ALL PRODUCTS
-    </a>
-    <!-- ปุ่ม PROMOTIONS อยู่ด้านล่างซ้าย (สีขาว อักษรดำ) -->
-    <a class="hero-btn hero-btn-white" href="promo.html">
-      PROMOTIONS
-    </a>
-    <!-- ปุ่ม INVENTORY อยู่ด้านล่างขวา (สีน้ำเงิน) -->
-    <a class="hero-btn hero-btn-blue" href="inventory.html">
-      INVENTORY
-    </a>
-  </div>
-
-</section>
-
-<!-- ================= PROMOTIONS ================= -->
-<section class="section recommend">
-
-  <div class="title">PROMOTIONS</div>
-
-  <div class="textblock">
-    <!-- EMPTY ZONE -->
+    <!-- Row 1 -->
+    <a class="hero-btn" href="products.html">ALL PRODUCTS</a>
+    <a class="hero-btn hero-btn-blue" href="inventory.html">INVENTORY</a>
+    
+    <!-- Row 2 (ใช้สไตล์ปุ่มขาว-ตัวหนังสือดำ ทั้งคู่ตามบรีฟครับ) -->
+    <a class="hero-btn hero-btn-white" href="sales.html">SALES DASHBOARD</a>
+    <a class="hero-btn hero-btn-white" href="promo.html">PROMOTIONS</a>
   </div>
 
 </section>
@@ -700,31 +372,13 @@ h1{
   <div class="title">OUR BRANDS</div>
 
   <div class="brands">
-
-    <div class="brandtag">
-      CROMAX
-    </div>
-
-    <div class="brandtag">
-      NIPPON PAINT
-    </div>
-
-    <div class="brandtag">
-      DOMAC
-    </div>
-
-    <div class="brandtag">
-      3M
-    </div>
-
-    <div class="brandtag">
-      LEZZON
-    </div>
-
-    <div class="brandtag">
-      SOLAR
-    </div>
-
+    <div class="brandtag">CROMAX</div>
+    <div class="brandtag">NIPPON PAINT</div>
+    <!-- ปรับแก้เฉพาะ DOMAC ให้เป็นลิงก์เปิดหน้า landing page ของตัวเอง -->
+    <a class="brandtag" href="domac.html">DOMAC</a>
+    <div class="brandtag">3M</div>
+    <div class="brandtag">LEZZON</div>
+    <div class="brandtag">SOLAR</div>
   </div>
 
 </section>
@@ -733,7 +387,6 @@ h1{
 <section class="contact">
 
   <div class="title">CONTACT</div>
-
   <p>Email: supalerk.k@superpart.co.th</p>
 
 </section>
@@ -747,7 +400,10 @@ h1{
    LOAD HEADER
 ========================= */
 fetch("header.html")
-  .then(response => response.text())
+  .then(response => {
+    if(!response.ok) throw new Error('Network error');
+    return response.text();
+  })
   .then(data => {
     document.getElementById("header-placeholder").innerHTML = data;
 
@@ -755,14 +411,10 @@ fetch("header.html")
     const menuDropdown = document.getElementById("menuDropdown");
 
     if(menuBtn && menuDropdown){
-      
-      // ตรวจสอบและแทรกหน้า PROMOTIONS เข้าไปใน Hamburger Menu ถ้ายังไม่มี
       if (!menuDropdown.querySelector('a[href="promo.html"]')) {
         const promoLink = document.createElement("a");
         promoLink.href = "promo.html";
         promoLink.textContent = "PROMOTIONS";
-        
-        // แทรกไว้ต่อจากหน้าแรก หรือเพิ่มไว้จุดที่ต้องการ (ตัวอย่างนี้เลือกใส่เพิ่มไว้ด้านบน)
         menuDropdown.insertBefore(promoLink, menuDropdown.firstChild);
       }
 
@@ -771,23 +423,33 @@ fetch("header.html")
       });
 
       window.addEventListener("click", (e) => {
-        if(
-          !menuBtn.contains(e.target) &&
-          !menuDropdown.contains(e.target)
-        ){
+        if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
           menuDropdown.classList.remove("active");
         } 
       });
     }
+  })
+  .catch(err => {
+    console.log("Header placeholder active or external file not found.");
   });
 
 /* =========================
    LOAD FOOTER
 ========================= */
 fetch("footer.html")
-  .then(response => response.text())
+  .then(response => {
+    if(!response.ok) throw new Error('NOT_FOUND');
+    return response.text();
+  })
   .then(data => {
     document.getElementById("footer-placeholder").innerHTML = data;
+  })
+  .catch(err => {
+    document.getElementById("footer-placeholder").innerHTML = `
+      <footer class="fallback-footer">
+        <p>&copy; 2026 SUPERPART. All rights reserved. | Contact: supalerk.k@superpart.co.th</p>
+      </footer>
+    `;
   });
 
 </script>
