@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SUPERPART | CodeMatch Master</title>
+<style>
+/* =========================
+   BASE & MOBILE SPACE OPTIMIZATION
+========================= */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  color: #111;
+  padding-top: 60px;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.container {
+  max-width: 1000px; /* ขยายความกว้างขึ้นเล็กน้อยเพื่อรองรับข้อมูลที่มากขึ้น */
+  margin: 0 auto;
+  padding: 12px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
+   BREADCRUMB ROW
+========================= */
+.breadcrumb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.breadcrumb {
+  font-size: 11px;
+  color: #777;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hide-zero-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+.hide-zero-wrap input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #2f5ea8;
+}
+
+/* =========================
+   CONTROL BAR (SEARCH & DROPDOWN)
+========================= */
+.control-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+@media(min-width: 600px) {
+  .control-bar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.search-wrapper {
+  flex: 1;
+}
+.search-wrapper input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.search-wrapper input:focus {
+  border-color: #2f5ea8;
+}
+
+.dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dropdown-wrapper label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #444;
+  white-space: nowrap;
+}
+.dropdown-wrapper select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  background: #fff;
+  color: #111;
+  outline: none;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* =========================
+   MODERN CIRCULAR FILTER CHIPS
+========================= */
+.cat-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 50px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  font-size: 12px;
+  color: #444;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+.cat-chip input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: #2f5ea8;
+  margin: 0;
+}
+.cat-chip:hover {
+  border-color: #2f5ea8;
+  color: #2f5ea8;
+  background: #fafcff;
+}
+.cat-chip.active {
+  border-color: #2f5ea8;
+  background: #2f5ea8;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(47, 94, 168, 0.25);
+}
+.cat-chip.active input[type="checkbox"] {
+  accent-color: #fff;
+}
+
+/* =========================
+   RESULT COUNT & LOCK STATUS
+========================= */
+.info-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.lock-badge {
+  font-size: 11px;
+  color: #155724;
+  background-color: #d4edda;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.result-count {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+/* =========================
+   TABLE WRAP & TABLE (NO HORIZONTAL SCROLL FOR MAIN COLUMNS)
+========================= */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid #eef0f5;
+  border-radius: 12px;
+  background: #fff;
+  max-height: 72vh;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* =========================
+   THEAD & TBODY
+========================= */
+thead th {
+  position: sticky;
+  top: 0;
+  background: #2f5ea8;
+  color: #fff;
+  z-index: 50;
+  text-align: left;
+  font-size: 12px;
+  padding: 10px 12px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+thead th:hover {
+  background: #244a86;
+}
+tbody td {
+  font-size: 13px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: top;
+}
+tbody tr:hover {
+  background: #f9fbfd;
+}
+
+/* =========================
+   DYNAMIC COLUMN WIDTHS
+========================= */
+.col-code { width: 110px; white-space: nowrap; font-weight: 600; color: #333; }
+.col-match { width: 110px; white-space: nowrap; color: #2f5ea8; font-weight: 600; }
+.col-desc { width: auto; word-break: break-word; white-space: normal; }
+.col-dynamic { width: 110px; text-align: right; white-space: nowrap; font-weight: bold; color: #111; }
+
+/* =========================
+   SORT ICON
+========================= */
+.sort-arrow {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* =========================
+   PASSWORD SCREEN (OVERLAY)
+========================= */
+#lock-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #f1f5f9;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.lock-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+  border: 1px solid #e2e8f0;
+}
+.lock-box h2 { font-size: 18px; margin-bottom: 8px; color: #1c2434; font-weight: 700; }
+.lock-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+.lock-box input {
+  width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: 16px; text-align: center; outline: none; margin-bottom: 12px;
+}
+.lock-box button {
+  width: 100%; padding: 12px; background: #2f5ea8; color: #fff; border: none;
+  border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+}
+.lock-box button:hover { background: #244a86; }
+
+/* =========================
+   FLOAT TOP BUTTON
+========================= */
+#toTop {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 99;
+}
+
+/* =========================
+   MOBILE RESPONSIVE COMPACT
+========================= */
+@media(max-width:768px){
+  body { padding-top: 54px; }
+  .container { padding: 8px 10px; }
+  .cat-chip { font-size: 11px; padding: 5px 12px; }
+  tbody td { padding: 8px 10px; font-size: 12.5px; }
+}
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-box">
+    <h2>🔒 ระบบป้องกันข้อมูล</h2>
+    <p>กรุณาระบุรหัสผ่านเพื่อเข้าใช้งานหน้า CodeMatch</p>
+    <input type="password" id="passInput" placeholder="ใส่รหัสผ่านที่นี่..." onkeypress="handleKeyPress(event)" />
+    <button onclick="verifyPassword()">ยืนยันความปลอดภัย</button>
+  </div>
+</div>
+
+<div id="header-placeholder"></div>
+
+<div class="container" id="main-content-area" style="display:none;">
+
+  <div class="breadcrumb-row">
+    <div class="breadcrumb">HOME / CODEMATCH MASTER</div>
+    <label class="hide-zero-wrap">
+      <input type="checkbox" id="hideZero" checked />
+      Hide 0 / –
+    </label>
+  </div>
+
+  <div class="control-bar">
+    <div class="search-wrapper">
+      <input id="searchBox" type="text" placeholder="ค้นหา Code / CodeMatch / Barcode / Name..." />
+    </div>
+    <div class="dropdown-wrapper">
+      <label for="columnSelector">แสดงคอลัมน์ขวาสุด:</label>
+      <select id="columnSelector">
+        <option value="AvgSalecost" selected>AvgSalecost</option>
+        <option value="Salecost">Salecost</option>
+        <option value="Onhand_Cost">Onhand_Cost</option>
+        <option value="avgcost">avgcost</option>
+        <option value="Onhand_All">Onhand_All</option>
+        <option value="StockStatus">StockStatus</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="cat-filter-bar">
+    <label class="cat-chip" id="chip-lacquer">
+      <input type="checkbox" id="cat-lacquer" /> แลคเกอร์
+    </label>
+    <label class="cat-chip" id="chip-tape">
+      <input type="checkbox" id="cat-tape" /> กระดาษกาว
+    </label>
+    <label class="cat-chip" id="chip-primer">
+      <input type="checkbox" id="cat-primer" /> สีพื้น
+    </label>
+    <label class="cat-chip" id="chip-spray">
+      <input type="checkbox" id="cat-spray" /> สีพ่น
+    </label>
+    <label class="cat-chip" id="chip-putty">
+      <input type="checkbox" id="cat-putty" /> สีโป๊ว
+    </label>
+  </div>
+
+  <div class="info-status-row">
+    <span class="lock-badge">✓ ผ่านการยืนยันสิทธิ์</span>
+    <div class="result-count" id="result-count"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('code')" class="col-code">Code <span class="sort-arrow" id="arrow-code">↕</span></th>
+          <th onclick="sortTable('CodeMatch')" class="col-match">CodeMatch <span class="sort-arrow" id="arrow-CodeMatch">↕</span></th>
+          <th onclick="sortTable('gbarcode')" style="width:110px;">gbarcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
+          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
+          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">AvgSalecost <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <tr><td colspan="5" style="text-align:center; padding:20px; color:#777;">กำลังเตรียมข้อมูลสิทธิ์การเข้าถึง...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div id="toTop">↑</div>
+
+<script>
+const dataApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
+const configApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/Config";
+
+const CAT_FILTERS = [
+  { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
+  { id: "cat-tape",    keyword: "กระดาษกาว", chipId: "chip-tape"    },
+  { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
+  { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"   }, 
+  { id: "cat-putty",   keyword: "สีโป๊ว",     chipId: "chip-putty"   },
+];
+
+let rawData       = [];
+let filteredData = [];
+let viewData     = [];
+let sortState    = { key: null, dir: "asc" };
+let currentDynamicColumn = "AvgSalecost";
+let cachedSecretPassword = "";
+
+/* =========================
+   PASSWORD VERIFICATION SYSTEM
+========================= */
+async function fetchPasswordConfig() {
+  try {
+    const res = await fetch(configApiUrl);
+    const configData = await res.json();
+    // ดึงค่าแถวที่ 2 (อินเด็กซ์ 1 เพราะแถวแรกคือหัวตาราง) คอลัมน์ B (หรือคีย์ตัวที่ 2)
+    if (configData && configData[1]) {
+      const rowValues = Object.values(configData[1]);
+      cachedSecretPassword = String(rowValues[1] || "").trim(); 
+    }
+  } catch (e) {
+    console.error("Failed to fetch password from Config Sheet. Defaulting backup.");
+  }
+  if (!cachedSecretPassword) { cachedSecretPassword = "1234"; } // ป้องกันค้าง
+}
+
+function handleKeyPress(e) {
+  if (e.key === "Enter") { verifyPassword(); }
+}
+
+function verifyPassword() {
+  const userPass = document.getElementById("passInput").value.trim();
+  if (userPass === cachedSecretPassword) {
+    document.getElementById("lock-screen").style.display = "none";
+    document.getElementById("main-content-area").style.display = "block";
+    loadTable(); // โหลดข้อมูลจริงหลังจากใส่รหัสผ่านถูกต้องเพื่อความปลอดภัยสูงสุด
+  } else {
+    alert("❌ รหัสผ่านไม่ถูกต้อง! ระบบปฏิเสธการเข้าถึงข้อมูล");
+    document.getElementById("passInput").value = "";
+  }
+}
+
+/* =========================
+   LOAD MASTER DATA
+========================= */
+async function loadTable(){
+  document.getElementById("table-body").innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#777;">Loading CodeMatch System...</td></tr>';
+  try {
+    const res = await fetch(dataApiUrl);
+    rawData = await res.json();
+    applyAll();
+  } catch(e) {
+    document.getElementById("table-body").innerHTML =
+      '<tr><td colspan="5" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบลิงก์สิทธิ์เข้าถึง</td></tr>';
+  }
+}
+
+/* =========================
+   APPLY ALL FILTERS
+========================= */
+function applyAll(){
+  const q        = document.getElementById("searchBox").value.toLowerCase().trim();
+  const hideZero = document.getElementById("hideZero").checked;
+
+  const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+
+  let result = rawData;
+
+  // 1. CATEGORY FILTER (ตรวจสอบจาก gnamechr)
+  if(activeCats.length > 0){
+    result = result.filter(i => {
+      const gname = String(i.gnamechr || "").toLowerCase();
+      return activeCats.some(f => gname.includes(f.keyword.toLowerCase()));
+    });
+  }
+
+  // 2. TEXT SEARCH MULTI-COLUMNS
+  if(q){
+    result = result.filter(i =>
+      String(i.code || "").toLowerCase().includes(q) ||
+      String(i.CodeMatch || "").toLowerCase().includes(q) ||
+      String(i.gbarcode || "").toLowerCase().includes(q) ||
+      String(i.name || "").toLowerCase().includes(q) ||
+      String(i.gnamechr || "").toLowerCase().includes(q) ||
+      String(i[currentDynamicColumn] || "").toLowerCase().includes(q)
+    );
+  }
+
+  // 3. HIDE ZERO / DASH ON DYNAMIC COLUMN
+  if(hideZero){
+    result = result.filter(i => {
+      const v = String(i[currentDynamicColumn] || "").trim();
+      if(v === "" || v === "-") return false;
+      const n = parseFloat(v);
+      if(!isNaN(n) && n === 0) return false;
+      return true;
+    });
+  }
+
+  filteredData = result;
+
+  // 4. SORT COMPONENT
+  if(sortState.key){
+    applySortOnFiltered();
+  } else {
+    viewData = filteredData;
+    renderTable(viewData);
+  }
+
+  updateResultCount(viewData.length);
+}
+
+/* =========================
+   SORT ALGORITHMS
+========================= */
+function sortTable(key){
+  if(sortState.key === key){
+    sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+  } else {
+    sortState.key = key;
+    sortState.dir = "asc";
+  }
+  applySortOnFiltered();
+}
+
+function applySortOnFiltered(){
+  const { key, dir } = sortState;
+  
+  // แปลงคีย์เสมือนเพื่อเรียงลำดับคอลัมน์ไดนามิกขวาสุด
+  const targetKey = key === "dynamic" ? currentDynamicColumn : key;
+
+  viewData = [...filteredData].sort((a, b) => {
+    let v1 = a[targetKey] ?? "";
+    let v2 = b[targetKey] ?? "";
+    const n1 = parseFloat(v1);
+    const n2 = parseFloat(v2);
+    
+    if(!isNaN(n1) && !isNaN(n2)){
+      return dir === "asc" ? n1 - n2 : n2 - n1;
+    }
+    v1 = String(v1).toLowerCase();
+    v2 = String(v2).toLowerCase();
+    if(v1 < v2) return dir === "asc" ? -1 : 1;
+    if(v1 > v2) return dir === "asc" ?  1 : -1;
+    return 0;
+  });
+  
+  updateArrows(key, dir);
+  renderTable(viewData);
+  updateResultCount(viewData.length);
+}
+
+/* =========================
+   RENDER TABLE DATA (DYNAMIC GENERATION)
+========================= */
+function renderTable(data){
+  const tbody = document.getElementById("table-body");
+  if(!data || data.length === 0){
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px;">ไม่พบรายการข้อมูลที่ค้นหา...</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = data.map(p => {
+    // ฟอร์แมตตัวเลขถ้าคอลัมน์ไดนามิกเป็นราคา/จำนวน เพื่อความสวยงาม ยกเว้น StockStatus
+    let rawVal = p[currentDynamicColumn] || "-";
+    let formattedVal = rawVal;
+    if (currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+    }
+
+    return `
+      <tr>
+        <td class="col-code">${p.code || "-"}</td>
+        <td class="col-match">${p.CodeMatch || "-"}</td>
+        <td>${p.gbarcode || "-"}</td>
+        <td class="col-desc">${p.name || "-"}</td>
+        <td class="col-dynamic">${formattedVal}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* =========================
+   INTERFACE AND DROPDOWN MANAGEMENT
+========================= */
+function updateResultCount(n){
+  document.getElementById("result-count").textContent =
+    n > 0 ? n.toLocaleString() + " items" : "0 items";
+}
+
+function updateArrows(active, dir){
+  ["code", "CodeMatch", "gbarcode", "name", "dynamic"].forEach(k => {
+    const el = document.getElementById("arrow-" + k);
+    if(!el) return;
+    el.textContent = k === active ? (dir === "asc" ? "↑" : "↓") : "↕";
+  });
+}
+
+function updateChipStyles(){
+  CAT_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    const chip     = document.getElementById(f.chipId);
+    if(checkbox && chip) {
+      if(checkbox.checked) chip.classList.add("active");
+      else                 chip.classList.remove("active");
+    }
+  });
+}
+
+/* =========================
+   INITIALIZE EVENTS
+========================= */
+window.addEventListener("DOMContentLoaded", () => {
+  fetchPasswordConfig(); // เรียกดึงรหัสผ่านมารอไว้ทันทีตอนเปิดหน้าจอ
+
+  document.getElementById("searchBox").addEventListener("input", applyAll);
+  document.getElementById("hideZero").addEventListener("change", applyAll);
+
+  // ควบคุมการเปลี่ยน Dropdown คอลัมน์ขวาสุด
+  const colSelector = document.getElementById("columnSelector");
+  colSelector.addEventListener("change", (e) => {
+    currentDynamicColumn = e.target.value;
+    document.getElementById("dynamic-th-label").innerHTML = `${currentDynamicColumn} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+    sortState = { key: null, dir: "asc" }; // รีเซ็ตสถานะการจัดเรียงเพื่อป้องกันบั๊ก
+    applyAll();
+  });
+
+  CAT_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    if(checkbox) {
+      checkbox.addEventListener("change", () => {
+        updateChipStyles();
+        applyAll();
+      });
+    }
+  });
+});
+
+/* =========================
+   BACK TO TOP BUTTON
+========================= */
+document.getElementById("toTop").onclick = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+</script>
+
+<script src="layout.js"></script>
+
+</body>
+</html>
