@@ -212,37 +212,37 @@
     }
 
     /* ==========================================================================
-       NEW PRODUCT SHOWCASE (สลับซ้าย-ขวา ขนาดกะทัดรัด ไม่กินพื้นที่ Mobile)
+       PRODUCT SHOWCASE (DESKTOP: วางเรียง 3 คอลัมน์ แข็งแรงสวยงาม)
        ========================================================================== */
-    .showcase-container {
-      display: flex;
-      flex-direction: column;
-      gap: 24px; /* กระชับระยะห่างช่องไฟ */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
     }
 
-    .showcase-row {
+    .showcase-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      display: grid;
-      grid-template-columns: 1fr 2fr; /* ให้ภาพขนาดเล็กกว่าเนื้อหา */
-      align-items: center;
-      padding: 24px;
-      gap: 32px;
-      overflow: hidden;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* คุมให้สลับขวา-ซ้าย สำหรับแถวที่ 2 */
-    .showcase-row.reverse {
-      grid-template-columns: 2fr 1fr;
+    .showcase-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
+      border-color: #cbd5e1;
     }
 
     .showcase-img-wrapper {
-      width: 100%;
-      height: 160px; /* จำกัดความสูงรูปไม่ให้ดึงหน้าเว็บยาว */
+      height: 200px;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 24px;
     }
 
     .showcase-img {
@@ -251,14 +251,18 @@
       object-fit: contain;
     }
 
-    .showcase-text-side h4 {
-      font-size: 20px;
+    .showcase-text-container {
+      text-align: center;
+    }
+
+    .showcase-text-container h4 {
+      font-size: 18px;
       color: #0f172a;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       font-weight: 700;
     }
 
-    .showcase-text-side p {
+    .showcase-text-container p {
       font-size: 14px;
       color: #475569;
       line-height: 1.6;
@@ -413,7 +417,6 @@
       color: #475569;
     }
 
-    /* กล่องแจ้งเตือนความปลอดภัยข้อควรระวัง */
     .warning-box {
       margin-top: 32px;
       background: #fff8f8;
@@ -451,22 +454,65 @@
       .hero-grid, .mindset-grid, .spec-grid, .benefit-grid {
         grid-template-columns: 1fr;
       }
-      
-      /* ปรับดีไซน์จุดโชว์สินค้าให้แบนราบบน Mobile ไม่ให้การ์ดสูงเกินไป */
-      .showcase-row, .showcase-row.reverse {
-        grid-template-columns: 1fr; /* ยุบรวมเป็น 1 คอลัมน์บนมือถือ */
-        padding: 20px;
+
+      /* ------------------------------------------------------------------------
+         MOBILE SPECIFIC: เปลี่ยนรูปแบบการ์ดสินค้าจัดเรียงสลับซ้าย-ขวา ย่อแบน ไม่กินพื้นที่แนวตั้ง
+         ------------------------------------------------------------------------ */
+      .showcase-grid {
+        grid-template-columns: 1fr; /* ยุบเป็นแถวแนวตั้งเดี่ยว */
         gap: 16px;
-        text-align: center;
       }
-      
-      .showcase-row.reverse .showcase-img-wrapper {
-        order: -1; /* บังคับให้รูปภาพในแถวสลับย้ายกลับมาอยู่ด้านบนของตัวอักษรเพื่อความเป็นระเบียบ */
+
+      .showcase-card {
+        flex-direction: row; /* เปลี่ยนกล่องจากบนลงล่าง ให้กลายเป็นแนวนอน */
+        align-items: center;
+        padding: 16px;
+        text-align: left;
+        border-radius: 12px;
+        gap: 16px;
       }
 
       .showcase-img-wrapper {
-        height: 130px; /* ลดความสูงของรูปลงอีกเมื่ออยู่บน Mobile */
+        width: 90px;  /* บังคับย่อขนาดรูปภาพให้เล็กลงมากบนมือถือ */
+        height: 90px; 
+        margin-bottom: 0; /* ลบระยะมาร์จิ้นล่างออก */
+        flex-shrink: 0;
       }
+
+      .showcase-text-container {
+        text-align: left;
+      }
+
+      .showcase-text-container h4 {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .showcase-text-container p {
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      /* ข้อ 1: ม้วน (รูปเล็ก อยู่ซ้าย ข้อความอยู่ขวา) */
+      .card-item-1 {
+        order: 1; /* บังคับให้อยู่อันดับแรก */
+      }
+
+      /* ข้อ 2: แถว (รูปเล็กอยู่ขวา ข้อความอยู่ซ้าย) */
+      .card-item-2 {
+        order: 2; /* บังคับให้อยู่อันดับสอง */
+        flex-direction: row-reverse;
+      }
+      .card-item-2 .showcase-text-container {
+        text-align: left;
+      }
+
+      /* ข้อ 3: ลัง (รูปเล็กอยู่ซ้าย ข้อความอยู่ขวา) */
+      .card-item-3 {
+        order: 3; /* บังคับให้อยู่อันดับสุดท้าย */
+      }
+
+      /* ------------------------------------------------------------------------ */
 
       .hero {
         padding: 30px 0 40px;
@@ -537,7 +583,7 @@
             <span class="badge">ความเข้าใจผิดเกี่ยวกับต้นทุนอู่</span>
             <h3>ทำไมการเลือกใช้ "กระดาษกาวที่ดีที่สุด" ถึงประหยัดต้นทุนให้อู่ได้มากกว่า?</h3>
             <p>
-              In กระบวนการซ่อมสีรถยนต์ <strong>"วัสดุสิ้นเปลืองทั้งหมดคิดเป็นค่าใช้จ่ายเพียง 10% เท่านั้น"</strong> 
+              ในกระบวนการซ่อมสีรถยนต์ <strong>"วัสดุสิ้นเปลืองทั้งหมดคิดเป็นค่าใช้จ่ายเพียง 10% เท่านั้น"</strong> 
               ในขณะที่อีก 90% คือค่าแรงช่าง ค่าสถานที่ และค่าบริหารจัดการภายในอู่
             </p>
             <p>
@@ -558,7 +604,7 @@
   </section>
 
   <!-- ==========================================================================
-       3. PRODUCT SHOWCASE (ปรับสัดส่วนรูปเล็ก+สลับด้าน กระชับพื้นที่เซฟจอโมบาย)
+       3. PRODUCT SHOWCASE (Desktop เรียง 3 สวยงาม / Mobile ปรับแบนราบสลับซ้ายขวา)
        ========================================================================== -->
   <section class="section-padding">
     <div class="container">
@@ -568,36 +614,36 @@
         <p class="section-subtitle" style="margin: 0 auto;">เราคัดสรรแบรนด์ DOMAC เข้าสู่ระบบคลังสินค้าขนาดใหญ่ เพื่อตอบโจทย์ทุกกลุ่มงานแก่อู่ซ่อมสีรถยนต์ชั้นนำและอู่ประกันทั่วประเทศ</p>
       </div>
 
-      <div class="showcase-container">
+      <div class="showcase-grid">
         
-        <!-- ชิ้นที่ 1: ม้วนเดี่ยว (รูปอยู่ซ้าย ข้อความอยู่ขวา) -->
-        <div class="showcase-row">
+        <!-- ชิ้นที่ 1: ม้วนเดี่ยว (Mobile: รูปซ้าย ข้อความขวา) -->
+        <div class="showcase-card card-item-1">
           <div class="showcase-img-wrapper">
             <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162117/domac_D1620YP_fhc4wc.png" alt="กระดาษกาว DOMAC D1620YP 1 ม้วน" class="showcase-img">
           </div>
-          <div class="showcase-text-side">
+          <div class="showcase-text-container">
             <h4>DOMAC D1620YP (Single Roll)</h4>
             <p>กระดาษกาวมาส์กกิ้งสีเหลือง ขนาดมาตรฐานสำหรับงานเก็บรายละเอียด หน้ากว้าง 20มม. <strong>ความยาวคุ้มค่าพิเศษ 20 หลา</strong> ตัวเนื้อกาวเหนียวแน่นสม่ำเสมอ ออกแบบมาให้ตอบโจทย์สรีระการลากเส้นและปิดมุมโค้งบนตัวถังรถยนต์ได้อย่างคล่องตัว</p>
           </div>
         </div>
 
-        <!-- ชิ้นที่ 2: แถว 10 ม้วน (รูปอยู่ขวา ข้อความอยู่ซ้าย) -->
-        <div class="showcase-row reverse">
-          <div class="showcase-text-side">
-            <h4>แบบแถวแพ็คห่อ (10 Rolls)</h4>
-            <p>บรรจุแถวละ 10 ม้วน ห่อหุ้มแน่นหนาเพื่อรักษาสภาพความหนืดของหน้ากาวและป้องกันเศษฝุ่นช็อป ผงละอองขัดสีเข้ามาเกาะตัวเทปก่อนการเริ่มใช้งานจริง ช่วยให้อู่จัดระเบียบวัสดุสิ้นเปลืองได้ดียิ่งขึ้น</p>
-          </div>
+        <!-- ชิ้นที่ 2: แถว 10 ม้วน (Mobile: รูปขวา ข้อความซ้าย) -->
+        <div class="showcase-card card-item-2">
           <div class="showcase-img-wrapper">
             <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779163224/%E0%B9%80%E0%B8%9B%E0%B8%B4%E0%B8%94%E0%B8%A5%E0%B8%B1%E0%B8%87_domac2_sxlj9u.png" alt="กระดาษกาว DOMAC เหลืองแบบแพ็ค" class="showcase-img">
           </div>
+          <div class="showcase-text-container">
+            <h4>แบบแถวแพ็คห่อ (10 Rolls)</h4>
+            <p>บรรจุแถวละ 10 ม้วน ห่อหุ้มแน่นหนาเพื่อรักษาสภาพความหนืดของหน้ากาวและป้องกันเศษฝุ่นช็อป ผงละอองขัดสีเข้ามาเกาะตัวเทปก่อนการเริ่มใช้งานจริง ช่วยให้อู่จัดระเบียบวัสดุสิ้นเปลืองได้ดียิ่งขึ้น</p>
+          </div>
         </div>
 
-        <!-- ชิ้นที่ 3: ยกกล่อง (รูปอยู่ซ้าย ข้อความอยู่ขวา) -->
-        <div class="showcase-row">
+        <!-- ชิ้นที่ 3: ยกกล่อง (Mobile: รูปซ้าย ข้อความขวา) -->
+        <div class="showcase-card card-item-3">
           <div class="showcase-img-wrapper">
             <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162833/domac_%E0%B8%A5%E0%B8%B1%E0%B8%87_x700_eobtiu.png" alt="กระดาษกาว DOMAC ยกลัง 700 ม้วน" class="showcase-img">
           </div>
-          <div class="showcase-text-side">
+          <div class="showcase-text-container">
             <h4>ยกลังสำหรับอู่มาตรฐาน (700 Rolls)</h4>
             <p>ยกลังใหญ่บรรจุอย่างปลอดภัย โครงสร้างกล่องหนาพิเศษป้องกันแรงกระแทกจากขนส่ง เหมาะสำหรับอู่สีขนาดกลางถึงขนาดใหญ่ที่ใช้ปริมาณสม่ำเสมอ โดยอู่ขนาดกลางเฉลี่ยจะใช้งานได้ประมาณ 2 เดือน ช่วยลดความถี่ในการสั่งซื้อบ่อยครั้ง</p>
           </div>
@@ -608,7 +654,7 @@
   </section>
 
   <!-- ==========================================================================
-       4. TECHNICAL SPECIFICATIONS & CORE VALUES
+       4. TECHNICAL SPECIFICATIONS
        ========================================================================== -->
   <section class="spec-section section-padding">
     <div class="container">
@@ -721,13 +767,13 @@
   </section>
 
   <!-- ==========================================================================
-       6. SUMMARY BENEFITS & CORE STRENGTHS (อัปเดตรูปใหม่ + เนื้อหาความคุ้มค่าเชิงลึก)
+       6. SUMMARY BENEFITS & CORE STRENGTHS (อัปเดตรูปใหม่ตรงตามบรีฟล่าสุด)
        ========================================================================== -->
   <section class="benefit-section section-padding">
     <div class="container">
       <div class="spec-grid" style="align-items: center;">
         <div>
-          <!-- อัปเดตรูปภาพ Core Strength ใหม่ตามบรีฟ -->
+          <!-- อัปเดตรูปภาพเก๋ๆ สไตล์ PNG ตามลิงก์ใหม่เรียบร้อย -->
           <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779164340/domac_1620_ypoj2_mkuvlw.png" alt="กระดาษกาว DOMAC D1620YP สำหรับมืออาชีพ" style="width: 100%; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
         </div>
         <div>
@@ -768,7 +814,7 @@
             </div>
           </div>
 
-          <!-- กล่องข้อควรระวังระวังเชิงเทคนิคที่เป็นกลางน่าเชื่อถือ -->
+          <!-- ส่วนข้อควรระวังที่ไม่กระทบแบรนด์อื่น มีความน่าเชื่อถือสูง -->
           <div class="warning-box">
             <h5>⚠️ ข้อแนะนำเชิงช่างเทคนิคเพื่อการทำงานที่สมบูรณ์แบบ</h5>
             <p>ในกรณีที่รถยนต์ผ่านการซ่อมสีหรือทำสีเฉพาะจุดมาจากหลายแหล่งก่อนหน้านี้ หากชั้นแลคเกอร์เดิม (Clear Coat) หรือสีรองพื้นเดิมที่ทำมาไม่ได้มาตรฐานความยึดเกาะที่ถูกต้อง ตัวชั้นผิวหน้าสีเดิมอาจหลุดลอกติดขึ้นมาพร้อมกับเนื้อเทปได้เมื่อดึงออก ซึ่งอาการลักษณะนี้จะเกิดขึ้นได้กับเทปกาวมาส์กกิ้งสำหรับพ่นสีรถยนต์ทุกแบรนด์ในอุตสาหกรรม ช่างจึงควรประเมินสภาพชั้นผิวเดิมและใช้ความระมัดระวังในการลอกตามเทคนิคขั้นสูง</p>
