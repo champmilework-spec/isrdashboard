@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EXECUTIVE SALES DASHBOARD - SUPERPART</title>
+
+<!-- รวม Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* =========================
+   BASE & BIG 4 THEME
+========================= */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Kanit", Arial, sans-serif;
+}
+
+body{
+  background:#f9fbfd;
+  color:#1e293b;
+  overflow-x:hidden;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 110px 24px 60px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.dashboard-title h1 {
+  font-size: 28px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard-title p {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* Dropdown สไตล์มินิมอล */
+.filter-box select {
+  padding: 10px 16px;
+  font-size: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+  min-width: 200px;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+}
+.filter-box select:hover {
+  border-color: #94a3b8;
+}
+
+#loader {
+  text-align: center;
+  padding: 60px;
+  font-size: 15px;
+  color: #64748b;
+  letter-spacing: 2px;
+}
+
+/* =========================
+   LAYOUT GRID
+========================= */
+.section-top {
+  margin-bottom: 32px;
+}
+
+.section-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media(min-width: 992px) {
+  .section-bottom-grid {
+    grid-template-columns: 1.4fr 1fr; 
+  }
+}
+
+.chart-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card h2 {
+  font-size: 15px;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  color: #0f172a;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 350px;
+}
+
+/* ข้อมูลสรุปเพิ่มเติมด้านล่างกราฟโดนัท */
+.contribution-badge {
+  margin-top: 20px;
+  padding: 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  font-size: 13px;
+  color: #334155;
+}
+.contribution-badge strong {
+  color: #0f172a;
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media(max-width: 768px){
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .container {
+    padding: 90px 16px 40px;
+  }
+  .chart-wrapper {
+    height: 280px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER LOAD ================= -->
+<div id="header-placeholder"></div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="container">
+  
+  <div class="dashboard-header">
+    <div class="dashboard-title">
+      <h1>SALES PERFORMANCE EXECUTIVE</h1>
+      <p>YOY TRENDS & INDIVIDUAL METRICS</p>
+    </div>
+    <!-- Dropdown เลือกเดือน -->
+    <div class="filter-box" id="filterArea" style="display: none;">
+      <select id="monthSelector"></select>
+    </div>
+  </div>
+
+  <div id="loader">LOADING FINANCIAL DATA FROM GOOGLE SHEETS...</div>
+
+  <div id="dashboardContent" style="display: none;">
+    
+    <!-- 1. กราฟด้านบนสุด: ยอดรวมทั้งทีม YoY (2025 vs 2026) -->
+    <div class="section-top">
+      <div class="chart-card">
+        <h2>Team Sales Overview: Year-over-Year (YoY Comparison)</h2>
+        <div class="chart-wrapper" style="height: 300px;">
+          <canvas id="yoyLineChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. โซนด้านล่างแบบแยกสองฝั่ง -->
+    <div class="section-bottom-grid">
+      
+      <!-- กราฟแท่งแนวนอน สไตล์เกจ HP เกมส์ -->
+      <div class="chart-card">
+        <h2>Individual Sales Performance (Selected Month)</h2>
+        <div class="chart-wrapper">
+          <canvas id="hpGaugeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- กราฟโดนัท สัดส่วน Contribute -->
+      <div class="chart-card">
+        <h2>Sales Contribution Share (%)</h2>
+        <div class="chart-wrapper" style="height: 280px;">
+          <canvas id="donutShareChart"></canvas>
+        </div>
+        <div class="contribution-badge" id="topContributorBox">
+          Top Contributor: <strong>Calculating...</strong>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= FOOTER LOAD ================= -->
+<div id="footer-placeholder"></div>
+
+
+<script>
+/* ===================================================
+   1. SYSTEM COMPONENT LOADING (HEADER/FOOTER)
+   =================================================== */
+fetch("header.html")
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById("header-placeholder").innerHTML = data;
+    const menuBtn = document.getElementById("menuBtn");
+    const menuDropdown = document.getElementById("menuDropdown");
+    if(menuBtn && menuDropdown){
+      menuBtn.addEventListener("click", () => menuDropdown.classList.toggle("active"));
+      window.addEventListener("click", (e) => {
+        if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
+          menuDropdown.classList.remove("active");
+        }
+      });
+    }
+  });
+
+fetch("footer.html")
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById("footer-placeholder").innerHTML = data;
+  });
+
+
+/* ===================================================
+   2. DATA ENGINE & CHART MANAGEMENT
+   =================================================== */
+const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv"; 
+
+// สีประจำตัวพนักงานขายแต่ละคน
+const staffColors = [
+  '#0f172a', // ดำสเลท (แอนนี่)
+  '#2563eb', // น้ำเงินรอยัล (พรีม)
+  '#64748b', // เทากลาง (ดอน)
+  '#94a3b8', // เทาอ่อน (นาเดียร์)
+  '#b45309'  // น้ำตาลทอง (ฟ้า)
+];
+
+let globalSalesData = []; 
+let uniqueTimelineKeys = [];  // คีย์ที่ไม่ซ้ำกัน เช่น ["2025-M01", "2025-M02"...]
+let monthOptions = [];    
+
+let hpChartInstance = null;
+let donutChartInstance = null;
+
+function cleanString(str) {
+  if(!str) return "";
+  return str.replace(/^["'\s\t]+|["'\s\t]+$/g, '').trim();
+}
+
+function translateMonthThai(mCode, yCode) {
+  const monthsThai = {
+    "M01": "มกราคม", "M02": "กุมภาพันธ์", "M03": "มีนาคม", "M04": "เมษายน",
+    "M05": "พฤษภาคม", "M06": "มิถุนายน", "M07": "กรกฎาคม", "M08": "สิงหาคม",
+    "M09": "กันยายน", "M10": "ตุลาคม", "M11": "พฤศจิกายน", "M12": "ธันวาคม"
+  };
+  const thaiYear = parseInt(yCode) + 543; 
+  return `${monthsThai[mCode] || mCode} ${thaiYear}`;
+}
+
+if(csvUrl) {
+  fetch(csvUrl)
+    .then(response => response.text())
+    .then(csvText => {
+      // แตกบรรทัด
+      const lines = csvText.split(/\r?\n/);
+      const rows = lines.map(line => line.split(","));
+      
+      // ดึงหัวตารางล้างข้อมูลขยะ
+      const rawYears = rows[0].map(y => cleanString(y));
+      const rawMonths = rows[1].map(m => cleanString(m));
+      
+      // หาตำแหน่งคอลัมน์ที่ข้อมูลตัวเลขเริ่มต้นจริง (เริ่มต้นที่คอลัมน์ดัชนีเลข 2 เป็นต้นไป)
+      // ตรวจสอบและคัดกรองคอลัมน์ที่ซ้ำออกเพื่อป้องกันกราฟพัง
+      let validColumnIndices = [];
+      let seenKeys = new Set();
+
+      for(let col = 2; col < rawMonths.length; col++) {
+        const m = rawMonths[col];
+        if(!m || m === "" || m.indexOf("M") === -1) continue; 
+        
+        // ค้นหาปีที่สัมพันธ์กับคอลัมน์นั้นๆ (หากช่องปีว่าง ให้ย้อนกลับไปใช้ปีล่าสุดก่อนหน้า)
+        let y = "";
+        for(let s = col; s >= 2; s--) {
+          if(rawYears[s] && rawYears[s] !== "") {
+            y = rawYears[s];
+            break;
+          }
+        }
+        
+        const combinedKey = `${y}-${m}`;
+        // ป้องกันกรณีมีคอลัมน์ M05 ซ้ำที่ปลายตาราง
+        if(!seenKeys.has(combinedKey)) {
+          seenKeys.add(combinedKey);
+          validColumnIndices.push(col);
+          uniqueTimelineKeys.push(combinedKey);
+          
+          monthOptions.push({
+            key: combinedKey,
+            text: translateMonthThai(m, y),
+            year: y,
+            monthCode: m
+          });
+        }
+      }
+
+      // ดึงข้อมูลรายบุคคลตามคอลัมน์ที่คัดกรองแล้ว
+      let colorIdx = 0;
+      for (let i = 2; i < rows.length; i++) {
+        const salePerson = cleanString(rows[i][1]);
+        if (!salePerson || salePerson === "" || salePerson === "SalePerson") continue;
+        
+        // ดึงค่าตามคอลัมน์ที่มีสิทธิ์เท่านั้น
+        const salesNumbers = validColumnIndices.map(colIdx => {
+          const numStr = rows[i][colIdx] ? rows[i][colIdx] : "0";
+          return parseFloat(numStr.replace(/[^0-9.-]+/g, "")) || 0;
+        });
+
+        globalSalesData.push({
+          name: salePerson,
+          shortName: salePerson.split('(')[0].replace("ISR-", ""),
+          data: salesNumbers,
+          color: staffColors[colorIdx % staffColors.length]
+        });
+        colorIdx++;
+      }
+
+      // คำนวณหายอดรวมทั้งทีมเพื่อทำกราฟ YoY บรรทัดบนสุด
+      let teamTotal2025 = Array(12).fill(0); 
+      let teamTotal2026 = Array(12).fill(0); 
+
+      monthOptions.forEach((opt, idx) => {
+        const mIdx = parseInt(opt.monthCode.replace("M", "")) - 1; 
+        let monthlySum = 0;
+        globalSalesData.forEach(staff => {
+          monthlySum += staff.data[idx];
+        });
+
+        if(opt.year === "2025") {
+          teamTotal2025[mIdx] = monthlySum;
+        } else if(opt.year === "2026") {
+          teamTotal2026[mIdx] = monthlySum;
+        }
+      });
+
+      // สั่งแสดงผลหน้าจอหลัก
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("filterArea").style.display = "block";
+      document.getElementById("dashboardContent").style.display = "block";
+
+      // วาดกราฟเส้นด้านบนสุด (YoY Team Sales)
+      renderYoYLineChart(teamTotal2025, teamTotal2026);
+
+      // จัดการระบบ Dropdown ตัวเลือกเดือน
+      const selector = document.getElementById("monthSelector");
+      monthOptions.forEach(opt => {
+        const el = document.createElement("option");
+        el.value = opt.key;
+        el.textContent = opt.text;
+        selector.appendChild(el);
+      });
+
+      // ตั้งค่า Default เป็น พฤษภาคม 2569 (2026-M05)
+      const defaultMonthKey = "2026-M05"; 
+      selector.value = defaultMonthKey;
+
+      updateBottomCharts(defaultMonthKey);
+
+      selector.addEventListener("change", (e) => {
+        updateBottomCharts(e.target.value);
+      });
+
+    })
+    .catch(err => {
+      document.getElementById("loader").textContent = "ERROR CONFIGURING GRAPHICAL DASHBOARD.";
+      console.error(err);
+    });
+}
+
+/* ===================================================
+   3. CHART RENDERING FUNCTIONS
+   =================================================== */
+
+function renderYoYLineChart(data25, data26) {
+  const ctx = document.getElementById('yoyLineChart').getContext('2d');
+  const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: monthNamesShort,
+      datasets: [
+        {
+          label: '2025 (ปีที่แล้ว)',
+          data: data25,
+          borderColor: '#2563eb', 
+          borderWidth: 2.5,
+          tension: 0.15,
+          pointRadius: 0,       
+          pointHoverRadius: 5   
+        },
+        {
+          label: '2026 (ปีปัจจุบัน)',
+          data: data26.map(val => val === 0 ? null : val), 
+          borderColor: '#ef4444', 
+          borderWidth: 2.5,
+          tension: 0.15,
+          pointRadius: 0,
+          pointHoverRadius: 5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 20, font: { size: 12, weight: 500 } } }
+      },
+      scales: {
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function updateBottomCharts(selectedMonthKey) {
+  const timeIndex = uniqueTimelineKeys.indexOf(selectedMonthKey);
+  if(timeIndex === -1) return;
+
+  const names = [];
+  const monthlyValues = [];
+  const colors = [];
+
+  let highestSale = -1;
+  let topSellerName = "";
+
+  globalSalesData.forEach(staff => {
+    const saleVal = staff.data[timeIndex] || 0;
+    names.push(staff.shortName);
+    monthlyValues.push(saleVal);
+    colors.push(staff.color);
+
+    if(saleVal > highestSale) {
+      highestSale = saleVal;
+      topSellerName = staff.name;
+    }
+  });
+
+  document.getElementById("topContributorBox").innerHTML = `Top Contributor: <strong>${topSellerName || 'No Data'}</strong>`;
+
+  // --- RE-RENDER: กราฟแท่งแนวนอนสไตล์หลอด HP ---
+  if(hpChartInstance) hpChartInstance.destroy(); 
+  
+  const ctxHp = document.getElementById('hpGaugeChart').getContext('2d');
+  hpChartInstance = new Chart(ctxHp, {
+    type: 'bar',
+    data: {
+      labels: names,
+      datasets: [{
+        data: monthlyValues,
+        backgroundColor: colors,
+        borderRadius: 5, 
+        barThickness: 24  
+      }]
+    },
+    options: {
+      indexAxis: 'y', 
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 12, weight: 500 } } }
+      }
+    }
+  });
+
+  // --- RE-RENDER: กราฟโดนัทเปรียบเทียบสัดส่วนแชร์ ---
+  if(donutChartInstance) donutChartInstance.destroy();
+  
+  const ctxDonut = document.getElementById('donutShareChart').getContext('2d');
+  donutChartInstance = new Chart(ctxDonut, {
+    type: 'doughnut',
+    data: {
+      labels: names,
+      datasets: [{
+        data: monthlyValues,
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: '#ffffff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%', 
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { boxWidth: 12, padding: 12, font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>
