@@ -30,13 +30,13 @@ body{
 .container {
   max-width: 1350px;
   margin: 0 auto;
-  padding: 90px 16px 40px; /* ลด Padding บน/ข้างลงเล็กน้อยให้กระชับบนมือถือ */
+  padding: 90px 16px 40px;
 }
 
 .dashboard-header {
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 12px;
-  margin-bottom: 16px; /* ลดระยะห่าง */
+  margin-bottom: 16px;
 }
 
 .dashboard-title h1 {
@@ -55,13 +55,13 @@ body{
    CARDS & GRIDS (COMPACT MARGINS)
 ========================= */
 .section-top {
-  margin-bottom: 16px; /* ลดช่องว่างจาก 32px เหลือ 16px */
+  margin-bottom: 16px;
 }
 
 .section-bottom-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px; /* ชิดกันมากขึ้น */
+  gap: 16px;
   margin-bottom: 16px;
 }
 
@@ -74,12 +74,12 @@ body{
 .chart-card {
   background: #ffffff;
   border-radius: 10px;
-  padding: 16px; /* ลด Padding ภายในกระชับพื้นที่ */
+  padding: 16px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
-  margin-bottom: 0px; /* ยุบ Margin นอกเพื่อคุมระยะผ่าน Grid/Flex แทน */
+  margin-bottom: 0px;
 }
 
 .card-header-flex {
@@ -97,7 +97,6 @@ body{
   font-weight: 700;
 }
 
-/* Contextual Picker */
 .filter-box select {
   padding: 6px 12px;
   font-size: 13px;
@@ -162,7 +161,7 @@ body{
 }
 
 /* =========================
-   SEARCH & STATUS FILTER STRIP
+   CONTROL STRIP (SEARCH & STATUS)
 ========================= */
 .control-strip {
   display: flex;
@@ -196,7 +195,6 @@ body{
   background: #fff;
 }
 
-/* Status Filter Block */
 .status-filter-group {
   display: flex;
   gap: 8px;
@@ -275,13 +273,13 @@ body{
   background: #fff;
   max-height: 55vh;
   overflow-y: auto;
-  overflow-x: hidden; /* บล็อกการไถซ้ายขวาเด็ดขาด */
+  overflow-x: hidden;
 }
 table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  table-layout: fixed; /* บังคับหน้ากว้างคอลัมน์คงที่ */
+  table-layout: fixed;
 }
 thead th {
   position: sticky;
@@ -297,20 +295,44 @@ thead th {
 }
 tbody td {
   font-size: 12px;
-  padding: 10px 8px;
+  padding: 12px 8px;
   border-bottom: 1px solid #f1f5f9;
   color: #1c2434;
-  word-wrap: break-word;     /* สั่งให้ตัดคำถ้ายาวเกินหน้าจอมือถือ */
-  white-space: normal;       /* ปิดระบบเว้นแถวยาวล้นกระจาย */
+  word-wrap: break-word;
+  white-space: normal;
   vertical-align: top;
 }
 
-/* คุมสัดส่วนพื้นที่กว้างคอลัมน์ให้สมดุลบนจอมือถือ */
 .col-code { width: 22%; }
 .col-name { width: 33%; }
 .col-customer { width: 45%; }
 
-/* ตกแต่งแถวให้อารมณ์เหมือนปุ่มกดเรียกดูรายละเอียด (CTA Look) */
+/* คอนเทนเนอร์จัดตำแหน่งของฝั่ง Customer และลูกศรขวา */
+.customer-cell-flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+}
+.customer-text-wrap {
+  flex: 1;
+  word-break: break-word;
+}
+/* ลูกศรชี้ขวาสไตล์ Modern Minimalist */
+.modern-arrow-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #3c50e0;
+  font-weight: 700;
+  font-size: 14px;
+  padding-left: 2px;
+  transition: transform 0.2s;
+}
+tbody tr:hover .modern-arrow-right {
+  transform: translateX(3px);
+}
+
 tbody tr {
   cursor: pointer;
   transition: background-color 0.15s;
@@ -319,15 +341,7 @@ tbody tr:hover {
   background: #f8fafc;
 }
 tbody tr:active {
-  background: #f1f5f9; /* แสดง Feed back ทันทีเมื่อกวาดนิ้วกดบนมือถือ */
-}
-
-/* ไอคอนแว่นขยายชี้เป้าสำหรับสายตาพนักงาน */
-.cta-view-indicator {
-  display: inline-block;
-  color: #3c50e0;
-  font-weight: bold;
-  margin-right: 2px;
+  background: #f1f5f9;
 }
 
 .result-count {
@@ -343,20 +357,25 @@ tbody tr:active {
 }
 
 /* =========================
-   POPUP MODAL TIMELINE (SCROLL FIX FOR MOBILE)
+   POPUP MODAL TIMELINE (MOBILE DISPLAY FIX)
 ========================= */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(15, 23, 42, 0.6);
   display: flex;
-  align-items: flex-end; /* บนมือถือปรับให้ป๊อปอัพดันจากล่างขึ้นมาเพื่อไม่ให้จมหาย */
+  align-items: flex-end; /* Mobile Bottom-sheet style */
   justify-content: center;
   z-index: 9999;
-  opacity: 0; pointer-events: none;
-  transition: all 0.25s ease-out;
+  opacity: 0; 
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
 }
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
+/* คุมสถานะแสดงผลเมื่อตื่นตัว */
+.modal-overlay.active { 
+  opacity: 1; 
+  pointer-events: auto; 
+}
 
 .modal-card {
   background: #ffffff;
@@ -369,22 +388,33 @@ tbody tr:active {
   padding: 20px 16px;
   box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
   
-  /* แก้ปัญหาเรื่องป๊อปอัพจมลงขอบล่างจนเลื่อนดูไม่ได้ */
-  max-height: 85vh; 
+  /* บล็อกตำแหน่งขอบและแก้บั๊กโมบายหายตัว */
+  position: relative;
+  bottom: 0;
+  max-height: 82vh; 
   display: flex;
   flex-direction: column;
   
   transform: translateY(100%);
-  transition: all 0.25s ease-out;
+  transition: transform 0.25s ease-out;
 }
-.modal-overlay.active .modal-card { transform: translateY(0); }
+.modal-overlay.active .modal-card { 
+  transform: translateY(0); 
+}
 
+/* ขยับเซ็ตติ้งเมื่อเปิดใช้งานผ่านหน้าจอ Desktop คอมพิวเตอร์ */
 @media(min-width: 576px) {
-  .modal-overlay { align-items: center; }
+  .modal-overlay { 
+    align-items: center; 
+  }
   .modal-card {
     border-radius: 12px;
-    max-height: 80vh;
+    max-height: 75vh;
     transform: translateY(20px);
+    bottom: auto;
+  }
+  .modal-overlay.active .modal-card { 
+    transform: translateY(0); 
   }
 }
 
@@ -401,7 +431,6 @@ tbody tr:active {
   width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
 }
 
-/* ส่วนขยายแสดงอายุของงานแบบนับสดเล็ก ๆ มุมขวาบนกล่อง */
 .case-age-badge {
   font-size: 11px;
   background: #eff6ff;
@@ -416,8 +445,9 @@ tbody tr:active {
 
 .modal-scroll-body {
   flex: 1;
-  overflow-y: auto; /* เปิดสิทธิ์ให้ Scroll ทะลุลงไปด้านล่างได้เต็มพิกัด */
+  overflow-y: auto;
   padding: 12px 2px 24px;
+  -webkit-overflow-scrolling: touch; /* รองรับนิ้วกวาดบนระบบ iOS */
 }
 
 .timeline-list {
@@ -443,7 +473,6 @@ tbody tr:active {
 
 #loader { text-align: center; padding: 40px; font-size: 14px; color: #64748b; }
 
-/* FLOAT TOP BUTTON */
 #toTop {
   position: fixed;
   bottom: 16px;
@@ -491,10 +520,9 @@ tbody tr:active {
       </div>
     </div>
 
-    <!-- 2. โซนกราฟวิเคราะห์รายบุคคลและแชร์ยอดขาย (บีบ Margin ให้เหลือนิดเดียวพอ) -->
+    <!-- 2. โซนกราฟวิเคราะห์รายบุคคลและแชร์ยอดขาย -->
     <div class="section-bottom-grid">
       
-      <!-- กราฟแท่งสไตล์เกจแบบบีบกระชับ -->
       <div class="chart-card">
         <div class="card-header-flex">
           <h2>Individual Sales Performance</h2>
@@ -507,7 +535,6 @@ tbody tr:active {
         </div>
       </div>
 
-      <!-- กราฟโดนัทพ่นตัวเลขตรงกลางวงแหวน -->
       <div class="chart-card">
         <div class="card-header-flex">
           <h2>Sales Contribution Share</h2>
@@ -519,7 +546,7 @@ tbody tr:active {
 
     </div>
 
-    <!-- 3. เว้นช่องไฟนิดเดียวแล้วขยับเข้าสู่ โซนตารางข้อมูลจากชีต Operation Pipeline -->
+    <!-- 3. โซนตารางข้อมูล Operation Pipeline -->
     <div class="chart-card" style="margin-top: 16px;">
       
       <div class="card-header-flex" style="margin-bottom: 8px;">
@@ -538,15 +565,13 @@ tbody tr:active {
         </div>
       </div>
 
-      <!-- CONTROL BAR: SEARCH & STATUS SELECTOR (RESPONSIBLE ON MOBILE) -->
+      <!-- CONTROL BAR: SEARCH & STATUS SELECTOR -->
       <div class="control-strip">
-        <!-- ช่องเสิร์ช -->
         <div class="search-wrapper-block">
           <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ชื่อเคส / ลูกค้า..." />
         </div>
-        <!-- ช่องติ๊กสลับสถานะย้ายขึ้นบนตามสั่ง -->
         <div class="status-filter-group">
-          <label class="status-chk-label active-success" id="lbl-status-success">
+          <label class="status-chk-label" id="lbl-status-success">
             <input type="checkbox" id="status-success" /> SUCCESS
           </label>
           <label class="status-chk-label active-progress" id="lbl-status-progress">
@@ -555,7 +580,7 @@ tbody tr:active {
         </div>
       </div>
 
-      <!-- CATEGORY FILTER CHIPS (คัดกรองเฉพาะหัวข้อที่เหลืออยู่) -->
+      <!-- CATEGORY FILTER CHIPS -->
       <div class="cat-filter-bar" id="catFilterBar">
         <label class="cat-chip" id="chip-bar">
           <input type="checkbox" id="cat-bar" checked /> เปิดบาร์
@@ -577,7 +602,7 @@ tbody tr:active {
       <!-- RESULT COUNT -->
       <div class="result-count" id="result-count">0 items</div>
 
-      <!-- TABLE MAP DATA (FIXED COMPACT FOR MOBILE VIEW) -->
+      <!-- TABLE MAP DATA (FIXED FOR MOBILE VIEW) -->
       <div class="table-wrap">
         <table>
           <thead>
@@ -606,12 +631,10 @@ tbody tr:active {
         <h3 id="modalCustomerName" style="font-size:15px; font-weight:700; padding-right:110px;">-</h3>
         <p id="modalCaseName" style="font-size:12px; color:#64748b; margin-top:2px;">-</p>
       </div>
-      <!-- ตัวนับอายุเคสขยับมาสถิติด้านขวาบนข้างปุ่มกากบาท -->
       <div class="case-age-badge" id="modalCaseAge">Age: 0d</div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     
-    <!-- ครอบโครงสร้างเลื่อนได้อิสระไม่ติดขอบจอด้านล่าง -->
     <div class="modal-scroll-body">
       <div style="margin-bottom: 12px; font-size:13px;">
         <span style="font-weight:600; color:#475569;">ผู้รับผิดชอบ: </span><span id="modalOwner" style="font-weight:700; color:#1c2434;">-</span>
@@ -629,11 +652,9 @@ tbody tr:active {
 <div id="footer-placeholder"></div>
 
 <script>
-// สัญญาณเชื่อมต่อฐานข้อมูล Google Sheets
 const salesCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv";
 const opCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=1693856458&single=true&output=csv";
-// ลิงก์สำหรับดึงรหัสผ่านหน้าแท็บ Config (ดึงเฉพาะคอลัมน์ A,B เพื่อความปลอดภัยสูงสุด)
-const configCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=198273645&single=true&output=csv"; // สมมุติเป็น Gid ของ Config
+const configCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=198273645&single=true&output=csv";
 
 const staffColorMap = {
   "แอนนี่": "#ec4899", "พรีม": "#a855f7", "ดอน": "#10b981", "นาเดียร์": "#f59e0b", "ฟ้า": "#0ea5e9"
@@ -658,7 +679,7 @@ let opSortState = { key: null, dir: "asc" };
 
 let hpChartInstance = null;
 let donutChartInstance = null;
-let cachedPasswordFromSheet = ""; // ตัวแปรเก็บรหัสผ่านแบบ Dynamic ป้องกันการกด Inspect
+let cachedPasswordFromSheet = "";
 
 function parseCSVLine(text) {
   let p = '', r = []; let q = false;
@@ -682,7 +703,6 @@ function translateMonthThai(mCode, yCode) {
   return `${monthsThai[mCode] || mCode} ${parseInt(yCode) + 543}`;
 }
 
-// 🎯 ฟังก์ชันโหลดคอมโพเนนต์ร่วมกับตัวยัดหน่วงเวลาปุ่ม Hamburger พัง
 function loadLayoutTemplates() {
   Promise.all([
     fetch("header.html").then(res => res.text()).catch(() => ""),
@@ -691,7 +711,6 @@ function loadLayoutTemplates() {
     if(headerHtml) document.getElementById("header-placeholder").innerHTML = headerHtml;
     if(footerHtml) document.getElementById("footer-placeholder").innerHTML = footerHtml;
     
-    // ⚡ หน่วงเวลา 100ms สกัดอาการปุ่มพังหลังจากคอมโพเนนต์โหลดเสร็จ
     setTimeout(() => {
       if (typeof initMenuDropdowns === "function") { initMenuDropdowns(); }
       if (typeof bindHamburgerClick === "function") { bindHamburgerClick(); }
@@ -701,26 +720,22 @@ function loadLayoutTemplates() {
 
 loadLayoutTemplates();
 
-// เริ่มดึงข้อมูลทั้งหมดคู่ขนานรวมถึงรหัสผ่านแอบซ่อนจากชีต Config
 Promise.all([
   fetch(salesCsvUrl).then(res => res.text()),
   fetch(opCsvUrl).then(res => res.text()),
-  fetch(configCsvUrl).then(res => res.text()).catch(() => "Key,Value\nPassword,1234") // Fallback สำรองหากสตรีมหลุด
+  fetch(configCsvUrl).then(res => res.text()).catch(() => "Key,Value\nPassword,1234")
 ]).then(([salesCsv, opCsv, configCsv]) => {
   
-  // 🔒 PROCESS DYNAMIC PASSWORD (ดึงจากเซลล์ B2)
   try {
     const cLines = configCsv.split(/\r?\n/).filter(l => l.trim() !== "");
     if(cLines.length > 1) {
-      const b2Row = parseCSVLine(cLines[1]); // แถวที่ 2
+      const b2Row = parseCSVLine(cLines[1]);
       if(b2Row && b2Row[1]) { cachedPasswordFromSheet = cleanString(b2Row[1]); }
     }
-  } catch(e) { console.log("Config load alternative method."); }
-  if(!cachedPasswordFromSheet) { cachedPasswordFromSheet = "1234"; } // ป้องกันค่าว่างหลุด
+  } catch(e) { console.log("Config backup run."); }
+  if(!cachedPasswordFromSheet) { cachedPasswordFromSheet = "1234"; }
 
-  // ---------------------------------------------------
-  // ENGINE A: CONFIG ยอดขาย
-  // ---------------------------------------------------
+  // ENGINE A: SALES OVERVIEW
   const sLines = salesCsv.split(/\r?\n/).filter(l => l.trim() !== "");
   const sRows = sLines.map(l => parseCSVLine(l));
   
@@ -797,7 +812,7 @@ Promise.all([
   selector.value = "2026-M05";
 
   // ---------------------------------------------------
-  // ENGINE B: LOGIC ตารางความยืดหยุ่นสูง (Fuzzy Header Mapping)
+  // 1. ENGINE B: MAPPING หัวตารางใหม่เพื่อความแม่นยำสูง
   // ---------------------------------------------------
   const opLines = opCsv.split(/\r?\n/).filter(l => l.trim() !== "");
   const opRows = opLines.map(l => parseCSVLine(l));
@@ -805,10 +820,11 @@ Promise.all([
   let opHeader = [];
   let startRowIndex = 1;
   
+  // ค้นหาตำแหน่งแถวของหัวเจาะลึก
   for (let r = 0; r < Math.min(opRows.length, 5); r++) {
     if (opRows[r]) {
       const rowTxt = opRows[r].join(" ").toUpperCase();
-      if (rowTxt.includes("CASENAME") || rowTxt.includes("CASE_")) {
+      if (rowTxt.includes("STATUS") || rowTxt.includes("CASE_") || rowTxt.includes("CASENAME")) {
         opHeader = opRows[r].map(h => cleanString(h));
         startRowIndex = r + 1;
         break;
@@ -821,23 +837,16 @@ Promise.all([
     startRowIndex = 2;
   }
 
-  const findColumnIndex = (keywords) => {
-    return opHeader.findIndex(h => {
-      const cleanH = h.toLowerCase().replace(/[^a-z0-9ก-๙]/g, "");
-      return keywords.some(kw => {
-        const cleanKw = kw.toLowerCase().replace(/[^a-z0-9ก-๙]/g, "");
-        return cleanH.includes(cleanKw) || cleanKw.includes(cleanH);
-      });
-    });
-  };
+  // จับคู่คอลัมน์จากตำแหน่งหัวเวิร์กชีตจริง
+  const idxCaseId = opHeader.findIndex(h => h.toUpperCase().replace(/\s/g, "") === "CASE_ID" || h.toUpperCase() === "CASEID");
+  const idxCaseName = opHeader.findIndex(h => h.toUpperCase() === "CASENAME");
+  const idxType = opHeader.findIndex(h => h.toUpperCase() === "CASETYPE");
+  const idxCust = opHeader.findIndex(h => h.toUpperCase().replace(/\s/g, "") === "CUSTOMERNAME/ITEMNAME" || h.toUpperCase() === "CUSTOMERNAME");
+  const idxStatus = opHeader.findIndex(h => h.toUpperCase() === "STATUS");
+  const idxOwner = opHeader.findIndex(h => h.toUpperCase() === "ชื่อเซลล์" || h.toUpperCase() === "OWNER");
+  const idxCaseAge = opHeader.findIndex(h => h.toUpperCase().replace(/\s/g, "") === "CASEAGE");
 
-  const idxCaseId = findColumnIndex(["caseid", "case_id"]);
-  const idxCaseName = findColumnIndex(["casename", "ชื่อเคส"]);
-  const idxType = findColumnIndex(["casetype", "ประเภทเคส"]);
-  const idxCust = findColumnIndex(["customername", "itemname", "ลูกค้า"]);
-  const idxStatus = findColumnIndex(["status", "สถานะ"]);
-  const idxOwner = findColumnIndex(["ชื่อเซลล์", "ชื่อเซล", "owner"]);
-
+  // ค้นหากลุ่มคอมเมนต์เรียงลำดับ FU1 - FU10
   let fuIndices = [];
   opHeader.forEach((h, colIdx) => {
     const cleanH = h.toUpperCase().replace(/\s/g, "");
@@ -853,8 +862,16 @@ Promise.all([
 
   for(let i = startRowIndex; i < opRows.length; i++) {
     const row = opRows[i];
-    if (!row || row.length === 0 || (idxCaseName !== -1 && !row[idxCaseName])) continue; 
+    if (!row || row.length === 0) continue;
+    if (idxCaseName !== -1 && !row[idxCaseName]) continue;
     
+    // ดึงค่าสเตตัสจากคอลัมน์ STATUS ตัวจริงเท่านั้น ป้องกันการนับซ้ำซ้อน
+    const currentStatus = idxStatus !== -1 ? cleanString(row[idxStatus]).toUpperCase() : "IN PROGRESS";
+    
+    if(currentStatus === "IN PROGRESS") {
+      liveProgressCounter++;
+    }
+
     let followUpHistory = [];
     fuIndices.forEach(fu => {
       if (row[fu.index]) {
@@ -865,13 +882,13 @@ Promise.all([
       }
     });
 
-    const currentStatus = idxStatus !== -1 ? (cleanString(row[idxStatus]).toUpperCase() || "IN PROGRESS") : "IN PROGRESS";
-    if(currentStatus === "IN PROGRESS") {
-      liveProgressCounter++;
+    // ตรวจสอบข้อมูล Case Age จากแผ่นงานโดยตรง หากไม่มีให้ใช้การนับจำนวน Follow up แทน
+    let parsedAge = 0;
+    if(idxCaseAge !== -1 && row[idxCaseAge]) {
+      parsedAge = parseInt(row[idxCaseAge].replace(/[^0-9]/g, "")) || 0;
+    } else {
+      parsedAge = followUpHistory.length * 3;
     }
-
-    // คำนวณอายุของเคส (Case Age) โดยอิงตามจำนวนข้อมูลในช่องประวัติการบันทึกงาน
-    const caseAgeDays = followUpHistory.length * 3; // ตัวเลขจำลองโมเดลอายุงาน
 
     followUpHistory.reverse();
 
@@ -882,12 +899,12 @@ Promise.all([
       customerName: idxCust !== -1 ? (cleanString(row[idxCust]) || "ไม่ระบุชื่อลูกค้า") : "ไม่ระบุชื่อลูกค้า",
       status: currentStatus,
       owner: idxOwner !== -1 ? (cleanString(row[idxOwner]) || "ไม่ระบุชื่อ") : "ไม่ระบุชื่อ",
-      ageDays: caseAgeDays,
+      ageDays: parsedAge,
       history: followUpHistory
     });
   }
 
-  // พ่นตัวเลขเคสที่ค้างหน้าแดชบอร์ดให้ทีมงานดูสด ๆ
+  // แสดงผลยอดรวมงานค้างจริงนับจากสเตตัสล้วนๆ
   document.getElementById("live-progress-counter").textContent = liveProgressCounter.toLocaleString();
 
   initInventoryFilterEvents();
@@ -985,12 +1002,11 @@ function updateBottomCharts(selectedMonthKey) {
 }
 
 /* ===================================================
-   INVENTORY PIPELINE ALGORITHMS (DYNAMIC PASS & LOCK)
+   INVENTORY PIPELINE ALGORITHMS
    =================================================== */
 function initInventoryFilterEvents() {
   document.getElementById("searchBox").addEventListener("input", applyOpFilters);
   
-  // จัดลิงก์เหตุการณ์ปุ่มสถานะด้านบน
   const chkSuccess = document.getElementById("status-success");
   const chkProgress = document.getElementById("status-progress");
   
@@ -1007,18 +1023,15 @@ function initInventoryFilterEvents() {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
       checkbox.addEventListener("change", (e) => {
-        // 🔒 DYNAMIC LOGIC RULE: ติ๊กอันอื่นที่ไม่ใช่เปิดบาร์ จะทำการท้าทายขอรหัสผ่านจาก Sheets ทันที
         if(checkbox.checked && f.keyword !== "เปิดบาร์") {
           const userInputPass = prompt(`กรุณาระบุรหัสผ่านเพื่อสลับดูข้อมูลหมวด "${f.keyword}":`);
-          
           if(userInputPass !== cachedPasswordFromSheet) {
             alert("รหัสผ่านไม่ถูกต้อง! ระบบสกัดสิทธิ์การเข้าถึงข้อมูล");
-            checkbox.checked = false; // เด้งสลักกลับไปปิด
+            checkbox.checked = false;
             updateChipStyles();
             return;
           }
         }
-        
         updateChipStyles();
         applyOpFilters();
       });
@@ -1046,8 +1059,6 @@ function applyOpFilters() {
 
   let result = globalOpData;
 
-  // 1. FILTER STATUS LOGIC (ตามโจทย์ระบุเงื่อนไขการเลือก)
-  // ติ๊ก 2 อัน = โชว์ 2 อัน, ติ๊กอันเดียว = โชว์อันเดียว, ไม่ติ๊กอะไรเลย = แสดงทั้งหมด
   if(chkSuccess || chkProgress) {
     result = result.filter(item => {
       if(chkSuccess && item.status === "SUCCESS") return true;
@@ -1056,7 +1067,6 @@ function applyOpFilters() {
     });
   }
 
-  // 2. FILTER CHIPS CATEGORY
   if(activeTypes.length > 0) {
     result = result.filter(item => {
       const typeStr = String(item.caseType).toLowerCase();
@@ -1064,7 +1074,6 @@ function applyOpFilters() {
     });
   }
 
-  // 3. SEARCH TEXT
   if(q) {
     result = result.filter(item => 
       String(item.caseId).toLowerCase().includes(q) ||
@@ -1113,6 +1122,7 @@ function applySortOnOpFiltered() {
   renderOpTable(viewOpData);
 }
 
+// 2. RENDER TABLE WITH MODERN RIGHT ARROW (แทนแว่นขยายตัวเก่า)
 function renderOpTable(data) {
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0) {
@@ -1122,9 +1132,14 @@ function renderOpTable(data) {
 
   tbody.innerHTML = data.map((item, index) => `
     <tr onclick="getOpRowClickData(${index})">
-      <td class="col-code"><span class="cta-view-indicator">🔍</span>${item.caseId}</td>
+      <td class="col-code">${item.caseId}</td>
       <td class="col-name">${item.caseName}</td>
-      <td class="col-customer">${item.customerName}</td>
+      <td class="col-customer">
+        <div class="customer-cell-flex">
+          <div class="customer-text-wrap">${item.customerName}</div>
+          <div class="modern-arrow-right">➔</div>
+        </div>
+      </td>
     </tr>
   `).join("");
 }
@@ -1139,14 +1154,14 @@ function updateResultCount(n) {
 }
 
 /* ===================================================
-   MODAL TIMELINE (SCROLLABLE & AGE TRACKING FIX)
+   MODAL TIMELINE (MOBILE HEIGHT & DISPLAY LOGIC FIXED)
    =================================================== */
 function openTimelineModal(item) {
+  const modal = document.getElementById("timelineModal");
+  
   document.getElementById("modalCustomerName").textContent = item.customerName;
   document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | หมวด: ${item.caseType} | สถานะ: ${item.status}`;
   document.getElementById("modalOwner").textContent = item.owner;
-  
-  // พ่นตัวเลขอายุเคสไว้ข้าง ๆ หัวการ์ดตามสั่งเป๊ะ
   document.getElementById("modalCaseAge").textContent = `Age: ${item.ageDays}d`;
 
   const timelineContent = document.getElementById("modalTimelineContent");
@@ -1166,11 +1181,15 @@ function openTimelineModal(item) {
     });
   }
 
-  document.getElementById("timelineModal").classList.add("active");
+  // ปลุกสเตตัสกระตุ้นการแสดงผลจากล่างจอคอมพิวเตอร์และมือถือ
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden"; // ล็อกหน้าจอด้านหลังไม่ให้ไถเลื่อนหลุดตำแหน่งขณะเปิดดูป๊อปอัพ
 }
 
 function closeModal() {
-  document.getElementById("timelineModal").classList.remove("active");
+  const modal = document.getElementById("timelineModal");
+  modal.classList.remove("active");
+  document.body.style.overflow = ""; // คืนสิทธิ์การไถหน้าจอหลัก
 }
 
 window.addEventListener("click", (e) => {
