@@ -23,10 +23,9 @@
       background-color: #f8fafc;
       color: #1e293b;
       line-height: 1.6;
-      padding-top: 60px; /* เว้นพื้นที่ให้ยึดติดกับ Topbar เดิม */
+      padding-top: 60px;
     }
 
-    /* Container */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -34,10 +33,9 @@
     }
 
     .section-padding {
-      padding: 80px 0;
+      padding: 60px 0;
     }
 
-    /* Badge & Typography */
     .badge {
       display: inline-block;
       padding: 6px 16px;
@@ -65,11 +63,8 @@
       margin-bottom: 48px;
     }
 
-    /* ==========================================================================
-       HEADER PLACEHOLDER (ล้อตามระบบโครงสร้างหลักของคุณ)
-       ========================================================================== */
     #header-placeholder {
-      min-height: 60px;
+      min-height: auto;
     }
 
     /* ==========================================================================
@@ -77,9 +72,9 @@
        ========================================================================== */
     .hero {
       position: relative;
-      background: #0f172a; /* สีกรมท่า/ดำ ลึกแบบพรีเมียม */
+      background: #0f172a; 
       color: #ffffff;
-      padding: 100px 0 140px;
+      padding: 40px 0 60px;
       overflow: hidden;
     }
 
@@ -99,29 +94,29 @@
       font-size: 14px;
       font-weight: 700;
       letter-spacing: 4px;
-      color: #f59e0b; /* สีส้มเหลืองเนื้อเทป */
+      color: #f59e0b; 
       margin-bottom: 12px;
     }
 
     .hero-title {
-      font-size: 48px;
+      font-size: 42px;
       font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 24px;
+      line-height: 1.3;
+      margin-bottom: 20px;
       letter-spacing: -1px;
     }
 
     .hero-desc {
       font-size: 16px;
       color: #94a3b8;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
       line-height: 1.8;
     }
 
     .hero-features-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
     }
 
     .hero-tag {
@@ -160,7 +155,7 @@
     }
 
     /* ==========================================================================
-       MINDSET CHANGER (โซนปรับแนวคิดอู่ประกัน / ค่าแรง vs ค่าวัสดุ)
+       MINDSET CHANGER
        ========================================================================== */
     .mindset-section {
       background: #ffffff;
@@ -195,7 +190,6 @@
       margin-bottom: 16px;
     }
 
-    /* ข้อมูลสัดส่วน 10% */
     .ratio-card {
       background: #0f172a;
       color: white;
@@ -218,35 +212,37 @@
     }
 
     /* ==========================================================================
-       PRODUCT SHOWCASE (โซนแสดงความหลากหลายสินค้าแพ็คเกจ)
+       NEW PRODUCT SHOWCASE (สลับซ้าย-ขวา ขนาดกะทัดรัด ไม่กินพื้นที่ Mobile)
        ========================================================================== */
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
+    .showcase-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px; /* กระชับระยะห่างช่องไฟ */
     }
 
-    .showcase-card {
+    .showcase-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 32px;
-      text-align: center;
-      transition: all 0.3s ease;
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: 1fr 2fr; /* ให้ภาพขนาดเล็กกว่าเนื้อหา */
+      align-items: center;
+      padding: 24px;
+      gap: 32px;
+      overflow: hidden;
     }
 
-    .showcase-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
-      border-color: #cbd5e1;
+    /* คุมให้สลับขวา-ซ้าย สำหรับแถวที่ 2 */
+    .showcase-row.reverse {
+      grid-template-columns: 2fr 1fr;
     }
 
     .showcase-img-wrapper {
-      height: 220px;
+      width: 100%;
+      height: 160px; /* จำกัดความสูงรูปไม่ให้ดึงหน้าเว็บยาว */
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 24px;
     }
 
     .showcase-img {
@@ -255,19 +251,21 @@
       object-fit: contain;
     }
 
-    .showcase-card h4 {
-      font-size: 18px;
+    .showcase-text-side h4 {
+      font-size: 20px;
       color: #0f172a;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      font-weight: 700;
     }
 
-    .showcase-card p {
+    .showcase-text-side p {
       font-size: 14px;
-      color: #64748b;
+      color: #475569;
+      line-height: 1.6;
     }
 
     /* ==========================================================================
-       TECHNICAL SPECIFICATIONS (ตารางข้อมูลเทคนิค)
+       TECHNICAL SPECIFICATIONS
        ========================================================================== */
     .spec-section {
       background: #0f172a;
@@ -333,7 +331,7 @@
     }
 
     /* ==========================================================================
-       STEP BY STEP USAGE (ขั้นตอนการใช้งาน)
+       STEP BY STEP USAGE
        ========================================================================== */
     .step-grid {
       display: grid;
@@ -346,7 +344,6 @@
       border: 1px solid #e2e8f0;
       padding: 24px;
       border-radius: 12px;
-      position: relative;
     }
 
     .step-num {
@@ -416,6 +413,28 @@
       color: #475569;
     }
 
+    /* กล่องแจ้งเตือนความปลอดภัยข้อควรระวัง */
+    .warning-box {
+      margin-top: 32px;
+      background: #fff8f8;
+      border-left: 4px solid #ef4444;
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .warning-box h5 {
+      color: #991b1b;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .warning-box p {
+      color: #7f1d1d;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
     /* ==========================================================================
        RESPONSIVE MEDIA QUERIES
        ========================================================================== */
@@ -426,21 +445,42 @@
     }
 
     @media (max-width: 768px) {
-      .hero-grid, .mindset-grid, .showcase-grid, .spec-grid, .benefit-grid {
+      body {
+        padding-top: 50px;
+      }
+      .hero-grid, .mindset-grid, .spec-grid, .benefit-grid {
         grid-template-columns: 1fr;
       }
+      
+      /* ปรับดีไซน์จุดโชว์สินค้าให้แบนราบบน Mobile ไม่ให้การ์ดสูงเกินไป */
+      .showcase-row, .showcase-row.reverse {
+        grid-template-columns: 1fr; /* ยุบรวมเป็น 1 คอลัมน์บนมือถือ */
+        padding: 20px;
+        gap: 16px;
+        text-align: center;
+      }
+      
+      .showcase-row.reverse .showcase-img-wrapper {
+        order: -1; /* บังคับให้รูปภาพในแถวสลับย้ายกลับมาอยู่ด้านบนของตัวอักษรเพื่อความเป็นระเบียบ */
+      }
+
+      .showcase-img-wrapper {
+        height: 130px; /* ลดความสูงของรูปลงอีกเมื่ออยู่บน Mobile */
+      }
+
       .hero {
-        padding: 60px 0 80px;
+        padding: 30px 0 40px;
         text-align: center;
       }
       .hero-title {
-        font-size: 36px;
+        font-size: 32px;
       }
       .hero-features-list {
         justify-content: center;
       }
       .hero-image-container {
         order: -1;
+        margin-bottom: 20px;
       }
       .mindset-box {
         border-left: none;
@@ -456,7 +496,6 @@
 </head>
 <body>
 
-  <!-- PLACEHOLDER สำหรับดึง TOPBAR HEADER อัตโนมัติ -->
   <div id="header-placeholder"></div>
 
   <!-- ==========================================================================
@@ -470,12 +509,13 @@
           <div class="hero-brand">DOMAC PREMIUM BRAND</div>
           <h1 class="hero-title">กระดาษกาว D1620YP<br>สำหรับงานพ่นสีรถยนต์มืออาชีพ</h1>
           <p class="hero-desc">
-            เพราะวัสดุที่ดีคือกุญแจสำคัญของช่างพ่นสีระดับสากล เทปกระดาษย่นเกรดพรีเมียมจากแบรนด์ DOMAC 
+            เพราะวัสดุที่ดีคือกุญแจสำคัญของช่างพ่นสีระดับสากล กระดาษกาวเกรดพรีเมียมจากแบรนด์ DOMAC 
             ที่ถูกออกแบบขึ้นมาเพื่อรองรับงานพ่นซ่อมสีที่ต้องการความแม่นยำสูง ตัดเส้นคมชัด และทนต่อความร้อนในห้องอบได้อย่างสมบูรณ์แบบ
           </p>
           <div class="hero-features-list">
-            <span class="hero-tag">✓ ทนความร้อน 100°C</span>
-            <span class="hero-tag">✓ กาวเนื้อยางธรรมชาติ (Natural Rubber)</span>
+            <span class="hero-tag">✓ พลังยึดเกาะสูง</span>
+            <span class="hero-tag">✓ บางพิเศษตัดเส้นคม</span>
+            <span class="hero-tag">✓ เคลือบสารกันซึม</span>
             <span class="hero-tag">✓ ลอกออกไม่ทิ้งคราบกาว</span>
           </div>
         </div>
@@ -487,7 +527,7 @@
   </section>
 
   <!-- ==========================================================================
-       2. MINDSET CHANGER SECTION (ประเด็น 10%)
+       2. MINDSET CHANGER SECTION
        ========================================================================== -->
   <section class="mindset-section section-padding">
     <div class="container">
@@ -495,13 +535,13 @@
         <div class="mindset-grid">
           <div class="mindset-text">
             <span class="badge">ความเข้าใจผิดเกี่ยวกับต้นทุนอู่</span>
-            <h3>ทำไมการเลือกใช้ "เทปกาวที่ดีที่สุด" ถึงประหยัดต้นทุนให้อู่ได้มากกว่า?</h3>
+            <h3>ทำไมการเลือกใช้ "กระดาษกาวที่ดีที่สุด" ถึงประหยัดต้นทุนให้อู่ได้มากกว่า?</h3>
             <p>
-              ในกระบวนการซ่อมสีรถยนต์ <strong>"วัสดุสิ้นเปลืองทั้งหมดคิดเป็นค่าใช้จ่ายเพียง 10% เท่านั้น"</strong> 
+              In กระบวนการซ่อมสีรถยนต์ <strong>"วัสดุสิ้นเปลืองทั้งหมดคิดเป็นค่าใช้จ่ายเพียง 10% เท่านั้น"</strong> 
               ในขณะที่อีก 90% คือค่าแรงช่าง ค่าสถานที่ และค่าบริหารจัดการภายในอู่
             </p>
             <p>
-              อู่ประกันหลายแห่งมักพยายามลดต้นทุนด้วยการเลือกใช้เทปกาวราคาถูก แต่ต้องแลกมาด้วยความเสี่ยงระดับสูง 
+              อู่ประกันหลายแห่งมักพยายามลดต้นทุนด้วยการเลือกใช้กระดาษกาวราคาถูก แต่ต้องแลกมาด้วยความเสี่ยงระดับสูง 
               เช่น คราบกาวฝังแน่นหลังจากเข้าห้องอบ หรือเส้นสีที่ซึมเลอะเทอะ จนทำให้ช่างต้องเสียเวลาขัดคราบ รื้อมาส์ก และพ่นแก้งานใหม่ 
               การเลือกใช้ของดีจึงเป็นการปกป้อง 90% ของต้นทุนที่เหลือได้อย่างชาญฉลาดที่สุด
             </p>
@@ -509,7 +549,7 @@
           <div>
             <div class="ratio-card">
               <div class="ratio-num">10%</div>
-              <div class="ratio-label">คือสัดส่วนค่าวัสดุในงานซ่อมสี<br>การเลือกเทปคุณภาพสูงสุดจึงคุ้มค่ากว่าเมื่อเทียบกับเวลาที่เสียไปกับการแก้งาน</div>
+              <div class="ratio-label">คือสัดส่วนค่าวัสดุในงานซ่อมสี<br>การเลือกกระดาษกาวคุณภาพสูงสุดจึงคุ้มค่ากว่าเมื่อเทียบกับเวลาที่เสียไปกับการแก้งาน</div>
             </div>
           </div>
         </div>
@@ -518,58 +558,66 @@
   </section>
 
   <!-- ==========================================================================
-       3. PRODUCT SHOWCASE (คลังสินค้าและการจัดจำหน่าย)
+       3. PRODUCT SHOWCASE (ปรับสัดส่วนรูปเล็ก+สลับด้าน กระชับพื้นที่เซฟจอโมบาย)
        ========================================================================== -->
   <section class="section-padding">
     <div class="container">
-      <div style="text-align: center; margin-bottom: 50px;">
+      <div style="text-align: center; margin-bottom: 40px;">
         <span class="badge">Production & Inventory</span>
         <h2 class="section-title">มั่นใจในศักยภาพ พร้อมจัดส่งจำนวนมาก</h2>
         <p class="section-subtitle" style="margin: 0 auto;">เราคัดสรรแบรนด์ DOMAC เข้าสู่ระบบคลังสินค้าขนาดใหญ่ เพื่อตอบโจทย์ทุกกลุ่มงานแก่อู่ซ่อมสีรถยนต์ชั้นนำและอู่ประกันทั่วประเทศ</p>
       </div>
 
-      <div class="showcase-grid">
-        <!-- ชิ้นที่ 1: ม้วนเดี่ยว -->
-        <div class="showcase-card">
+      <div class="showcase-container">
+        
+        <!-- ชิ้นที่ 1: ม้วนเดี่ยว (รูปอยู่ซ้าย ข้อความอยู่ขวา) -->
+        <div class="showcase-row">
           <div class="showcase-img-wrapper">
             <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162117/domac_D1620YP_fhc4wc.png" alt="กระดาษกาว DOMAC D1620YP 1 ม้วน" class="showcase-img">
           </div>
-          <h4>DOMAC D1620YP (Single Roll)</h4>
-          <p>เทปกระดาษย่นมาส์กกิ้งสีเหลือง ขนาดมาตรฐานสำหรับงานเก็บรายละเอียด</p>
+          <div class="showcase-text-side">
+            <h4>DOMAC D1620YP (Single Roll)</h4>
+            <p>กระดาษกาวมาส์กกิ้งสีเหลือง ขนาดมาตรฐานสำหรับงานเก็บรายละเอียด หน้ากว้าง 20มม. <strong>ความยาวคุ้มค่าพิเศษ 20 หลา</strong> ตัวเนื้อกาวเหนียวแน่นสม่ำเสมอ ออกแบบมาให้ตอบโจทย์สรีระการลากเส้นและปิดมุมโค้งบนตัวถังรถยนต์ได้อย่างคล่องตัว</p>
+          </div>
         </div>
 
-        <!-- ชิ้นที่ 2: แถว 10 ม้วน -->
-        <div class="showcase-card">
-          <div class="showcase-img-wrapper">
-            <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162149/domac_mang_tape_rolls_qnhkqk.png" alt="กระดาษกาว DOMAC เหลือง 1 แถว 10 ม้วน" class="showcase-img">
+        <!-- ชิ้นที่ 2: แถว 10 ม้วน (รูปอยู่ขวา ข้อความอยู่ซ้าย) -->
+        <div class="showcase-row reverse">
+          <div class="showcase-text-side">
+            <h4>แบบแถวแพ็คห่อ (10 Rolls)</h4>
+            <p>บรรจุแถวละ 10 ม้วน ห่อหุ้มแน่นหนาเพื่อรักษาสภาพความหนืดของหน้ากาวและป้องกันเศษฝุ่นช็อป ผงละอองขัดสีเข้ามาเกาะตัวเทปก่อนการเริ่มใช้งานจริง ช่วยให้อู่จัดระเบียบวัสดุสิ้นเปลืองได้ดียิ่งขึ้น</p>
           </div>
-          <h4>Pack (10 Rolls)</h4>
-          <p>แพ็คแถวห่อหุ้มมิดชิด ป้องกันฝุ่นละอองเกาะหน้ากาวก่อนเริ่มใช้งานหน้างาน</p>
+          <div class="showcase-img-wrapper">
+            <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779163224/%E0%B9%80%E0%B8%9B%E0%B8%B4%E0%B8%94%E0%B8%A5%E0%B8%B1%E0%B8%87_domac2_sxlj9u.png" alt="กระดาษกาว DOMAC เหลืองแบบแพ็ค" class="showcase-img">
+          </div>
         </div>
 
-        <!-- ชิ้นที่ 3: ยกกล่อง -->
-        <div class="showcase-card">
+        <!-- ชิ้นที่ 3: ยกกล่อง (รูปอยู่ซ้าย ข้อความอยู่ขวา) -->
+        <div class="showcase-row">
           <div class="showcase-img-wrapper">
-            <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162201/%E0%B8%A5%E0%B8%B1%E0%B8%87_1620_kusajc.png" alt="ลังกระดาษกาว DOMAC 1 ลัง" class="showcase-img">
+            <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162833/domac_%E0%B8%A5%E0%B8%B1%E0%B8%87_x700_eobtiu.png" alt="กระดาษกาว DOMAC ยกลัง 700 ม้วน" class="showcase-img">
           </div>
-          <h4>Carton Box Box (Bulk)</h4>
-          <p>บรรจุยกลังอย่างแน่นหนา เหมาะสำหรับอู่สีขนาดกลางถึงขนาดใหญ่ที่ใช้ปริมาณสม่ำเสมอ</p>
+          <div class="showcase-text-side">
+            <h4>ยกลังสำหรับอู่มาตรฐาน (700 Rolls)</h4>
+            <p>ยกลังใหญ่บรรจุอย่างปลอดภัย โครงสร้างกล่องหนาพิเศษป้องกันแรงกระแทกจากขนส่ง เหมาะสำหรับอู่สีขนาดกลางถึงขนาดใหญ่ที่ใช้ปริมาณสม่ำเสมอ โดยอู่ขนาดกลางเฉลี่ยจะใช้งานได้ประมาณ 2 เดือน ช่วยลดความถี่ในการสั่งซื้อบ่อยครั้ง</p>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
 
   <!-- ==========================================================================
-       4. TECHNICAL SPECIFICATIONS (ตารางข้อมูลเทคนิค)
+       4. TECHNICAL SPECIFICATIONS & CORE VALUES
        ========================================================================== -->
   <section class="spec-section section-padding">
     <div class="container">
       <div class="spec-grid">
         <div>
           <span class="badge" style="background: rgba(255,255,255,0.1); color: #f59e0b;">Technical Data Sheet</span>
-          <h2 class="section-title">ข้อมูลทางเทคนิคของตัวเทป D1620YP</h2>
+          <h2 class="section-title">ข้อมูลทางเทคนิคของตัวกระดาษกาว D1620YP</h2>
           <p style="color: #94a3b8; font-size: 15px; margin-bottom: 32px; line-height: 1.8;">
-            พิสูจน์ด้วยตัวเลขมาตรฐานสากล เทป DOMAC เลือกใช้ชนิดกาวกาวซิลิโคนธรรมชาติ (Natural Rubber Adhesive) 
+            พิสูจน์ด้วยตัวเลขมาตรฐานสากล กระดาษกาว DOMAC เลือกใช้ชนิดกาวซิลิโคนธรรมชาติ (Natural Rubber Adhesive) 
             ที่เด่นในเรื่องการเกาะติดหนึบทันที แต่ลอกออกได้อย่างหมดจดโดยไม่ทำลายชั้นแลคเกอร์รถยนต์
           </p>
           <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779161902/domac_pallet_m7uko3.jpg" alt="พาเลทลังสินค้า DOMAC ในคลังสินค้าแสดงความพร้อมส่งมอบจำนวนมาก" class="spec-banner-img">
@@ -611,7 +659,7 @@
             </div>
             <div class="spec-row">
               <span class="spec-label">การทนความร้อน (Temperature Resistant)</span>
-              <span class="spec-value">100°C</span>
+              <span class="spec-value">ทนความร้อนสูง (High Temp Resistant)</span>
             </div>
             <div class="spec-row">
               <span class="spec-label">การทนต่อแสง UV (UV Resistant)</span>
@@ -624,7 +672,7 @@
           </div>
           
           <div class="spec-compare-note">
-            💡 <strong>เทียบเท่าแบรนด์สากล:</strong> คุณสมบัติและประสิทธิภาพการยึดติดเกรดเดียวกับเทปคุณภาพสูงระดับอิตาลีรุ่นยอดนิยมอย่าง Sicad เทียบเคียงโมเดล MSK 93, 94, 95, 96, 98 และ MSK 99 ได้อย่างไร้กังวล
+            💡 <strong>เทียบเท่าแบรนด์สากล:</strong> คุณสมบัติและประสิทธิภาพการยึดติดเกรดเดียวกับกระดาษกาวคุณภาพสูงระดับอิตาลีรุ่นยอดนิยมอย่าง Sicad เทียบเคียงโมเดล MSK 93, 94, 95, 96, 98 และ MSK 99 ได้อย่างไร้กังวล
           </div>
         </div>
       </div>
@@ -632,110 +680,108 @@
   </section>
 
   <!-- ==========================================================================
-       5. USAGE STEPS (ขั้นตอนการทำงาน)
+       5. USAGE STEPS
        ========================================================================== -->
   <section class="section-padding">
     <div class="container">
       <div style="text-align: center; margin-bottom: 50px;">
         <span class="badge">Application Guide</span>
         <h2 class="section-title">ขั้นตอนการใช้งานในอู่สีเพื่อให้ได้ประสิทธิภาพสูงสุด</h2>
-        <p class="section-subtitle" style="margin: 0 auto;">คู่มือเชิงปฏิบัติสำหรับการใช้งานร่วมกับเทป D1620YP เพื่อผลลัพธ์ของเส้นสีที่เนียนกริบ ไร้รอยซึม</p>
+        <p class="section-subtitle" style="margin: 0 auto;">คู่มือเชิงปฏิบัติสำหรับการใช้งานร่วมกับกระดาษกาว D1620YP เพื่อผลลัพธ์ของเส้นสีที่เนียนกริบ ไร้รอยซึม</p>
       </div>
 
       <div class="step-grid">
-        <!-- Step 1 -->
         <div class="step-card">
           <div class="step-num">01</div>
           <h4>เตรียมพื้นผิว</h4>
-          <p>ทำความสะอาดพื้นผิวรถยนต์ให้ปราศจากฝุ่น คราบน้ำมัน หรือสิ่งสกปรก เพื่อให้เทปกาวทำงานได้เต็มประสิทธิภาพ</p>
+          <p>ทำความสะอาดพื้นผิวรถยนต์ให้ปราศจากฝุ่น คราบน้ำมัน หรือสิ่งสกปรก เพื่อให้กระดาษกาวทำงานได้เต็มประสิทธิภาพ</p>
         </div>
-        <!-- Step 2 -->
         <div class="step-card">
           <div class="step-num">02</div>
           <h4>มาส์กส่วนสำคัญ</h4>
-          <p>ใช้เทปปิดขอบจุดที่ไม่ต้องการให้โดนสีพ่นโดยตรง เช่น ขอบกระจก ขอบไฟรถ โลโก้ หรือชิ้นส่วนเดิมที่ไม่เกี่ยวข้องกัน</p>
+          <p>ใช้กระดาษกาวปิดขอบจุดที่ไม่ต้องการให้โดนสีพ่นโดยตรง เช่น ขอบกระจก ขอบไฟรถ โลโก้ หรือชิ้นส่วนเดิมที่ไม่เกี่ยวข้องกัน</p>
         </div>
-        <!-- Step 3 -->
         <div class="step-card">
           <div class="step-num">03</div>
           <h4>คลุมพื้นที่รอบข้าง</h4>
-          <p>ติดเทปกาวเข้ากับกระดาษหนังสือพิมพ์หรือกระดาษมาส์กเฉพาะ ปิดคลุมพื้นที่วงกว้างเพื่อดักฝุ่นละอองสีละเลงกระจาย</p>
+          <p>ติดกระดาษกาวเข้ากับกระดาษหนังสือพิมพ์หรือกระดาษมาส์กเฉพาะ ปิดคลุมพื้นที่วงกว้างเพื่อดักฝุ่นละอองสีละเลงกระจาย</p>
         </div>
-        <!-- Step 4 -->
         <div class="step-card">
           <div class="step-num">04</div>
           <h4>ทำการพ่นสี</h4>
-          <p>ลงมือทำสีบนส่วนที่ต้องการซ่อมหรือพ่นใหม่ ตัวเทปทนสารเคมีและน้ำมันในสีพ่นรถยนต์ได้อย่างดีเยี่ยม</p>
+          <p>ลงมือทำสีบนส่วนที่ต้องการซ่อมหรือพ่นใหม่ ตัวกระดาษกาวทนสารเคมีและน้ำมันในสีพ่นรถยนต์ได้อย่างดีเยี่ยม</p>
         </div>
-        <!-- Step 5 -->
         <div class="step-card">
           <div class="step-num">05</div>
-          <h4>ลอกเทปหลังแห้ง</h4>
-          <p>ลอกเทปกาวออกอย่างระมัดระวังหลังสีเริ่มเซ็ตตัวแห้งพอดี จะได้แนวเส้นขอบสีที่คมชัดและไร้คราบกาวตกค้างกวนใจ</p>
+          <h4>ลอกกระดาษกาวหลังแห้ง</h4>
+          <p>ลอกกระดาษกาวออกอย่างระมัดระวังหลังสีเริ่มเซ็ตตัวแห้งพอดี จะได้แนวเส้นขอบสีที่คมชัดและไร้คราบกาวตกค้างกวนใจ</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ==========================================================================
-       6. SUMMARY BENEFITS & PACKING VIEW
+       6. SUMMARY BENEFITS & CORE STRENGTHS (อัปเดตรูปใหม่ + เนื้อหาความคุ้มค่าเชิงลึก)
        ========================================================================== -->
   <section class="benefit-section section-padding">
     <div class="container">
       <div class="spec-grid" style="align-items: center;">
         <div>
-          <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779162009/Image_20240829100530_i566j7.jpg" alt="ถ่ายมุมมองจากด้านบนเห็นม้วนเทปกระดาษกาวจัดเรียงเต็มกล่องลัง DOMAC" style="width: 100%; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+          <!-- อัปเดตรูปภาพ Core Strength ใหม่ตามบรีฟ -->
+          <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779164340/domac_1620_ypoj2_mkuvlw.png" alt="กระดาษกาว DOMAC D1620YP สำหรับมืออาชีพ" style="width: 100%; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
         </div>
         <div>
           <span class="badge">Core Strength</span>
-          <h2 class="section-title">สรุปคุณสมบัติเด่นที่ช่างพ่นสีเลือกเจาะจงใช้</h2>
+          <h2 class="section-title">ทำไมดีไซน์ของ DOMAC จึงตอบโจทย์งานช่างจริง?</h2>
           
           <div class="benefit-grid" style="margin-top: 24px;">
             <div class="benefit-item">
               <div class="benefit-icon">✓</div>
               <div class="benefit-content">
-                <h4>แรงยึดเกาะติดแน่น ทนชื้น</h4>
-                <p>ติดสปริงตัวได้ดีตามขอบโค้งมน ไม่ล่อนหลุดระหว่างที่ลมเป่าแรงจากปืนพ่นสี</p>
+                <h4>ความยาว 20 หลา เพื่อต้นทุนที่ถูกลง</h4>
+                <p>เราเลือกใช้ความยาว 20 หลา เพื่อช่วยลดต้นทุนเฉลี่ยต่อหลาของอู่ให้ต่ำลง เนื่องจากสัดส่วนของต้นทุนแกนกระดาษต่อความยาวถูกกระจายออกไป ส่งผลให้แบบ 20 หลาที่มีคุณภาพสูงตัวนี้ มีราคาประหยัดกว่าแบบ 10 หลาทั่วไปในท้องตลาด ซึ่งเทปกาวส่วนใหญ่แบบ 10 หลาเหล่านั้นไม่ได้ออกแบบมาสำหรับงานพ่นสีโดยเฉพาะ</p>
               </div>
             </div>
 
             <div class="benefit-item">
               <div class="benefit-icon">✓</div>
               <div class="benefit-content">
-                <h4>ทนน้ำมันและแสง UV ได้ 7 วัน</h4>
-                <p>กรณีจอดพักรอชิ้นส่วนแห้งนอกอาคาร ทนแดดเมืองไทยได้สบาย แกะออกง่ายไม่กรอบแตก</p>
+                <h4>เครื่องจักรมาตรฐานสูง ตัดขอบตรงแนวคม</h4>
+                <p>การตัดเส้นพ่นสีให้ตรงเฉียบและเนียนกริบ จำเป็นต้องพึ่งพากระบวนการตัดม้วนจากเครื่องจักรที่มีคุณภาพสูง หากเป็นเทปที่ไม่ได้มาตรฐาน เวลาช่างลากเส้นตรงเพื่อมาส์กแนว เส้นพ่นอาจจะโย้โค้งไปโค้งมา ทำให้ผลงานสูญเสียความเป็นมืออาชีพ</p>
               </div>
             </div>
 
             <div class="benefit-item">
               <div class="benefit-icon">✓</div>
               <div class="benefit-content">
-                <h4>การยึดติดระหว่างเทปดีเยี่ยม</h4>
-                <p>แปะทับซ้อนเกยกันเองระหว่างแนวเทปได้สนิท ไม่มีรอยอ้าให้ละอองสีแทรกซึมผ่านเข้าไป</p>
+                <h4>การเคลือบสารกันซึมที่ประหยัดเวลา</h4>
+                <p>ตัวเนื้อกระดาษผ่านการเคลือบสารป้องกันของเหลวซึมผ่านอย่างประณีต ช่วยสกัดกั้นไม่ให้เนื้อสีหรือสารละลายทินเนอร์ซึมทะลุชั้นกระดาษไปเลอะพื้นผิวด้านล่าง ช่วยเซฟเวลาช่างไม่ต้องมาคอยเช็ดหรือแก้งานซ้ำซ้อน</p>
               </div>
             </div>
 
             <div class="benefit-item">
               <div class="benefit-icon">✓</div>
               <div class="benefit-content">
-                <h4>ลอกออกหมดจด ตัดเส้นคมชัด</h4>
-                <p>ทิ้งร่องรอยงานเรียบเนียนระดับส่งมอบรถหรู ไม่ต้องมานั่งเก็บงานรอบสอง</p>
+                <h4>บางพิเศษ ฉีกง่าย ไม่ลดทอนคุณภาพ</h4>
+                <p>โครงสร้างกระดาษออกแบบมาให้มีความบางเป็นพิเศษ เพื่อให้ได้รอยต่อเส้นสีที่บางคมชัดที่สุด ช่างทำงานง่ายสามารถใช้นิ้วมือฉีกได้อย่างสะดวดรวดเร็ว แต่ยังคงรักษาแรงดึงเหนียวทนทาน ไม่ขาดกลางคันขณะดึงลากเส้น</p>
               </div>
             </div>
           </div>
+
+          <!-- กล่องข้อควรระวังระวังเชิงเทคนิคที่เป็นกลางน่าเชื่อถือ -->
+          <div class="warning-box">
+            <h5>⚠️ ข้อแนะนำเชิงช่างเทคนิคเพื่อการทำงานที่สมบูรณ์แบบ</h5>
+            <p>ในกรณีที่รถยนต์ผ่านการซ่อมสีหรือทำสีเฉพาะจุดมาจากหลายแหล่งก่อนหน้านี้ หากชั้นแลคเกอร์เดิม (Clear Coat) หรือสีรองพื้นเดิมที่ทำมาไม่ได้มาตรฐานความยึดเกาะที่ถูกต้อง ตัวชั้นผิวหน้าสีเดิมอาจหลุดลอกติดขึ้นมาพร้อมกับเนื้อเทปได้เมื่อดึงออก ซึ่งอาการลักษณะนี้จะเกิดขึ้นได้กับเทปกาวมาส์กกิ้งสำหรับพ่นสีรถยนต์ทุกแบรนด์ในอุตสาหกรรม ช่างจึงควรประเมินสภาพชั้นผิวเดิมและใช้ความระมัดระวังในการลอกตามเทคนิคขั้นสูง</p>
+          </div>
+
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PLACEHOLDER สำหรับดึง FOOTER อัตโนมัติ -->
   <div id="footer-placeholder"></div>
 
-  <!-- ==========================================================================
-       SCRIPT FOR LOADING HEADER/FOOTER (ผสานเข้ากับระบบเดิม)
-       ========================================================================== -->
   <script>
-    // โหลดชิ้นส่วน Header และผสานสคริปต์การเปิดปิด Hamburger เมนู
     fetch("header.html")
       .then(response => {
         if(!response.ok) throw new Error('Header network error');
@@ -755,7 +801,6 @@
         }
       }).catch(err => console.log("Header element omitted or running locally."));
 
-    // โหลดชิ้นส่วน Footer
     fetch("footer.html")
       .then(response => {
         if(!response.ok) throw new Error('Footer network error');
