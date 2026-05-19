@@ -1,7 +1,6 @@
 <!-- ================= FOOTER ================= -->
 
 <style>
-
 /* =========================
    FOOTER BASE
 ========================= */
@@ -11,11 +10,10 @@
   padding: 70px 24px 40px;
   margin-top: 80px;
   position: relative;
-  overflow: hidden; /* ล็อคไม่ให้แสงเอฟเฟกต์หรือคอนเทนเนอร์ล้นจอมือถือ */
-  box-sizing: border-box; /* คำนวณขอบให้แม่นยำ ป้องกันการแสดงผลขาดหาย */
+  overflow: hidden; 
+  box-sizing: border-box; /* คุมขนาดขอบลดปัญหาการแสดงผลขาดหาย */
 }
 
-/* แสงเหลือบโทนน้ำเงินสไตล์มินิมอล */
 .footer::before {
   content: "";
   position: absolute;
@@ -24,7 +22,7 @@
   background: radial-gradient(circle, rgba(47, 94, 168, 0.12), transparent 70%); 
   top: -200px;
   right: -200px;
-  pointer-events: none; /* เพื่อไม่ให้บังการคลิกลิงก์ */
+  pointer-events: none;
 }
 
 .footer-inner {
@@ -51,7 +49,7 @@
 .footer-text {
   font-size: 14px;
   line-height: 1.9;
-  color: #a5b1c2; /* โทนตัวหนังสือนวลตา */
+  color: #a5b1c2;
   max-width: 420px;
 }
 
@@ -81,13 +79,11 @@
   transform: translateX(4px);
 }
 
-/* สไตล์เฉพาะสำหรับรายชื่อแบรนด์พาร์ทเนอร์ */
 .partner-item {
   display: flex;
   align-items: center;
 }
 
-/* เอฟเฟกต์พิเศษสำหรับพาร์ทเนอร์ที่เป็นลิงก์คลิกได้ */
 a.partner-item {
   cursor: pointer;
 }
@@ -111,23 +107,20 @@ a.partner-item:hover {
   font-size: 12px;
   color: #67748b;
   letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 /* =========================
-   MOBILE RESPONSIVE (ปรับแต่งพิเศษ)
+   MOBILE RESPONSIVE
 ========================= */
 @media(max-width:768px){
-
   .footer {
-    padding: 50px 20px 30px; /* กระชับพื้นที่ขอบสัดส่วนบนมือถือ */
+    padding: 50px 20px 30px;
     margin-top: 50px;
   }
 
   .footer-grid {
-    grid-template-columns: 1fr;
+    display: grid !important; /* บังคับให้ใช้ Grid แถวเดี่ยวบนมือถือ */
+    grid-template-columns: 1fr !important;
     gap: 34px;
   }
 
@@ -135,25 +128,20 @@ a.partner-item:hover {
     margin-top: 40px;
     padding-top: 20px;
     flex-direction: column;
-    align-items: flex-start; /* จัดเรียงเครดิตให้ชิดซ้ายอ่านง่ายบนมือถือ */
+    align-items: flex-start;
     gap: 10px;
   }
-
 }
-
 </style>
 
 <footer class="footer">
-
   <div class="footer-inner">
-
+    
     <div class="footer-grid">
 
       <!-- COLUMN 1: ABOUT -->
       <div>
-        <div class="footer-logo">
-          SUPERPART
-        </div>
+        <div class="footer-logo">SUPERPART</div>
         <div class="footer-text">
           ศูนย์รวมสีพ่นรถยนต์ สีโป๊ว แลคเกอร์ และอุปกรณ์งานคาร์แคร์ครบวงจร มุ่งเน้นการจัดหาผลิตภัณฑ์คุณภาพสูง เพื่อประสิทธิภาพสูงสุดในงานพ่นซ่อมสีรถยนต์ของคุณ
         </div>
@@ -161,9 +149,7 @@ a.partner-item:hover {
 
       <!-- COLUMN 2: NAVIGATION -->
       <div>
-        <div class="footer-title">
-          NAVIGATION
-        </div>
+        <div class="footer-title">NAVIGATION</div>
         <div class="footer-links">
           <a href="index.html">Home</a>
           <a href="products.html">All Products</a>
@@ -173,11 +159,9 @@ a.partner-item:hover {
         </div>
       </div>
 
-      <!-- COLUMN 3: PARTNERS & LINKS (เพิ่มลิงก์ DOMAC เรียบร้อย) -->
+      <!-- COLUMN 3: OUR PARTNERS -->
       <div>
-        <div class="footer-title">
-          OUR PARTNERS
-        </div>
+        <div class="footer-title">OUR PARTNERS</div>
         <div class="footer-links">
           <span class="partner-item">Nippon Paint</span>
           <span class="partner-item">3M</span>
@@ -186,17 +170,14 @@ a.partner-item:hover {
         </div>
       </div>
 
-    </div>
+    </div> <!-- ปิด footer-grid -->
 
-    <!-- FOOTER BOTTOM & NEW CREDIT WITH COPYRIGHT ICON -->
+    <!-- FOOTER BOTTOM -->
     <div class="footer-bottom">
-
       <div class="footer-copy">
         &copy; 2026 CHAMP CM &mdash; Digital Automotive Systems v2.4
       </div>
-
     </div>
 
-  </div>
-
+  </div> <!-- ปิด footer-inner -->
 </footer>
