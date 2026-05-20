@@ -238,15 +238,17 @@ input[type="checkbox"]:checked::after {
   white-space: nowrap;
 }
 .inventory-summary {
-  font-size: 11px;
+  font-size: 13px;                              /* ปรับขนาดตัวอักษรบน Desktop ให้ใหญ่เต็มตาขึ้น */
   color: #2f5ea8;
   font-weight: bold;
   background-color: #e8f0fe;
-  padding: 2px 6px;
+  padding: 4px 10px;                            /* เพิ่มความกว้างของกล่องข้อความ */
   border-radius: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-left: auto;                            /* ดันฝั่งซ้ายเพื่อให้ตัวเลขวิ่งไปชิดขวา */
+  /* margin: 0 auto; */                         /* หรือเปิดใช้งานบรรทัดนี้แทน ถ้าอยากให้อยู่ตรงกลาง */
 }
 .result-count {
   font-size: 11px;
