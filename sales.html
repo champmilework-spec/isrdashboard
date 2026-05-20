@@ -52,6 +52,71 @@ body{
 }
 
 /* =========================
+   NEW EXECUTIVE SUMMARY WIDGET ROW
+========================= */
+.summary-widget-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media(min-width: 768px) {
+  .summary-widget-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.widget-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+}
+.widget-stat-card .stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.widget-stat-card .stat-grid-vals {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.stat-val-block .year-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+.stat-val-block .money-num {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1c2434;
+}
+.stat-val-block .money-num.primary {
+  color: #ef4444;
+}
+.stat-val-block .money-num.secondary {
+  color: #2563eb;
+}
+.trend-indicator {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.trend-indicator.up {
+  background: #dcfce7;
+  color: #155724;
+}
+.trend-indicator.down {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+/* =========================
    CARDS & GRIDS (COMPACT MARGINS)
 ========================= */
 .section-top {
@@ -510,6 +575,44 @@ tbody tr:active {
 
   <div id="dashboardContent" style="display: none;">
     
+    <!-- EXECTIVE SALES SUMMARY & YTD PERFORMANCE WIDGETS -->
+    <div class="summary-widget-row">
+      <!-- 1. ยอดขายรวมทั้งปี -->
+      <div class="widget-stat-card">
+        <div class="stat-label">Annual Team Sales Summary</div>
+        <div class="summary-stat-data">
+          <div class="stat-grid-vals">
+            <div class="stat-val-block">
+              <span class="year-tag">ปีนี้ (2026):</span><br>
+              <span class="money-num primary" id="annualSales2026">0.00 M</span>
+            </div>
+            <div class="stat-val-block">
+              <span class="year-tag">ปีที่แล้ว (2025):</span><br>
+              <span class="money-num secondary" id="annualSales2025">0.00 M</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 2. เปรียบเทียบแบบ YTD จนถึงเดือนปัจจุบัน -->
+      <div class="widget-stat-card">
+        <div class="stat-label" id="ytdLabelTitle">YTD Comparison (Jan - May)</div>
+        <div class="summary-stat-data">
+          <div class="stat-grid-vals">
+            <div class="stat-val-block">
+              <span class="year-tag">YTD 2026:</span><br>
+              <span class="money-num primary" id="ytdSales2026">0.00 M</span>
+            </div>
+            <div class="stat-val-block">
+              <span class="year-tag">YTD 2025:</span><br>
+              <span class="money-num secondary" id="ytdSales2025">0.00 M</span>
+            </div>
+            <div class="trend-indicator" id="ytdGrowthTrend">0.0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 1. กราฟด้านบนสุด: ยอดรวมทั้งทีม YoY -->
     <div class="section-top">
       <div class="chart-card">
@@ -557,10 +660,7 @@ tbody tr:active {
       <div class="live-monitor-bar">
         <div class="live-pulse-group">
           <div class="pulse-dot"></div>
-          <span class="live-title">LIVE MONITOR
-            
-            
-            ING</span>
+          <span class="live-title">LIVE MONITORING</span>
         </div>
         <div>
           <span style="font-size:12px; color:#475569; font-weight:600; margin-right:4px;">งานค้างที่ต้องทำ:</span>
@@ -714,10 +814,41 @@ function loadLayoutTemplates() {
     if(headerHtml) document.getElementById("header-placeholder").innerHTML = headerHtml;
     if(footerHtml) document.getElementById("footer-placeholder").innerHTML = footerHtml;
     
-    setTimeout(() => {
-      if (typeof initMenuDropdowns === "function") { initMenuDropdowns(); }
-      if (typeof bindHamburgerClick === "function") { bindHamburgerClick(); }
-    }, 300); /* <-- ปรับเป็น 300ms เพื่อชัวร์ว่าโครงสร้างแฮมเบอร์เกอร์ถูกสร้างเสร็จก่อนเปิดการทำงาน */
+    const rebindMenuEvents = () => {
+      const btn = document.getElementById("menuBtn");
+      const dropdown = document.getElementById("menuDropdown");
+      if (btn && dropdown) {
+        btn.replaceWith(btn.cloneNode(true));
+        const newBtn = document.getElementById("menuBtn");
+        
+        newBtn.addEventListener("click", function(e) {
+          e.stopPropagation();
+          newBtn.classList.toggle("active");
+          dropdown.classList.toggle("active");
+        });
+        
+        document.addEventListener("click", function(e) {
+          if (!newBtn.contains(e.target) && !dropdown.contains(e.target)) {
+            newBtn.classList.remove("active");
+            dropdown.classList.remove("active");
+          }
+        });
+      }
+    };
+
+    setTimeout(rebindMenuEvents, 300);
+
+    const checkLoaderObserver = new MutationObserver(() => {
+      if (document.getElementById("dashboardContent").style.display === "block") {
+        rebindMenuEvents();
+        checkLoaderObserver.disconnect();
+      }
+    });
+    
+    const dashboardContainer = document.getElementById("dashboardContent");
+    if (dashboardContainer) {
+      checkLoaderObserver.observe(dashboardContainer, { attributes: true, attributeFilter: ['style'] });
+    }
   });
 }
 
@@ -804,6 +935,9 @@ Promise.all([
 
   renderYoYLineChart(teamTotal2025, teamTotal2026);
 
+  // คำนวณและแสดงผลกล่องรายงานสรุปยอดขายระดับบริหาร (Executive Summary Widgets)
+  calculateExecutiveStats(teamTotal2025, teamTotal2026);
+
   const selector = document.getElementById("monthSelector");
   monthOptions.forEach(opt => {
     const el = document.createElement("option");
@@ -814,9 +948,7 @@ Promise.all([
   
   selector.value = "2026-M05";
 
-  // ---------------------------------------------------
-  // ENGINE B: MAPPING หัวตารางเพื่อคัดแยกแถวอย่างแม่นยำ
-  // ---------------------------------------------------
+  // ENGINE B: LOGISTICS OPERATION PIPELINE
   const opLines = opCsv.split(/\r?\n/).filter(l => l.trim() !== "");
   const opRows = opLines.map(l => parseCSVLine(l));
   
@@ -857,7 +989,6 @@ Promise.all([
   });
   fuIndices.sort((a, b) => a.order - b.order);
 
-  // --- ปรับปรุงใหม่จุดนี้: นับสดคำว่า IN PROGRESS จากคอลัมน์ STATUS แถว 3 ลงไปตรงๆ เท่านั้น ---
   globalOpData = [];
   let liveProgressCounter = opRows.slice(startRowIndex).filter(row => {
     if (!row || idxStatus === -1) return false;
@@ -902,7 +1033,6 @@ Promise.all([
     });
   }
 
-  // อัปเดตยอดตัวเลขสรุปสดไปแสดงที่ Widget บาร์แดง
   document.getElementById("live-progress-counter").textContent = liveProgressCounter.toLocaleString();
 
   initInventoryFilterEvents();
@@ -915,6 +1045,41 @@ Promise.all([
   document.getElementById("loader").textContent = "โครงสร้างเซิร์ฟเวอร์ฐานข้อมูลขัดข้อง กรุณาตรวจสอบการเข้าถึงไฟล์ชีต";
   console.error(err);
 });
+
+/* ===================================================
+   FUNCTION: CALCULATE EXECUTIVE STATS & YTD
+   =================================================== */
+function calculateExecutiveStats(data25, data26) {
+  // 1. คำนวณยอดรวมทั้งปี (ล้านบาท)
+  let total2025 = data25.reduce((a, b) => a + b, 0);
+  let total2026 = data26.reduce((a, b) => a + b, 0);
+
+  document.getElementById("annualSales2025").textContent = (total2025 / 1000000).toFixed(2) + " M";
+  document.getElementById("annualSales2026").textContent = (total2026 / 1000000).toFixed(2) + " M";
+
+  // 2. คำนวณ Year-to-Date (YTD) จนถึงเดือนปัจจุบัน (สมมติเป้าหมายปัจจุบันถึง M05 / พฤษภาคม ตามค่าตั้งต้นระบบ)
+  let currentMonthLimit = 5; // Jan - May (5 เดือนแรก)
+  let ytd2025 = data25.slice(0, currentMonthLimit).reduce((a, b) => a + b, 0);
+  let ytd2026 = data26.slice(0, currentMonthLimit).reduce((a, b) => a + b, 0);
+
+  document.getElementById("ytdSales2025").textContent = (ytd2025 / 1000000).toFixed(2) + " M";
+  document.getElementById("ytdSales2026").textContent = (ytd2026 / 1000000).toFixed(2) + " M";
+
+  // 3. คำนวณอัตราการเติบโตของพอร์ต % Growth
+  let growth = 0;
+  if(ytd2025 > 0) {
+    growth = ((ytd2026 - ytd2025) / ytd2025) * 100;
+  }
+  
+  const trendEl = document.getElementById("ytdGrowthTrend");
+  if(growth >= 0) {
+    trendEl.textContent = "+" + growth.toFixed(1) + "%";
+    trendEl.className = "trend-indicator up";
+  } else {
+    trendEl.textContent = growth.toFixed(1) + "%";
+    trendEl.className = "trend-indicator down";
+  }
+}
 
 /* ===================================================
    CHART DRAWING & CONFIG
@@ -953,6 +1118,43 @@ function updateBottomCharts(selectedMonthKey) {
     totalMonthSum += val;
   });
 
+  // อัปเดตข้อความหัวข้อ YTD ตามเดือนที่เลือกเปลี่ยนใน Dropdown แบบไดนามิก
+  const optFound = monthOptions.find(o => o.key === selectedMonthKey);
+  if(optFound) {
+    const mNum = parseInt(optFound.monthCode.replace("M", ""));
+    const monthsThaiNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    document.getElementById("ytdLabelTitle").textContent = `YTD Comparison (Jan - ${monthsThaiNames[mNum-1] || 'May'})`;
+    
+    // คำนวณอัปเดตค่าสรุป YTD ใหม่ให้สัมพันธ์กับความลึกของเดือนที่เลือก
+    const sRows = document.getElementById("annualSales2025").textContent; // ล็อกอิงค่าหลักไว้
+    let rawSalesCsv = globalSalesData;
+    let tempTotal25 = Array(12).fill(0);
+    let tempTotal26 = Array(12).fill(0);
+    uniqueTimelineKeys.forEach((k, rIdx) => {
+      const parts = k.split("-");
+      const y = parts[0];
+      const mIdx = parseInt(parts[1].replace("M","")) - 1;
+      let sum = 0;
+      globalSalesData.forEach(st => { sum += st.data[rIdx]; });
+      if(y === "2025") tempTotal25[mIdx] = sum;
+      else if(y === "2026") tempTotal26[mIdx] = sum;
+    });
+    let ytd25 = tempTotal25.slice(0, mNum).reduce((a, b) => a + b, 0);
+    let ytd26 = tempTotal26.slice(0, mNum).reduce((a, b) => a + b, 0);
+    document.getElementById("ytdSales2025").textContent = (ytd25 / 1000000).toFixed(2) + " M";
+    document.getElementById("ytdSales2026").textContent = (ytd26 / 1000000).toFixed(2) + " M";
+    let growth = ytd25 > 0 ? ((ytd26 - ytd25) / ytd25) * 100 : 0;
+    const trendEl = document.getElementById("ytdGrowthTrend");
+    if(growth >= 0) {
+      trendEl.textContent = "+" + growth.toFixed(1) + "%";
+      trendEl.className = "trend-indicator up";
+    } else {
+      trendEl.textContent = growth.toFixed(1) + "%";
+      trendEl.className = "trend-indicator down";
+    }
+  }
+
+  // 1. BAR CHART: เพิ่มฟังก์ชันวาดตัวเลขยอดขายแต่ละคนบนแกน/แท่งกราฟ
   if(hpChartInstance) hpChartInstance.destroy();
   const ctxBar = document.getElementById('hpGaugeChart').getContext('2d');
   hpChartInstance = new Chart(ctxBar, {
@@ -968,9 +1170,31 @@ function updateBottomCharts(selectedMonthKey) {
         x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
         y: { grid: { display: false }, ticks: { font: { size: 11, weight: 600 } } }
       }
-    }
+    },
+    plugins: [{
+      id: 'barValueLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx, data } = chart;
+        ctx.save();
+        ctx.font = 'bold 11px Plus Jakarta Sans';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'left';
+
+        chart.getDatasetMeta(0).data.forEach((bar, index) => {
+          const val = data.datasets[0].data[index];
+          if(val > 0) {
+            // ฟอร์แมตตัวเลขแสดงผล เช่น แสน (K) หรือ ล้าน (M)
+            let displayLabel = val >= 1000000 ? (val / 1000000).toFixed(2) + 'M' : (val / 1000).toFixed(1) + 'K';
+            ctx.fillStyle = '#1c2434';
+            ctx.fillText(displayLabel, bar.x + 6, bar.y);
+          }
+        });
+        ctx.restore();
+      }
+    }]
   });
 
+  // 2. DONUT CHART: เพิ่มฟังก์ชันคำนวณและวาด % Share บนทุกชิ้นเค้กโดนัท
   if(donutChartInstance) donutChartInstance.destroy();
   const ctxDonut = document.getElementById('donutShareChart').getContext('2d');
   
@@ -983,19 +1207,53 @@ function updateBottomCharts(selectedMonthKey) {
       responsive: true, maintainAspectRatio: false, cutout: '72%',
       plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10, weight: 500 } } } },
     },
-    plugins: [{
-      id: 'centerText',
-      afterDraw(chart) {
-        const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
-        ctx.save();
-        ctx.font = '900 45px Plus Jakarta Sans';
-        ctx.fillStyle = '#1c2434';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(centerTextStr, left + (width / 2), top + (height / 2));
-        ctx.restore();
+    plugins: [
+      {
+        id: 'centerText',
+        afterDraw(chart) {
+          const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+          ctx.save();
+          ctx.font = '900 45px Plus Jakarta Sans';
+          ctx.fillStyle = '#1c2434';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(centerTextStr, left + (width / 2), top + (height / 2));
+          ctx.restore();
+        }
+      },
+      {
+        id: 'donutPercentLabels',
+        afterDatasetsDraw(chart) {
+          const { ctx, data } = chart;
+          ctx.save();
+          ctx.font = 'bold 11px Plus Jakarta Sans';
+          ctx.fillStyle = '#ffffff'; // ตัวหนังสือสีขาวให้อ่านง่ายบนพื้นสีชิ้นเค้ก
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          const dataset = data.datasets[0];
+          const total = dataset.data.reduce((activeSum, currentVal) => activeSum + currentVal, 0);
+
+          chart.getDatasetMeta(0).data.forEach((arc, idx) => {
+            const val = dataset.data[idx];
+            if (val > 0 && total > 0) {
+              const percent = ((val / total) * 100).toFixed(1) + '%';
+              // คำนวณหาตำแหน่งกึ่งกลางของชิ้นแผ่นโดนัท (Centroid) เพื่อวางอักษร
+              const centerAngle = arc.startAngle + (arc.endAngle - arc.startAngle) / 2;
+              const r = arc.innerRadius + (arc.outerRadius - arc.innerRadius) / 2;
+              const x = arc.x + Math.cos(centerAngle) * r;
+              const y = arc.y + Math.sin(centerAngle) * r;
+              
+              // วาดสัดส่วน % ลงบนแผ่นหากชิ้นใหญ่พอที่จะไม่เบียดกันเกินไป
+              if (arc.endAngle - arc.startAngle > 0.15) {
+                ctx.fillText(percent, x, y);
+              }
+            }
+          });
+          ctx.restore();
+        }
       }
-    }]
+    ]
   });
 }
 
@@ -1097,7 +1355,7 @@ function sortOpTable(key) {
     opSortState.dir = opSortState.dir === "asc" ? "desc" : "asc";
   } else {
     opSortState.key = key;
-    opSortState.dir = "asc";
+    sortState.dir = "asc";
   }
   applySortOnOpFiltered();
 }
