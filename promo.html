@@ -677,11 +677,14 @@ function processAndRender() {
     
     const rawPrice = p["ราคาขาย"] || "";
     let displayPrice = 'ราคาพิเศษ';
+
     if(rawPrice) {
-      const parsed = parseFloat(rawPrice);
+      // ลบเครื่องหมาย , ออกทั้งหมดก่อน (เช่น "6,600" จะกลายเป็น "6600") แล้วค่อยแปลงเป็นตัวเลข
+      const cleanPrice = String(rawPrice).replace(/,/g, '');
+      const parsed = parseFloat(cleanPrice);
+      
       displayPrice = !isNaN(parsed) ? `฿${parsed.toLocaleString()}` : rawPrice;
     }
-
     // ปรับสีตัวอักษร Active/Inactive เป็นสีขาวสว่างให้อ่านออกง่าย (ข้อ 2)
     const isAct = status.toLowerCase() === 'active';
     const badgeStyle = isAct 
