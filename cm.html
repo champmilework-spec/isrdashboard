@@ -21,7 +21,7 @@ body {
    LAYOUT
 ========================= */
 .container {
-  max-width: 1000px; /* ขยายความกว้างขึ้นเล็กน้อยเพื่อรองรับข้อมูลที่มากขึ้น */
+  max-width: 1000px;
   margin: 0 auto;
   padding: 12px 16px;
   position: relative;
@@ -53,11 +53,33 @@ body {
   cursor: pointer;
   user-select: none;
 }
-.hide-zero-wrap input[type="checkbox"] {
+
+/* ปรับแต่ง Checkbox พื้นฐานให้เป็นวงกลม */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
   width: 15px;
   height: 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%; /* บังคับวงกลม */
+  outline: none;
   cursor: pointer;
-  accent-color: #2f5ea8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: #fff;
+}
+input[type="checkbox"]:checked {
+  background-color: #2f5ea8;
+  border-color: #2f5ea8;
+}
+input[type="checkbox"]:checked::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background-color: #fff;
+  border-radius: 50%;
 }
 
 /* =========================
@@ -103,7 +125,6 @@ body {
   color: #666;
   white-space: nowrap;
 }
-/* ปรับแต่ง Dropdown ให้สวยงาม มินิมอล บางลง และเล็กลง */
 .dropdown-wrapper select {
   padding: 6px 28px 6px 12px;
   font-size: 13px;
@@ -128,13 +149,25 @@ body {
 }
 
 /* =========================
-   MODERN CIRCULAR FILTER CHIPS
+   MODERN CIRCULAR FILTER CHIPS & DIVISION FILTERS
 ========================= */
-.cat-filter-bar {
+.cat-filter-bar, .div-filter-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 12px;
+}
+.div-filter-bar {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #eef0f5;
+  align-items: center;
+}
+.div-filter-title {
+  font-size: 12px;
+  color: #666;
+  font-weight: bold;
+  margin-right: 4px;
 }
 .cat-chip {
   display: inline-flex;
@@ -153,8 +186,6 @@ body {
 .cat-chip input[type="checkbox"] {
   width: 13px;
   height: 13px;
-  cursor: pointer;
-  accent-color: #2f5ea8;
   margin: 0;
 }
 .cat-chip:hover {
@@ -170,38 +201,67 @@ body {
   box-shadow: 0 2px 8px rgba(47, 94, 168, 0.25);
 }
 .cat-chip.active input[type="checkbox"] {
-  accent-color: #fff;
+  border-color: rgba(255,255,255,0.6);
+}
+.cat-chip.active input[type="checkbox"]:checked {
+  background-color: #fff;
+}
+.cat-chip.active input[type="checkbox"]:checked::after {
+  background-color: #2f5ea8;
 }
 
 /* =========================
-   RESULT COUNT & LOCK STATUS
+   RESULT COUNT & LOCK STATUS (SINGLE ROW UX FOR MOBILE)
 ========================= */
 .info-status-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  gap: 4px;
+  width: 100%;
+}
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 .lock-badge {
   font-size: 11px;
   color: #155724;
   background-color: #d4edda;
-  padding: 2px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
   font-weight: bold;
+  white-space: nowrap;
+}
+.inventory-summary {
+  font-size: 11px;
+  color: #2f5ea8;
+  font-weight: bold;
+  background-color: #e8f0fe;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .result-count {
   font-size: 11px;
   color: #888;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  text-align: right;
 }
 
 /* =========================
-   TABLE WRAP & TABLE (NO HORIZONTAL SCROLL FOR MAIN COLUMNS)
+   TABLE WRAP & TABLE
 ========================= */
 .table-wrap {
   width: 100%;
-  overflow-x: hidden; /* ล็อกไม่ให้เลื่อนซ้ายขวาเพื่อ UX ที่นิ่งสนิท */
+  overflow-x: hidden;
   overflow-y: auto;
   border: 1px solid #eef0f5;
   border-radius: 12px;
@@ -212,7 +272,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* บังคับควบคุมความกว้างคอลัมน์ไม่ให้หลุดจอ */
+  table-layout: fixed;
 }
 
 /* =========================
@@ -222,7 +282,7 @@ thead th {
   position: sticky;
   top: 0;
   background: #2f5ea8;
-  color: #fff !important; /* บังคับหัวตารางเป็นสีขาวล้วน */
+  color: #fff !important;
   z-index: 50;
   text-align: left;
   font-size: 12px;
@@ -236,7 +296,7 @@ thead th:hover {
   background: #244a86;
 }
 thead th, thead th span {
-  color: #fff !important; /* คุมให้ลูกศรจัดเรียงเป็นสีขาวด้วย */
+  color: #fff !important;
 }
 tbody td {
   font-size: 13px;
@@ -245,32 +305,32 @@ tbody td {
   vertical-align: top;
 }
 tbody tr {
-  cursor: pointer; /* ทำสัญลักษณ์ให้รู้ว่ากดจิ้มเพื่อก๊อปปี้ได้ */
+  cursor: pointer;
   transition: background 0.15s;
 }
 tbody tr:hover {
-  background: #f1f5f9; /* ไฮไลท์แถวเข้มขึ้นนิดหน่อยตอนชี้ */
+  background: #f1f5f9;
 }
 tbody tr:active {
-  background: #e2e8f0; /* แสดงสีตอบสนองตอนกดจิ้ม */
+  background: #e2e8f0;
 }
 
 /* =========================
-   DYNAMIC COLUMN WIDTHS (จัดการระยะช่องตารางใหม่)
+   DYNAMIC COLUMN WIDTHS
 ========================= */
 .col-barcode { 
-  width: 22%; /* แคบลงสำหรับรองรับ 7 digit */
+  width: 22%;
   word-break: break-all; 
 }
 .col-desc { 
-  width: auto; /* กว้างสุดสำหรับโชว์เนื้อหาหลักรายละเอียดสินค้า */
+  width: auto;
   word-break: break-word; 
   white-space: normal; 
 }
 .col-dynamic { 
-  width: 22%; /* ขนาดพอดีสั้นๆ สำหรับตัวเลขหลักสแตนดาร์ด */
+  width: 22%;
   text-align: right; 
-  word-break: break-all; /* ถ้าหลักเลขยาวเกินพิกัดให้ wrap ลงล่างป้องกันตารางพัง */
+  word-break: break-all;
   font-weight: bold; 
   color: #111; 
 }
@@ -285,7 +345,7 @@ tbody tr:active {
 }
 
 /* =========================
-   TOAST NOTIFICATION (แจ้งเตือนตอนก๊อปปี้)
+   TOAST NOTIFICATION
 ========================= */
 .copy-toast {
   position: fixed;
@@ -360,13 +420,25 @@ tbody tr:active {
 }
 
 /* =========================
-   MOBILE RESPONSIVE COMPACT
+   MOBILE RESPONSIVE COMPACT (FORCE SINGLE ROW)
 ========================= */
 @media(max-width:768px){
   body { padding-top: 54px; }
   .container { padding: 8px 10px; }
   .cat-chip { font-size: 11px; padding: 5px 12px; }
-  tbody td { padding: 10px 6px; font-size: 12px; } /* ปรับกระชับบนมือถือเพิ่ม */
+  tbody td { padding: 10px 6px; font-size: 12px; }
+  /* บังคับให้อยู่บรรทัดเดียวกัน ห้ามแตกแถวบนมือถือ */
+  .info-status-row { flex-direction: row !important; align-items: center !important; justify-content: space-between; }
+  .status-left { flex-direction: row !important; align-items: center !important; gap: 4px; }
+  .lock-badge, .result-count { font-size: 10px; padding: 2px 4px; }
+
+  /* แยกปรับเฉพาะยอด Value */
+  .inventory-summary { 
+    font-size: 13px;       /* ปรับขนาดตัวอักษรตามใจชอบ (เช่น 11px, 12px) */
+    font-family: Arial;    /* เปลี่ยนชื่อ Font ที่ต้องการตรงนี้ */
+    padding: 2px 6px; 
+    margin-left: auto;       /* ดันซ้าย-ขวาให้เท่ากัน เพื่อบังคับอยู่ตรงกลางจอ */
+  }
 }
 </style>
 </head>
@@ -406,8 +478,20 @@ tbody tr:active {
         <option value="avgcost">avgcost</option>
         <option value="Onhand_All">Onhand_All</option>
         <option value="StockStatus">StockStatus</option>
+        <option value="gpriceF">gpriceF</option>
+        <option value="glocat">glocat</option>
       </select>
     </div>
+  </div>
+
+  <div class="div-filter-bar">
+    <span class="div-filter-title">Division:</span>
+    <label class="cat-chip" id="chip-div-tool">
+      <input type="checkbox" id="div-tool" /> Tool
+    </label>
+    <label class="cat-chip" id="chip-div-wos">
+      <input type="checkbox" id="div-wos" checked /> WOS
+    </label>
   </div>
 
   <div class="cat-filter-bar">
@@ -429,7 +513,10 @@ tbody tr:active {
   </div>
 
   <div class="info-status-row">
-    <span class="lock-badge">✓ ผ่านการยืนยันสิทธิ์</span>
+    <div class="status-left">
+      <span class="lock-badge">✓ Verified</span>
+      <span class="inventory-summary" id="inventory-cost-sum">Value: 0.00</span>
+    </div>
     <div class="result-count" id="result-count"></div>
   </div>
 
@@ -454,7 +541,7 @@ tbody tr:active {
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <script>
-const dataApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/itemmaster";
+const dataApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/cm";
 const configApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/Config";
 
 const CAT_FILTERS = [
@@ -463,6 +550,11 @@ const CAT_FILTERS = [
   { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
   { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"   }, 
   { id: "cat-putty",   keyword: "สีโป๊ว",     chipId: "chip-putty"   },
+];
+
+const DIV_FILTERS = [
+  { id: "div-tool", value: "Tool and Equipment", chipId: "chip-div-tool" },
+  { id: "div-wos",  value: "Workshop Product Solution", chipId: "chip-div-wos" }
 ];
 
 let rawData       = [];
@@ -513,6 +605,7 @@ async function loadTable(){
   try {
     const res = await fetch(dataApiUrl);
     rawData = await res.json();
+    updateChipStyles();
     applyAll();
   } catch(e) {
     document.getElementById("table-body").innerHTML =
@@ -528,10 +621,19 @@ function applyAll(){
   const hideZero = document.getElementById("hideZero").checked;
 
   const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+  const activeDivs = DIV_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
 
   let result = rawData;
 
-  // 1. CATEGORY FILTER
+  // 1. PRODUCT DIVISION FILTER
+  if(activeDivs.length > 0){
+    result = result.filter(i => {
+      const prodDiv = String(i.ProductDivision || "").trim();
+      return activeDivs.some(f => prodDiv === f.value);
+    });
+  }
+
+  // 2. CATEGORY FILTER
   if(activeCats.length > 0){
     result = result.filter(i => {
       const gname = String(i.gnamechr || "").toLowerCase();
@@ -539,7 +641,7 @@ function applyAll(){
     });
   }
 
-  // 2. TEXT SEARCH MULTI-COLUMNS
+  // 3. TEXT SEARCH MULTI-COLUMNS
   if(q){
     result = result.filter(i =>
       String(i.code || "").toLowerCase().includes(q) ||
@@ -551,7 +653,7 @@ function applyAll(){
     );
   }
 
-  // 3. HIDE ZERO / DASH ON DYNAMIC COLUMN
+  // 4. HIDE ZERO / DASH ON DYNAMIC COLUMN
   if(hideZero){
     result = result.filter(i => {
       const v = String(i[currentDynamicColumn] || "").trim();
@@ -564,7 +666,7 @@ function applyAll(){
 
   filteredData = result;
 
-  // 4. SORT COMPONENT
+  // 5. SORT COMPONENT
   if(sortState.key){
     applySortOnFiltered();
   } else {
@@ -572,7 +674,32 @@ function applyAll(){
     renderTable(viewData);
   }
 
+  calculateInventorySum(viewData);
   updateResultCount(viewData.length);
+}
+
+/* =========================
+   CALCULATE INVENTORY SUM (AUTO K / M FORMAT)
+========================= */
+function calculateInventorySum(data) {
+  let totalCost = 0;
+  data.forEach(item => {
+    const costVal = parseFloat(item.Onhand_Cost);
+    if(!isNaN(costVal)) {
+      totalCost += costVal;
+    }
+  });
+  
+  let formattedCost = "";
+  if (totalCost >= 1000000) {
+    formattedCost = (totalCost / 1000000).toFixed(2) + "M";
+  } else if (totalCost >= 1000) {
+    formattedCost = (totalCost / 1000).toFixed(2) + "K";
+  } else {
+    formattedCost = totalCost.toFixed(2);
+  }
+  
+  document.getElementById("inventory-cost-sum").textContent = `Value: ${formattedCost}`;
 }
 
 /* =========================
@@ -610,6 +737,7 @@ function applySortOnFiltered(){
   
   updateArrows(key, dir);
   renderTable(viewData);
+  calculateInventorySum(viewData);
   updateResultCount(viewData.length);
 }
 
@@ -622,7 +750,7 @@ function copyRowToClipboard(index) {
 
   let rawVal = item[currentDynamicColumn] || "-";
   let formattedVal = rawVal;
-  if (currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+  if (currentDynamicColumn !== "StockStatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 
@@ -653,8 +781,7 @@ function renderTable(data){
     let rawVal = p[currentDynamicColumn] || "-";
     let formattedVal = rawVal;
     
-    // บังคับเปลี่ยนรูปแบบให้เป็น Float ทศนิยม 2 ตำแหน่ง พร้อมลูกน้ำคอมมาเสมอ ยกเว้นคอลัมน์ StockStatus
-    if (currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+    if (currentDynamicColumn !== "StockStatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
       formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
@@ -688,7 +815,17 @@ function updateArrows(active, dir){
    UPDATE CHIP STYLES
 ========================= */
 function updateChipStyles(){
+  // Categories
   CAT_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    const chip     = document.getElementById(f.chipId);
+    if(checkbox && chip) {
+      if(checkbox.checked) chip.classList.add("active");
+      else                 chip.classList.remove("active");
+    }
+  });
+  // Divisions
+  DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     const chip     = document.getElementById(f.chipId);
     if(checkbox && chip) {
@@ -716,6 +853,16 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   CAT_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    if(checkbox) {
+      checkbox.addEventListener("change", () => {
+        updateChipStyles();
+        applyAll();
+      });
+    }
+  });
+
+  DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
       checkbox.addEventListener("change", () => {
