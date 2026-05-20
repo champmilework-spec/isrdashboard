@@ -52,7 +52,7 @@ body{
 }
 
 /* =========================
-   NEW EXECUTIVE SUMMARY WIDGET ROW
+   EXECUTIVE SUMMARY WIDGET ROW
 ========================= */
 .summary-widget-row {
   display: grid;
@@ -71,6 +71,9 @@ body{
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .widget-stat-card .stat-label {
   font-size: 12px;
@@ -78,12 +81,16 @@ body{
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 .widget-stat-card .stat-grid-vals {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+}
+.stat-val-block {
+  flex: 1;
 }
 .stat-val-block .year-tag {
   font-size: 11px;
@@ -93,19 +100,31 @@ body{
 .stat-val-block .money-num {
   font-size: 22px;
   font-weight: 700;
-  color: #1c2434;
 }
 .stat-val-block .money-num.primary {
-  color: #ef4444;
+  color: #ef4444; /* แดง = ปีนี้ */
 }
 .stat-val-block .money-num.secondary {
-  color: #2563eb;
+  color: #2563eb; /* น้ำเงิน = ปีที่แล้ว */
 }
+
+/* ฝั่งขวาสุดของกล่องเมื่อมีแผนภูมิครึ่งวงกลมประกบกับเปอร์เซ็นต์ */
+.right-pulse-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  gap: 4px;
+}
+
 .trend-indicator {
   font-size: 12px;
   font-weight: 700;
   padding: 4px 8px;
   border-radius: 6px;
+  text-align: center;
+  white-space: nowrap;
 }
 .trend-indicator.up {
   background: #dcfce7;
@@ -115,9 +134,39 @@ body{
   background: #fee2e2;
   color: #7f1d1d;
 }
+.trend-indicator.neutral {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Gauge Area */
+.gauge-wrapper {
+  position: relative;
+  width: 100px;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.gauge-text-center {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+}
+.gauge-text-center .gauge-percent {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1c2434;
+  line-height: 1;
+}
+.gauge-text-center .gauge-sub {
+  font-size: 9px;
+  color: #64748b;
+  font-weight: 600;
+}
 
 /* =========================
-   CARDS & GRIDS (COMPACT MARGINS)
+   CARDS & GRIDS
 ========================= */
 .section-top {
   margin-bottom: 16px;
@@ -144,7 +193,6 @@ body{
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
-  margin-bottom: 0px;
 }
 
 .card-header-flex {
@@ -329,7 +377,7 @@ body{
 }
 
 /* =========================
-   MOBILE-FIRST FIXED TABLE (NO HORIZONTAL SCROLL)
+   MOBILE-FIRST FIXED TABLE
 ========================= */
 .table-wrap {
   width: 100%;
@@ -372,7 +420,6 @@ tbody td {
 .col-name { width: 33%; }
 .col-customer { width: 45%; }
 
-/* คอนเทนเนอร์จัดตำแหน่งของฝั่ง Customer และลูกศรขวา */
 .customer-cell-flex {
   display: flex;
   align-items: flex-start;
@@ -383,7 +430,6 @@ tbody td {
   flex: 1;
   word-break: break-word;
 }
-/* ลูกศรชี้ขวาสไตล์ Modern Minimalist */
 .modern-arrow-right {
   display: inline-flex;
   align-items: center;
@@ -422,21 +468,20 @@ tbody tr:active {
 }
 
 /* =========================
-   POPUP MODAL TIMELINE (MOBILE DISPLAY FIX)
+   POPUP MODAL TIMELINE
 ========================= */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(15, 23, 42, 0.6);
   display: flex;
-  align-items: flex-end; /* Mobile Bottom-sheet style */
+  align-items: flex-end; 
   justify-content: center;
   z-index: 9999;
   opacity: 0; 
   pointer-events: none;
   transition: opacity 0.2s ease-out;
 }
-/* คุมสถานะแสดงผลเมื่อตื่นตัว */
 .modal-overlay.active { 
   opacity: 1; 
   pointer-events: auto; 
@@ -452,14 +497,11 @@ tbody tr:active {
   border-bottom-right-radius: 0px;
   padding: 20px 16px;
   box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
-  
-  /* บล็อกตำแหน่งขอบและแก้บั๊กโมบายหายตัว */
   position: relative;
   bottom: 0;
   max-height: 82vh; 
   display: flex;
   flex-direction: column;
-  
   transform: translateY(100%);
   transition: transform 0.25s ease-out;
 }
@@ -467,7 +509,6 @@ tbody tr:active {
   transform: translateY(0); 
 }
 
-/* ขยับเซ็ตติ้งเมื่อเปิดใช้งานผ่านหน้าจอ Desktop คอมพิวเตอร์ */
 @media(min-width: 576px) {
   .modal-overlay { 
     align-items: center; 
@@ -512,7 +553,7 @@ tbody tr:active {
   flex: 1;
   overflow-y: auto;
   padding: 12px 2px 24px;
-  -webkit-overflow-scrolling: touch; /* รองรับนิ้วกวาดบนระบบ iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 .timeline-list {
@@ -575,9 +616,9 @@ tbody tr:active {
 
   <div id="dashboardContent" style="display: none;">
     
-    <!-- EXECTIVE SALES SUMMARY & YTD PERFORMANCE WIDGETS -->
+    <!-- EXECUTIVE SALES SUMMARY WIDGETS -->
     <div class="summary-widget-row">
-      <!-- 1. ยอดขายรวมทั้งปี -->
+      <!-- 1. ยอดขายรวมทั้งปี (พร้อมเกจความคืบหน้าของเดือนในฝั่งขวา) -->
       <div class="widget-stat-card">
         <div class="stat-label">Annual Team Sales Summary</div>
         <div class="summary-stat-data">
@@ -590,11 +631,21 @@ tbody tr:active {
               <span class="year-tag">ปีที่แล้ว (2025):</span><br>
               <span class="money-num secondary" id="annualSales2025">0.00 M</span>
             </div>
+            <div class="right-pulse-block">
+              <div class="gauge-wrapper">
+                <canvas id="gaugeMonthChart"></canvas>
+                <div class="gauge-text-center">
+                  <div class="gauge-percent" id="gaugeTxtPercent">0%</div>
+                  <div class="gauge-sub" id="gaugeTxtSub">0/12</div>
+                </div>
+              </div>
+              <div class="trend-indicator neutral" id="annualSalesShare" style="font-size: 11px; padding: 2px 6px;">0.0%</div>
+            </div>
           </div>
         </div>
       </div>
       
-      <!-- 2. เปรียบเทียบแบบ YTD จนถึงเดือนปัจจุบัน -->
+      <!-- 2. เปรียบเทียบสะสมแบบ YTD -->
       <div class="widget-stat-card">
         <div class="stat-label" id="ytdLabelTitle">YTD Comparison (Jan - May)</div>
         <div class="summary-stat-data">
@@ -613,7 +664,7 @@ tbody tr:active {
       </div>
     </div>
 
-    <!-- 1. กราฟด้านบนสุด: ยอดรวมทั้งทีม YoY -->
+    <!-- 1. กราฟแดชบอร์ดหลัก: ยอดรวมทั้งทีม YoY -->
     <div class="section-top">
       <div class="chart-card">
         <h2>Team Sales Overview: Year-over-Year (YoY Comparison)</h2>
@@ -623,7 +674,7 @@ tbody tr:active {
       </div>
     </div>
 
-    <!-- 2. โซนกราฟวิเคราะห์รายบุคคลและแชร์ยอดขาย -->
+    <!-- 2. โซนวิเคราะห์รายบุคคลและแชร์ส่วนแบ่งทางการตลาด -->
     <div class="section-bottom-grid">
       
       <div class="chart-card">
@@ -649,7 +700,7 @@ tbody tr:active {
 
     </div>
 
-    <!-- 3. โซนตารางข้อมูล Operation Pipeline -->
+    <!-- 3. ส่วนงานตารางข้อมูล Operation Pipeline -->
     <div class="chart-card" style="margin-top: 16px;">
       
       <div class="card-header-flex" style="margin-bottom: 8px;">
@@ -705,7 +756,7 @@ tbody tr:active {
       <!-- RESULT COUNT -->
       <div class="result-count" id="result-count">0 items</div>
 
-      <!-- TABLE MAP DATA (FIXED FOR MOBILE VIEW) -->
+      <!-- TABLE MAP DATA -->
       <div class="table-wrap">
         <table>
           <thead>
@@ -782,7 +833,11 @@ let opSortState = { key: null, dir: "asc" };
 
 let hpChartInstance = null;
 let donutChartInstance = null;
+let gaugeChartInstance = null;
 let cachedPasswordFromSheet = "";
+
+let globalTeamTotal2025 = Array(12).fill(0);
+let globalTeamTotal2026 = Array(12).fill(0);
 
 function parseCSVLine(text) {
   let p = '', r = []; let q = false;
@@ -915,9 +970,6 @@ Promise.all([
 
     globalSalesData.push({ name: person, shortName: person.replace("ISR-", ""), nickName: nick, data: nums, color: staffColorMap[nick] || "#cbd5e1" });
   }
-
-  let teamTotal2025 = Array(12).fill(0);
-  let teamTotal2026 = Array(12).fill(0);
   
   uniqueTimelineKeys.forEach((key, rawIdx) => {
     const parts = key.split("-");
@@ -926,17 +978,14 @@ Promise.all([
     let sum = 0;
     globalSalesData.forEach(st => { sum += st.data[rawIdx]; });
     
-    if(y === "2025") teamTotal2025[mIdx] = sum;
-    else if(y === "2026") teamTotal2026[mIdx] = sum;
+    if(y === "2025") globalTeamTotal2025[mIdx] = sum;
+    else if(y === "2026") globalTeamTotal2026[mIdx] = sum;
   });
 
   document.getElementById("loader").style.display = "none";
   document.getElementById("dashboardContent").style.display = "block";
 
-  renderYoYLineChart(teamTotal2025, teamTotal2026);
-
-  // คำนวณและแสดงผลกล่องรายงานสรุปยอดขายระดับบริหาร (Executive Summary Widgets)
-  calculateExecutiveStats(teamTotal2025, teamTotal2026);
+  renderYoYLineChart(globalTeamTotal2025, globalTeamTotal2026);
 
   const selector = document.getElementById("monthSelector");
   monthOptions.forEach(opt => {
@@ -946,6 +995,7 @@ Promise.all([
     selector.appendChild(el);
   });
   
+  // ตั้งค่าเริ่มต้นระบบไว้ที่เดือน 2026-M05
   selector.value = "2026-M05";
 
   // ENGINE B: LOGISTICS OPERATION PIPELINE
@@ -1037,9 +1087,9 @@ Promise.all([
 
   initInventoryFilterEvents();
   applyOpFilters();
-  updateBottomCharts("2026-M05");
+  updateExecutiveAndBottomCharts("2026-M05");
 
-  selector.addEventListener("change", (e) => updateBottomCharts(e.target.value));
+  selector.addEventListener("change", (e) => updateExecutiveAndBottomCharts(e.target.value));
 
 }).catch(err => {
   document.getElementById("loader").textContent = "โครงสร้างเซิร์ฟเวอร์ฐานข้อมูลขัดข้อง กรุณาตรวจสอบการเข้าถึงไฟล์ชีต";
@@ -1047,30 +1097,39 @@ Promise.all([
 });
 
 /* ===================================================
-   FUNCTION: CALCULATE EXECUTIVE STATS & YTD
+   FUNCTION: UPDATE EXECUTIVE STATS & CHARTS
    =================================================== */
-function calculateExecutiveStats(data25, data26) {
-  // 1. คำนวณยอดรวมทั้งปี (ล้านบาท)
-  let total2025 = data25.reduce((a, b) => a + b, 0);
-  let total2026 = data26.reduce((a, b) => a + b, 0);
+function updateExecutiveAndBottomCharts(selectedMonthKey) {
+  const rawIdx = uniqueTimelineKeys.indexOf(selectedMonthKey);
+  if(rawIdx === -1) return;
+
+  // 1. ประมวลผลข้อมูลยอดขายรวมทั้งปีสําหรับกล่อง 1
+  let total2025 = globalTeamTotal2025.reduce((a, b) => a + b, 0);
+  let total2026 = globalTeamTotal2026.reduce((a, b) => a + b, 0);
 
   document.getElementById("annualSales2025").textContent = (total2025 / 1000000).toFixed(2) + " M";
   document.getElementById("annualSales2026").textContent = (total2026 / 1000000).toFixed(2) + " M";
 
-  // 2. คำนวณ Year-to-Date (YTD) จนถึงเดือนปัจจุบัน (สมมติเป้าหมายปัจจุบันถึง M05 / พฤษภาคม ตามค่าตั้งต้นระบบ)
-  let currentMonthLimit = 5; // Jan - May (5 เดือนแรก)
-  let ytd2025 = data25.slice(0, currentMonthLimit).reduce((a, b) => a + b, 0);
-  let ytd2026 = data26.slice(0, currentMonthLimit).reduce((a, b) => a + b, 0);
+  let annualRatio = total2025 > 0 ? (total2026 / total2025) * 100 : 0;
+  document.getElementById("annualSalesShare").textContent = annualRatio.toFixed(1) + "% ของปีที่แล้ว";
+
+  // 2. ดึงลำดับเดือนจากรหัสคีย์เพื่อนำมาคุมขอบเขตของ YTD
+  const optFound = monthOptions.find(o => o.key === selectedMonthKey);
+  let currentMonthLimit = 5; // Default Jan - May
+  if(optFound) {
+    currentMonthLimit = parseInt(optFound.monthCode.replace("M", ""));
+  }
+
+  const monthsEnglishNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  document.getElementById("ytdLabelTitle").textContent = `YTD Comparison (Jan - ${monthsEnglishNames[currentMonthLimit-1] || 'May'})`;
+
+  let ytd2025 = globalTeamTotal2025.slice(0, currentMonthLimit).reduce((a, b) => a + b, 0);
+  let ytd2026 = globalTeamTotal2026.slice(0, currentMonthLimit).reduce((a, b) => a + b, 0);
 
   document.getElementById("ytdSales2025").textContent = (ytd2025 / 1000000).toFixed(2) + " M";
   document.getElementById("ytdSales2026").textContent = (ytd2026 / 1000000).toFixed(2) + " M";
 
-  // 3. คำนวณอัตราการเติบโตของพอร์ต % Growth
-  let growth = 0;
-  if(ytd2025 > 0) {
-    growth = ((ytd2026 - ytd2025) / ytd2025) * 100;
-  }
-  
+  let growth = ytd2025 > 0 ? ((ytd2026 - ytd2025) / ytd2025) * 100 : 0;
   const trendEl = document.getElementById("ytdGrowthTrend");
   if(growth >= 0) {
     trendEl.textContent = "+" + growth.toFixed(1) + "%";
@@ -1079,34 +1138,11 @@ function calculateExecutiveStats(data25, data26) {
     trendEl.textContent = growth.toFixed(1) + "%";
     trendEl.className = "trend-indicator down";
   }
-}
 
-/* ===================================================
-   CHART DRAWING & CONFIG
-   =================================================== */
-function renderYoYLineChart(data25, data26) {
-  const ctx = document.getElementById('yoyLineChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."],
-      datasets: [
-        { label: '2025', data: data25, borderColor: '#2563eb', borderWidth: 2, tension: 0.1, pointRadius: 0 },
-        { label: '2026', data: data26.map(v => v === 0 ? null : v), borderColor: '#ef4444', borderWidth: 2, tension: 0.1, pointRadius: 0 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11, weight: 600 } } } },
-      scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } }
-    }
-  });
-}
+  // 3. เรียกวาดแผนภูมิเข็มไมล์ย่อยขวาบน (ฝังในกล่องสรุปผลรวมประจำปี)
+  renderGaugeChart(currentMonthLimit);
 
-function updateBottomCharts(selectedMonthKey) {
-  const rawIdx = uniqueTimelineKeys.indexOf(selectedMonthKey);
-  if(rawIdx === -1) return;
-
+  // 4. ดึงข้อมูลรายบุคคลเพื่อนำไปแสดงผลกราฟแท่งและโดนัทด้านล่าง
   const names = []; const values = []; const colors = [];
   let totalMonthSum = 0;
 
@@ -1118,43 +1154,7 @@ function updateBottomCharts(selectedMonthKey) {
     totalMonthSum += val;
   });
 
-  // อัปเดตข้อความหัวข้อ YTD ตามเดือนที่เลือกเปลี่ยนใน Dropdown แบบไดนามิก
-  const optFound = monthOptions.find(o => o.key === selectedMonthKey);
-  if(optFound) {
-    const mNum = parseInt(optFound.monthCode.replace("M", ""));
-    const monthsThaiNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    document.getElementById("ytdLabelTitle").textContent = `YTD Comparison (Jan - ${monthsThaiNames[mNum-1] || 'May'})`;
-    
-    // คำนวณอัปเดตค่าสรุป YTD ใหม่ให้สัมพันธ์กับความลึกของเดือนที่เลือก
-    const sRows = document.getElementById("annualSales2025").textContent; // ล็อกอิงค่าหลักไว้
-    let rawSalesCsv = globalSalesData;
-    let tempTotal25 = Array(12).fill(0);
-    let tempTotal26 = Array(12).fill(0);
-    uniqueTimelineKeys.forEach((k, rIdx) => {
-      const parts = k.split("-");
-      const y = parts[0];
-      const mIdx = parseInt(parts[1].replace("M","")) - 1;
-      let sum = 0;
-      globalSalesData.forEach(st => { sum += st.data[rIdx]; });
-      if(y === "2025") tempTotal25[mIdx] = sum;
-      else if(y === "2026") tempTotal26[mIdx] = sum;
-    });
-    let ytd25 = tempTotal25.slice(0, mNum).reduce((a, b) => a + b, 0);
-    let ytd26 = tempTotal26.slice(0, mNum).reduce((a, b) => a + b, 0);
-    document.getElementById("ytdSales2025").textContent = (ytd25 / 1000000).toFixed(2) + " M";
-    document.getElementById("ytdSales2026").textContent = (ytd26 / 1000000).toFixed(2) + " M";
-    let growth = ytd25 > 0 ? ((ytd26 - ytd25) / ytd25) * 100 : 0;
-    const trendEl = document.getElementById("ytdGrowthTrend");
-    if(growth >= 0) {
-      trendEl.textContent = "+" + growth.toFixed(1) + "%";
-      trendEl.className = "trend-indicator up";
-    } else {
-      trendEl.textContent = growth.toFixed(1) + "%";
-      trendEl.className = "trend-indicator down";
-    }
-  }
-
-  // 1. BAR CHART: เพิ่มฟังก์ชันวาดตัวเลขยอดขายแต่ละคนบนแกน/แท่งกราฟ
+  // BAR CHART รายบุคคล
   if(hpChartInstance) hpChartInstance.destroy();
   const ctxBar = document.getElementById('hpGaugeChart').getContext('2d');
   hpChartInstance = new Chart(ctxBar, {
@@ -1183,7 +1183,6 @@ function updateBottomCharts(selectedMonthKey) {
         chart.getDatasetMeta(0).data.forEach((bar, index) => {
           const val = data.datasets[0].data[index];
           if(val > 0) {
-            // ฟอร์แมตตัวเลขแสดงผล เช่น แสน (K) หรือ ล้าน (M)
             let displayLabel = val >= 1000000 ? (val / 1000000).toFixed(2) + 'M' : (val / 1000).toFixed(1) + 'K';
             ctx.fillStyle = '#1c2434';
             ctx.fillText(displayLabel, bar.x + 6, bar.y);
@@ -1194,10 +1193,9 @@ function updateBottomCharts(selectedMonthKey) {
     }]
   });
 
-  // 2. DONUT CHART: เพิ่มฟังก์ชันคำนวณและวาด % Share บนทุกชิ้นเค้กโดนัท
+  // DONUT CHART ส่วนแบ่งยอดขาย
   if(donutChartInstance) donutChartInstance.destroy();
   const ctxDonut = document.getElementById('donutShareChart').getContext('2d');
-  
   let centerTextStr = totalMonthSum >= 1000000 ? (totalMonthSum / 1000000).toFixed(1) + 'M' : (totalMonthSum / 1000).toFixed(0) + 'K';
 
   donutChartInstance = new Chart(ctxDonut, {
@@ -1213,7 +1211,7 @@ function updateBottomCharts(selectedMonthKey) {
         afterDraw(chart) {
           const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
           ctx.save();
-          ctx.font = '900 45px Plus Jakarta Sans';
+          ctx.font = '900 38px Plus Jakarta Sans';
           ctx.fillStyle = '#1c2434';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -1227,7 +1225,7 @@ function updateBottomCharts(selectedMonthKey) {
           const { ctx, data } = chart;
           ctx.save();
           ctx.font = 'bold 11px Plus Jakarta Sans';
-          ctx.fillStyle = '#ffffff'; // ตัวหนังสือสีขาวให้อ่านง่ายบนพื้นสีชิ้นเค้ก
+          ctx.fillStyle = '#ffffff';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
 
@@ -1238,13 +1236,11 @@ function updateBottomCharts(selectedMonthKey) {
             const val = dataset.data[idx];
             if (val > 0 && total > 0) {
               const percent = ((val / total) * 100).toFixed(1) + '%';
-              // คำนวณหาตำแหน่งกึ่งกลางของชิ้นแผ่นโดนัท (Centroid) เพื่อวางอักษร
               const centerAngle = arc.startAngle + (arc.endAngle - arc.startAngle) / 2;
               const r = arc.innerRadius + (arc.outerRadius - arc.innerRadius) / 2;
               const x = arc.x + Math.cos(centerAngle) * r;
               const y = arc.y + Math.sin(centerAngle) * r;
               
-              // วาดสัดส่วน % ลงบนแผ่นหากชิ้นใหญ่พอที่จะไม่เบียดกันเกินไป
               if (arc.endAngle - arc.startAngle > 0.15) {
                 ctx.fillText(percent, x, y);
               }
@@ -1257,8 +1253,58 @@ function updateBottomCharts(selectedMonthKey) {
   });
 }
 
+function renderGaugeChart(currentMonth) {
+  const percentVal = Math.round((currentMonth / 12) * 100);
+  document.getElementById("gaugeTxtPercent").textContent = percentVal + "%";
+  document.getElementById("gaugeTxtSub").textContent = `${currentMonth}/12 M`;
+
+  if(gaugeChartInstance) gaugeChartInstance.destroy();
+  const ctxGauge = document.getElementById('gaugeMonthChart').getContext('2d');
+  
+  gaugeChartInstance = new Chart(ctxGauge, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [currentMonth, 12 - currentMonth],
+        backgroundColor: ['#ef4444', '#e2e8f0'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '80%',
+      rotation: -90,
+      circumference: 180,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      }
+    }
+  });
+}
+
+function renderYoYLineChart(data25, data26) {
+  const ctx = document.getElementById('yoyLineChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."],
+      datasets: [
+        { label: '2025', data: data25, borderColor: '#2563eb', borderWidth: 2, tension: 0.1, pointRadius: 0 },
+        { label: '2026', data: data26.map(v => v === 0 ? null : v), borderColor: '#ef4444', borderWidth: 2, tension: 0.1, pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11, weight: 600 } } } },
+      scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
 /* ===================================================
-   INVENTORY PIPELINE ALGORITHMS
+   INVENTORY PIPELINE FILTER EVENTS
    =================================================== */
 function initInventoryFilterEvents() {
   document.getElementById("searchBox").addEventListener("input", applyOpFilters);
@@ -1355,7 +1401,7 @@ function sortOpTable(key) {
     opSortState.dir = opSortState.dir === "asc" ? "desc" : "asc";
   } else {
     opSortState.key = key;
-    sortState.dir = "asc";
+    opSortState.dir = "asc";
   }
   applySortOnOpFiltered();
 }
@@ -1409,13 +1455,13 @@ function updateResultCount(n) {
 }
 
 /* ===================================================
-   MODAL TIMELINE
+   MODAL TIMELINE WINDOWS
    =================================================== */
 function openTimelineModal(item) {
   const modal = document.getElementById("timelineModal");
   
   document.getElementById("modalCustomerName").textContent = item.customerName;
-  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | หมวด: ${item.caseType} | สถานะ: ${item.status}`;
+  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | หมวด: ${item.caseType} | Status: ${item.status}`;
   document.getElementById("modalOwner").textContent = item.owner;
   document.getElementById("modalCaseAge").textContent = `Age: ${item.ageDays}d`;
 
