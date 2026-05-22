@@ -268,7 +268,7 @@ body{
     
     <!-- EXECUTIVE SALES SUMMARY WIDGETS -->
     <div class="summary-widget-row">
-      <!-- 1. ยอดขายรวมทั้งปี (พร้อมเกจความคืบหน้าของเดือนในฝั่งขวา) -->
+      <!-- 1. ยอดขายรวมทั้งปี -->
       <div class="widget-stat-card">
         <div class="stat-label">Annual Team Sales Summary</div>
         <div class="summary-stat-data">
@@ -359,8 +359,8 @@ body{
 <div id="footer-placeholder"></div>
 
 <script>
-const salesCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=831219279&single=true&output=csv";
-const configCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=198273645&single=true&output=csv";
+// เปลี่ยนมาดึงข้อมูลผ่านระบบ API ปลอดภัยหลังบ้านของ Google Apps Script แทนลิงก์ชีตเดิมตรงๆ
+const secureApiUrl = "https://script.google.com/macros/s/AKfycbyZBB8OY2G-VBc4kQESdx75b_RBJ4Rmb0DVcKrOEIAhOQhkX6Tr59gQO-RP6NnSlWTF/exec?sheet=sales";
 
 const staffColorMap = {
   "แอนนี่": "#ec4899", "พรีม": "#a855f7", "ดอน": "#10b981", "นาเดียร์": "#f59e0b", "ฟ้า": "#0ea5e9"
@@ -373,23 +373,9 @@ let monthOptions = [];
 let hpChartInstance = null;
 let donutChartInstance = null;
 let gaugeChartInstance = null;
-let cachedPasswordFromSheet = "";
 
 let globalTeamTotal2025 = Array(12).fill(0);
 let globalTeamTotal2026 = Array(12).fill(0);
-
-function parseCSVLine(text) {
-  let p = '', r = []; let q = false;
-  for (let i = 0; i < text.length; i++) {
-    let c = text[i];
-    if (c === '"') { q = !q; }
-    else if (c === ',' && !q) { r.push(p); p = ''; }
-    else { p += c; }
-  }
-  r.push(p); return r;
-}
-
-function cleanString(str) { return str ? str.replace(/^["'\s\t\r\n]+|["'\s\t\r\n]+$/g, '').trim() : ""; }
 
 function translateMonthThai(mCode, yCode) {
   const monthsThai = {
@@ -448,101 +434,101 @@ function loadLayoutTemplates() {
 
 loadLayoutTemplates();
 
-Promise.all([
-  fetch(salesCsvUrl).then(res => res.text()),
-  fetch(configCsvUrl).then(res => res.text()).catch(() => "Key,Value\nPassword,1234")
-]).then(([salesCsv, configCsv]) => {
-  
-  try {
-    const cLines = configCsv.split(/\r?\n/).filter(l => l.trim() !== "");
-    if(cLines.length > 1) {
-      const b2Row = parseCSVLine(cLines[1]);
-      if(b2Row && b2Row[1]) { cachedPasswordFromSheet = cleanString(b2Row[1]); }
-    }
-  } catch(e) { console.log("Config backup run."); }
-  if(!cachedPasswordFromSheet) { cachedPasswordFromSheet = "1234"; }
-
-  // ENGINE A: SALES OVERVIEW
-  const sLines = salesCsv.split(/\r?\n/).filter(l => l.trim() !== "");
-  const sRows = sLines.map(l => parseCSVLine(l));
-  
-  const rawYears = sRows[0].map(y => cleanString(y));
-  const rawMonths = sRows[1].map(m => cleanString(m));
-  
-  let validColumnIndices = [];
-  let seenKeys = new Set();
-
-  for(let col = 2; col < rawMonths.length; col++) {
-    const m = rawMonths[col];
-    if(!m || m.indexOf("M") === -1) continue;
-    let y = "";
-    for(let s = col; s >= 2; s--) { if(rawYears[s]) { y = rawYears[s]; break; } }
+// ENGINE: FETCH DATA VIA SECURE BACKEND API
+fetch(secureApiUrl, { method: 'GET', redirect: 'follow' })
+  .then(res => res.json())
+  .then(jsonData => {
     
-    const combinedKey = `${y}-${m}`;
-    if(!seenKeys.has(combinedKey)) {
-      seenKeys.add(combinedKey);
-      validColumnIndices.push(col);
-      uniqueTimelineKeys.push(combinedKey);
-      monthOptions.push({ key: combinedKey, text: translateMonthThai(m, y), year: y, monthCode: m });
+    if (!jsonData || jsonData.length === 0) {
+      throw new Error("ไม่มีข้อมูลส่งกลับมาจาก API");
     }
-  }
 
-  monthOptions.reverse();
-
-  for (let i = 2; i < sRows.length; i++) {
-    if(!sRows[i][1]) continue;
-    const person = cleanString(sRows[i][1]);
-    if(person === "" || person === "SalePerson") continue;
+    // 1. ประมวลผลสร้างโครงสร้างช่วงเวลา (Timeline Keys) จากหัวข้อ JSON อัตโนมัติ
+    // โดยกรองดูจาก Keys ที่ขึ้นต้นด้วยปี ค.ศ. เช่น "2025-" หรือ "2026-"
+    const sampleItem = jsonData[0];
+    const rawKeys = Object.keys(sampleItem);
     
-    let nick = "ทั่วไป";
-    if(person.includes("แอนนี่")) nick = "แอนนี่";
-    else if(person.includes("พรีม")) nick = "พรีม";
-    else if(person.includes("ดอน")) nick = "ดอน";
-    else if(person.includes("นาเดียร์")) nick = "นาเดียร์";
-    else if(person.includes("ฟ้า")) nick = "ฟ้า";
-
-    const nums = validColumnIndices.map(colIdx => {
-      const valStr = sRows[i][colIdx] || "0";
-      return parseFloat(valStr.replace(/[^0-9.-]+/g, "")) || 0;
+    rawKeys.forEach(key => {
+      if (key.includes("2025-M") || key.includes("2026-M")) {
+        uniqueTimelineKeys.push(key);
+        
+        const parts = key.split("-");
+        const y = parts[0];
+        const m = parts[1];
+        monthOptions.push({ key: key, text: translateMonthThai(m, y), year: y, monthCode: m });
+      }
     });
 
-    globalSalesData.push({ name: person, shortName: person.replace("ISR-", ""), nickName: nick, data: nums, color: staffColorMap[nick] || "#cbd5e1" });
-  }
-  
-  uniqueTimelineKeys.forEach((key, rawIdx) => {
-    const parts = key.split("-");
-    const y = parts[0];
-    const mIdx = parseInt(parts[1].replace("M","")) - 1;
-    let sum = 0;
-    globalSalesData.forEach(st => { sum += st.data[rawIdx]; });
+    // เรียงคีย์ข้อมูลให้ถูกต้อง (ม.ค. -> ธ.ค.)
+    uniqueTimelineKeys.sort();
+    // เรียงตัวเลือกเงื่อนไขเวลาให้แสดงจากล่าสุดย้อนหลังลงไป
+    monthOptions.sort((a,b) => b.key.localeCompare(a.key));
+
+    // 2. จัดการแปรสภาพข้อมูลรายบุคคลลงฐานข้อมูลแดชบอร์ด
+    jsonData.forEach(row => {
+      const person = row["SalePerson"] || row["พนักงานขาย"]; 
+      if (!person) return;
+
+      let nick = "ทั่วไป";
+      if(person.includes("แอนนี่")) nick = "แอนนี่";
+      else if(person.includes("พรีม")) nick = "พรีม";
+      else if(person.includes("ดอน")) nick = "ดอน";
+      else if(person.includes("นาเดียร์")) nick = "นาเดียร์";
+      else if(person.includes("ฟ้า")) nick = "ฟ้า";
+
+      // ดึงตัวเลขจากคีย์เวลาตามลำดับเส้นเวลา
+      const nums = uniqueTimelineKeys.map(key => {
+        const valStr = String(row[key] || "0");
+        return parseFloat(valStr.replace(/[^0-9.-]+/g, "")) || 0;
+      });
+
+      globalSalesData.push({ 
+        name: person, 
+        shortName: person.replace("ISR-", ""), 
+        nickName: nick, 
+        data: nums, 
+        color: staffColorMap[nick] || "#cbd5e1" 
+      });
+    });
     
-    if(y === "2025") globalTeamTotal2025[mIdx] = sum;
-    else if(y === "2026") globalTeamTotal2026[mIdx] = sum;
+    // 3. รวมผลยอดขายยอดรวมทั้งทีมแบ่งแยกตามรายเดือนและรายปี
+    uniqueTimelineKeys.forEach((key, rawIdx) => {
+      const parts = key.split("-");
+      const y = parts[0];
+      const mIdx = parseInt(parts[1].replace("M","")) - 1;
+      
+      let sum = 0;
+      globalSalesData.forEach(st => { sum += st.data[rawIdx]; });
+      
+      if(y === "2025") globalTeamTotal2025[mIdx] = sum;
+      else if(y === "2026") globalTeamTotal2026[mIdx] = sum;
+    });
+
+    // ปิดตัวหมุนโหลด และเปิดแสดงแดชบอร์ดหลัก
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("dashboardContent").style.display = "block";
+
+    renderYoYLineChart(globalTeamTotal2025, globalTeamTotal2026);
+
+    const selector = document.getElementById("monthSelector");
+    monthOptions.forEach(opt => {
+      const el = document.createElement("option");
+      el.value = opt.key;
+      el.textContent = opt.text;
+      selector.appendChild(el);
+    });
+    
+    // ตั้งค่าเริ่มต้นระบบไว้ที่เดือนล่าสุดประจำแผน (2026-M05)
+    selector.value = "2026-M05";
+    updateExecutiveAndBottomCharts("2026-M05");
+
+    selector.addEventListener("change", (e) => updateExecutiveAndBottomCharts(e.target.value));
+
+  })
+  .catch(err => {
+    document.getElementById("loader").textContent = "โครงสร้างระบบจัดทำ API ขัดข้อง กรุณาตรวจสอบสถานะ Web App หรือสิทธิ์การเข้าถึง";
+    console.error(err);
   });
-
-  document.getElementById("loader").style.display = "none";
-  document.getElementById("dashboardContent").style.display = "block";
-
-  renderYoYLineChart(globalTeamTotal2025, globalTeamTotal2026);
-
-  const selector = document.getElementById("monthSelector");
-  monthOptions.forEach(opt => {
-    const el = document.createElement("option");
-    el.value = opt.key;
-    el.textContent = opt.text;
-    selector.appendChild(el);
-  });
-  
-  // ตั้งค่าเริ่มต้นระบบไว้ที่เดือน 2026-M05
-  selector.value = "2026-M05";
-  updateExecutiveAndBottomCharts("2026-M05");
-
-  selector.addEventListener("change", (e) => updateExecutiveAndBottomCharts(e.target.value));
-
-}).catch(err => {
-  document.getElementById("loader").textContent = "โครงสร้างเซิร์ฟเวอร์ฐานข้อมูลขัดข้อง กรุณาตรวจสอบการเข้าถึงไฟล์ชีต";
-  console.error(err);
-});
 
 /* ===================================================
    FUNCTION: UPDATE EXECUTIVE STATS & CHARTS
@@ -551,7 +537,7 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
   const rawIdx = uniqueTimelineKeys.indexOf(selectedMonthKey);
   if(rawIdx === -1) return;
 
-  // 1. ประมวลผลข้อมูลยอดขายรวมทั้งปีสําหรับกล่อง 1
+  // 1. ยอดขายรวมทั้งปีสําหรับกล่องสรุป
   let total2025 = globalTeamTotal2025.reduce((a, b) => a + b, 0);
   let total2026 = globalTeamTotal2026.reduce((a, b) => a + b, 0);
 
@@ -561,9 +547,9 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
   let annualRatio = total2025 > 0 ? (total2026 / total2025) * 100 : 0;
   document.getElementById("annualSalesShare").textContent = annualRatio.toFixed(1) + "% ของปีที่แล้ว";
 
-  // 2. ดึงลำดับเดือนจากรหัสคีย์เพื่อนำมาคุมขอบเขตของ YTD
+  // 2. ดึงขอบเขตของ YTD
   const optFound = monthOptions.find(o => o.key === selectedMonthKey);
-  let currentMonthLimit = 5; // Default Jan - May
+  let currentMonthLimit = 5; 
   if(optFound) {
     currentMonthLimit = parseInt(optFound.monthCode.replace("M", ""));
   }
@@ -587,10 +573,10 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
     trendEl.className = "trend-indicator down";
   }
 
-  // 3. เรียกวาดแผนภูมิเข็มไมล์ย่อยขวาบน (ฝังในกล่องสรุปผลรวมประจำปี)
+  // 3. แผนภูมิเกจความคืบหน้าของเดือน
   renderGaugeChart(currentMonthLimit);
 
-  // 4. ดึงข้อมูลรายบุคคลเพื่อนำไปแสดงผลกราฟแท่งและโดนัทด้านล่าง
+  // 4. แสดงผลกราฟแท่งและโดนัทรายบุคคลด้านล่าง
   const names = []; const values = []; const colors = [];
   let totalMonthSum = 0;
 
