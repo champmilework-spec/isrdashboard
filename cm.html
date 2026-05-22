@@ -238,17 +238,16 @@ input[type="checkbox"]:checked::after {
   white-space: nowrap;
 }
 .inventory-summary {
-  font-size: 13px;                              /* ปรับขนาดตัวอักษรบน Desktop ให้ใหญ่เต็มตาขึ้น */
+  font-size: 13px;
   color: #2f5ea8;
   font-weight: bold;
   background-color: #e8f0fe;
-  padding: 4px 10px;                            /* เพิ่มความกว้างของกล่องข้อความ */
+  padding: 4px 10px;
   border-radius: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-left: auto;                            /* ดันฝั่งซ้ายเพื่อให้ตัวเลขวิ่งไปชิดขวา */
-  /* margin: 0 auto; */                         /* หรือเปิดใช้งานบรรทัดนี้แทน ถ้าอยากให้อยู่ตรงกลาง */
+  margin-left: auto;
 }
 .result-count {
   font-size: 11px;
@@ -429,17 +428,15 @@ tbody tr:active {
   .container { padding: 8px 10px; }
   .cat-chip { font-size: 11px; padding: 5px 12px; }
   tbody td { padding: 10px 6px; font-size: 12px; }
-  /* บังคับให้อยู่บรรทัดเดียวกัน ห้ามแตกแถวบนมือถือ */
   .info-status-row { flex-direction: row !important; align-items: center !important; justify-content: space-between; }
   .status-left { flex-direction: row !important; align-items: center !important; gap: 4px; }
   .lock-badge, .result-count { font-size: 10px; padding: 2px 4px; }
 
-  /* แยกปรับเฉพาะยอด Value */
   .inventory-summary { 
-    font-size: 13px;       /* ปรับขนาดตัวอักษรตามใจชอบ (เช่น 11px, 12px) */
-    font-family: Arial;    /* เปลี่ยนชื่อ Font ที่ต้องการตรงนี้ */
+    font-size: 13px;
+    font-family: Arial;
     padding: 2px 6px; 
-    margin-left: auto;       /* ดันซ้าย-ขวาให้เท่ากัน เพื่อบังคับอยู่ตรงกลางจอ */
+    margin-left: auto;
   }
 }
 </style>
