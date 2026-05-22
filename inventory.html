@@ -199,8 +199,7 @@ input[type="checkbox"]:checked::after {
 ========================= */
 .table-wrap {
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: auto;
   border: 1px solid #eee;
   border-radius: 12px;
   background: #fff;
@@ -255,7 +254,7 @@ tbody tr:hover {
    COLUMN WIDTHS
 ========================= */
 .col-code {
-  width: 90px;
+  width: 110px;
   white-space: nowrap;
 }
 .col-desc {
@@ -264,7 +263,7 @@ tbody tr:hover {
   white-space: normal;
 }
 .col-dynamic {
-  width: 90px;
+  width: 100px;
   text-align: right;
   white-space: nowrap;
   font-weight: bold;
@@ -289,7 +288,7 @@ tbody tr:hover {
   bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(17, 24, 39, 0.85);
+  background: rgba(17, 24, 39, 0.9);
   color: #fff;
   padding: 8px 18px;
   border-radius: 20px;
@@ -337,9 +336,6 @@ tbody tr:hover {
    MOBILE RESPONSIVE
 ========================= */
 @media(max-width:768px){
-  .table-wrap {
-    overflow-x: hidden;
-  }
   .cat-filter-bar {
     gap: 5px;
   }
@@ -352,7 +348,7 @@ tbody tr:hover {
 </head>
 <body>
 
-<!-- TOPBAR PLACEHOLDER (LOAD FROM LAYOUT.JS) -->
+<!-- TOPBAR PLACEHOLDER (FALLBACK BACKUP INCLUDED IN SCRIPT) -->
 <div id="header-placeholder"></div>
 
 <!-- CONTENT MAIN CONTAINER -->
@@ -438,7 +434,7 @@ tbody tr:hover {
         </tr>
       </thead>
       <tbody id="table-body">
-        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading...</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading Inventory Master Data...</td></tr>
       </tbody>
     </table>
   </div>
@@ -455,7 +451,7 @@ const API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_uk
 
 // Category filter definitions — keyword searched in gnamechr
 const CAT_FILTERS = [
-  { id: "cat-lacquer", keyword: "แลคเกอร์พ่นสีรถยนต์", chipId: "chip-lacquer" },
+  { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว",            chipId: "chip-tape"    },
   { id: "cat-primer",  keyword: "สีรองพื้น",              chipId: "chip-primer"  },
   { id: "cat-spray",   keyword: "สีพ่น",                  chipId: "chip-spray"   }, 
@@ -479,12 +475,28 @@ let currentDynamicColumn = "Onhand_All";
 async function loadTable(){
   try {
     const res = await fetch(API);
+    if (!res.ok) throw new Error("Network response error");
     rawData = await res.json();
+    
+    // คลีน Key ของอ็อบเจกต์ให้ยืดหยุ่นขึ้น (ป้องกันปัญหาตัวพิมพ์เล็ก-ใหญ่จากต้นทาง)
+    rawData = rawData.map(item => {
+      let newItem = {};
+      for (let k in item) {
+        newItem[k] = item[k];
+        // แมปคีย์สำรองที่เป็นตัวเล็กล้วน
+        if (k.toLowerCase() !== k) {
+          newItem[k.toLowerCase()] = item[k];
+        }
+      }
+      return newItem;
+    });
+
     updateChipStyles();
     applyAll();
   } catch(e) {
+    console.error(e);
     document.getElementById("table-body").innerHTML =
-      '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">Failed to load data.</td></tr>';
+      '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">Failed to load data from Sheet API.</td></tr>';
   }
 }
 
@@ -503,8 +515,9 @@ function applyAll(){
   // 1. PRODUCT DIVISION FILTER
   if(activeDivs.length > 0){
     result = result.filter(i => {
-      const prodDiv = String(i.ProductDivision || "").trim();
-      return activeDivs.some(f => prodDiv === f.value);
+      // ดึงคีย์ได้ทั้ง ProductDivision และ productdivision
+      const prodDiv = String(i.productdivision || i.ProductDivision || "").trim().toLowerCase();
+      return activeDivs.some(f => prodDiv === f.value.toLowerCase());
     });
   }
 
@@ -518,19 +531,21 @@ function applyAll(){
 
   // 3. TEXT SEARCH
   if(q){
-    result = result.filter(i =>
-      String(i.gbarcode    || "").toLowerCase().includes(q) ||
-      String(i.name        || "").toLowerCase().includes(q) ||
-      String(i.gnamechr    || "").toLowerCase().includes(q) ||
-      String(i[currentDynamicColumn]  || "").toLowerCase().includes(q)
-    );
+    result = result.filter(i => {
+      // ค้นหาจาก Column หลักและ Dynamic Column ที่เลือกอยู่ขณะนั้น
+      const dynVal = String(i[currentDynamicColumn] || i[currentDynamicColumn.toLowerCase()] || "").toLowerCase();
+      return String(i.gbarcode || "").toLowerCase().includes(q) ||
+             String(i.name || "").toLowerCase().includes(q) ||
+             String(i.gnamechr || "").toLowerCase().includes(q) ||
+             dynVal.includes(q);
+    });
   }
 
   // 4. HIDE ZERO / DASH
   if(hideZero){
     result = result.filter(i => {
-      const v = String(i[currentDynamicColumn] || "").trim();
-      if(v === "" || v === "-") return false;
+      const v = String(i[currentDynamicColumn] || i[currentDynamicColumn.toLowerCase()] || "").trim();
+      if(v === "" || v === "-" || v === "0") return false;
       const n = parseFloat(v);
       if(!isNaN(n) && n === 0) return false;
       return true;
@@ -539,7 +554,7 @@ function applyAll(){
 
   filteredData = result;
 
-  // 5. SORT
+  // 5. SORT MANAGEMENT
   if(sortState.key){
     applySortOnFiltered();
   } else {
@@ -547,7 +562,7 @@ function applyAll(){
     renderTable(viewData);
   }
 
-  updateResultCount(viewData.length || filteredData.length);
+  updateResultCount(viewData.length);
 }
 
 /* =========================
@@ -565,25 +580,30 @@ function sortTable(key){
 
 function applySortOnFiltered(){
   const { key, dir } = sortState;
-  const targetKey = key === "dynamic" ? currentDynamicColumn : key;
+  // หากเป็นคอลัมน์ dynamic ให้ใช้ค่าตัวแปรหัวข้อปัจจุบัน
+  let targetKey = key === "dynamic" ? currentDynamicColumn : key;
 
   viewData = [...filteredData].sort((a, b) => {
-    let v1 = a[targetKey] ?? "";
-    let v2 = b[targetKey] ?? "";
+    // ดึงค่ารองรับทั้งตัวเล็กตัวใหญ่
+    let v1 = a[targetKey] ?? a[targetKey.toLowerCase()] ?? "";
+    let v2 = b[targetKey] ?? b[targetKey.toLowerCase()] ?? "";
+    
     const n1 = parseFloat(v1);
     const n2 = parseFloat(v2);
+    
     if(!isNaN(n1) && !isNaN(n2)){
       return dir === "asc" ? n1 - n2 : n2 - n1;
     }
+    
     v1 = String(v1).toLowerCase();
     v2 = String(v2).toLowerCase();
     if(v1 < v2) return dir === "asc" ? -1 : 1;
     if(v1 > v2) return dir === "asc" ?  1 : -1;
     return 0;
   });
+  
   updateArrows(key, dir);
   renderTable(viewData);
-  updateResultCount(viewData.length);
 }
 
 /* =========================
@@ -593,7 +613,7 @@ function copyRowToClipboard(index) {
   const item = viewData[index];
   if (!item) return;
 
-  let rawVal = item[currentDynamicColumn] || "-";
+  let rawVal = item[currentDynamicColumn] ?? item[currentDynamicColumn.toLowerCase()] ?? "-";
   let formattedVal = rawVal;
   if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
@@ -621,10 +641,11 @@ function renderTable(data){
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">No results found.</td></tr>';
     return;
   }
+  
   tbody.innerHTML = data.map((p, index) => {
-    let rawVal = p[currentDynamicColumn] || "-";
+    let rawVal = p[currentDynamicColumn] ?? p[currentDynamicColumn.toLowerCase()] ?? "-";
     let formattedVal = rawVal;
-    
+     
     if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
       formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
     }
@@ -644,7 +665,7 @@ function renderTable(data){
 ========================= */
 function updateResultCount(n){
   document.getElementById("result-count").textContent =
-    n > 0 ? n.toLocaleString() + " items" : "";
+    n > 0 ? n.toLocaleString() + " items" : "0 items";
 }
 
 /* =========================
@@ -685,7 +706,23 @@ function updateChipStyles(){
 /* =========================
    INITIALIZE EVENT LISTENERS
 ========================= */
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
+  // บังคับหยุดพฤติกรรมการกดซ้ำซ้อนบน label-chip 
+  const chips = document.querySelectorAll('.cat-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      if(e.target.tagName !== 'INPUT') {
+        e.preventDefault(); // ป้องกันการเบิ้ลคลิกจาก label
+        const cb = chip.querySelector('input[type="checkbox"]');
+        if(cb) {
+          cb.checked = !cb.checked;
+          // ยิงอีเวนต์ change ให้ทำงานแบบแมนนวล
+          cb.dispatchEvent(new Event('change'));
+        }
+      }
+    });
+  });
+
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
 
@@ -697,6 +734,7 @@ window.addEventListener("load", () => {
     applyAll();
   });
 
+  // ผูกการทำงานเมื่อ Checkbox ของหมวดหมู่เปลี่ยนค่า
   CAT_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
@@ -707,6 +745,7 @@ window.addEventListener("load", () => {
     }
   });
 
+  // ผูกการทำงานเมื่อ Checkbox ของแผนกเปลี่ยนค่า
   DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
@@ -717,7 +756,20 @@ window.addEventListener("load", () => {
     }
   });
 
+  // โหลดข้อมูลเริ่มต้น
   loadTable();
+
+  // สร้าง Topbar สำรอง เผื่อไฟล์ layout.js ไม่ทำงาน
+  setTimeout(() => {
+    const headerEl = document.getElementById("header-placeholder");
+    if (headerEl && headerEl.innerHTML.trim() === "") {
+      headerEl.innerHTML = `
+        <div style="position:fixed; top:0; left:0; width:100%; height:60px; background:#2f5ea8; color:white; display:flex; align-items:center; padding:0 20px; box-shadow:0 2px 5px rgba(0,0,0,0.1); z-index:100; box-sizing:border-box;">
+          <h2 style="margin:0; font-size:20px; letter-spacing:1px;">SUPERPART</h2>
+        </div>
+      `;
+    }
+  }, 1000);
 });
 
 /* =========================
