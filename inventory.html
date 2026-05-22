@@ -51,20 +51,54 @@ body {
   cursor: pointer;
   user-select: none;
 }
-.hide-zero-wrap input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+
+/* ปรับแต่ง Checkbox พื้นฐานให้เป็นวงกลม */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%; /* บังคับวงกลม */
+  outline: none;
   cursor: pointer;
-  accent-color: #2f5ea8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: #fff;
+}
+input[type="checkbox"]:checked {
+  background-color: #2f5ea8;
+  border-color: #2f5ea8;
+}
+input[type="checkbox"]:checked::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background-color: #fff;
+  border-radius: 50%;
 }
 
 /* =========================
-   FILTER BAR
+   CONTROL BAR (SEARCH & DROPDOWN)
 ========================= */
-.filterbar {
-  margin-bottom: 8px;
+.control-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-.filterbar input {
+@media(min-width: 600px) {
+  .control-bar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.search-wrapper {
+  flex: 1;
+}
+.search-wrapper input {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #ddd;
@@ -74,14 +108,60 @@ body {
   box-sizing: border-box;
 }
 
+.dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dropdown-wrapper label {
+  font-size: 12px;
+  font-weight: normal;
+  color: #666;
+  white-space: nowrap;
+}
+.dropdown-wrapper select {
+  padding: 6px 28px 6px 12px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  color: #4a5568;
+  outline: none;
+  cursor: pointer;
+  font-weight: normal;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  transition: all 0.2s;
+}
+.dropdown-wrapper select:focus {
+  border-color: #2f5ea8;
+  box-shadow: 0 0 0 2px rgba(47, 94, 168, 0.1);
+}
+
 /* =========================
-   CATEGORY FILTER CHIPS
+   CATEGORY FILTER CHIPS & DIVISION FILTERS
 ========================= */
-.cat-filter-bar {
+.cat-filter-bar, .div-filter-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 10px;
+}
+.div-filter-bar {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #eef0f5;
+  align-items: center;
+}
+.div-filter-title {
+  font-size: 12px;
+  color: #666;
+  font-weight: bold;
+  margin-right: 4px;
 }
 .cat-chip {
   display: inline-flex;
@@ -101,8 +181,6 @@ body {
 .cat-chip input[type="checkbox"] {
   width: 12px;
   height: 12px;
-  cursor: pointer;
-  accent-color: #2f5ea8;
   margin: 0;
 }
 .cat-chip:hover {
@@ -111,9 +189,9 @@ body {
 }
 .cat-chip.active {
   border-color: #2f5ea8;
-  background: #f0f5ff;
-  color: #2f5ea8;
-  font-weight: 600;
+  background: #2f5ea8;
+  color: #fff;
+  font-weight: bold;
 }
 
 /* =========================
@@ -166,6 +244,9 @@ tbody td {
   padding: 10px;
   border-bottom: 1px solid #f0f0f0;
 }
+tbody tr {
+  cursor: pointer;
+}
 tbody tr:hover {
   background: #f7f7f7;
 }
@@ -182,10 +263,11 @@ tbody tr:hover {
   word-break: break-word;
   white-space: normal;
 }
-.col-stock {
-  width: 50px;
+.col-dynamic {
+  width: 90px;
   text-align: right;
   white-space: nowrap;
+  font-weight: bold;
 }
 
 /* =========================
@@ -197,6 +279,25 @@ tbody tr:hover {
   letter-spacing: 0.5px;
   margin-bottom: 6px;
   text-align: right;
+}
+
+/* =========================
+   TOAST NOTIFICATION
+========================= */
+.copy-toast {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 24, 39, 0.85);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 10000;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 /* =========================
@@ -239,10 +340,6 @@ tbody tr:hover {
   .table-wrap {
     overflow-x: hidden;
   }
-  thead th.col-stock {
-    background: #2f5ea8;
-    color: #fff;
-  }
   .cat-filter-bar {
     gap: 5px;
   }
@@ -270,9 +367,31 @@ tbody tr:hover {
     </label>
   </div>
 
-  <!-- SEARCH -->
-  <div class="filterbar">
-    <input id="searchBox" type="text" placeholder="Search Item Code / Description / OH..." />
+  <!-- CONTROL BAR (SEARCH & DROPDOWN) -->
+  <div class="control-bar">
+    <div class="search-wrapper">
+      <input id="searchBox" type="text" placeholder="Search Item Code / Description / Value..." />
+    </div>
+    <div class="dropdown-wrapper">
+      <label for="columnSelector">แสดงข้อมูล:</label>
+      <select id="columnSelector">
+        <option value="gpriceF">gpriceF</option>
+        <option value="Onhand_All" selected>Onhand_All</option>
+        <option value="glocat">glocat</option>
+        <option value="onhandST">onhandST</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- DIVISION FILTER BAR -->
+  <div class="div-filter-bar">
+    <span class="div-filter-title">Division:</span>
+    <label class="cat-chip" id="chip-div-tool">
+      <input type="checkbox" id="div-tool" /> Tool
+    </label>
+    <label class="cat-chip" id="chip-div-wos">
+      <input type="checkbox" id="div-wos" checked /> WOS
+    </label>
   </div>
 
   <!-- CATEGORY FILTER CHIPS -->
@@ -313,8 +432,8 @@ tbody tr:hover {
           <th onclick="sortTable('name')">
             Description <span class="sort-arrow" id="arrow-name">↕</span>
           </th>
-          <th onclick="sortTable('Onhand_All')" class="col-stock">
-            OH <span class="sort-arrow" id="arrow-Onhand_All">↕</span>
+          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">
+            Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span>
           </th>
         </tr>
       </thead>
@@ -328,6 +447,7 @@ tbody tr:hover {
 
 <!-- FLOAT TOP BUTTON -->
 <div id="toTop">↑</div>
+<div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <!-- SYSTEM SCRIPTS -->
 <script>
@@ -338,14 +458,20 @@ const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์พ่นสีรถยนต์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว",            chipId: "chip-tape"    },
   { id: "cat-primer",  keyword: "สีรองพื้น",              chipId: "chip-primer"  },
-  { id: "cat-spray",   keyword: "สีพ่น",                 chipId: "chip-spray"   }, 
-  { id: "cat-putty",   keyword: "สีโป๊ว",                chipId: "chip-putty"   },
+  { id: "cat-spray",   keyword: "สีพ่น",                  chipId: "chip-spray"   }, 
+  { id: "cat-putty",   keyword: "สีโป๊ว",                 chipId: "chip-putty"   },
+];
+
+const DIV_FILTERS = [
+  { id: "div-tool", value: "Tool and Equipment", chipId: "chip-div-tool" },
+  { id: "div-wos",  value: "Workshop Product Solution", chipId: "chip-div-wos" }
 ];
 
 let rawData      = [];
 let filteredData = [];
 let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
+let currentDynamicColumn = "Onhand_All";
 
 /* =========================
    LOAD DATA
@@ -354,6 +480,7 @@ async function loadTable(){
   try {
     const res = await fetch(API);
     rawData = await res.json();
+    updateChipStyles();
     applyAll();
   } catch(e) {
     document.getElementById("table-body").innerHTML =
@@ -369,10 +496,19 @@ function applyAll(){
   const hideZero = document.getElementById("hideZero").checked;
 
   const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+  const activeDivs = DIV_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
 
   let result = rawData;
 
-  // 1. CATEGORY FILTER
+  // 1. PRODUCT DIVISION FILTER
+  if(activeDivs.length > 0){
+    result = result.filter(i => {
+      const prodDiv = String(i.ProductDivision || "").trim();
+      return activeDivs.some(f => prodDiv === f.value);
+    });
+  }
+
+  // 2. CATEGORY FILTER
   if(activeCats.length > 0){
     result = result.filter(i => {
       const gname = String(i.gnamechr || "").toLowerCase();
@@ -380,20 +516,20 @@ function applyAll(){
     });
   }
 
-  // 2. TEXT SEARCH
+  // 3. TEXT SEARCH
   if(q){
     result = result.filter(i =>
       String(i.gbarcode    || "").toLowerCase().includes(q) ||
       String(i.name        || "").toLowerCase().includes(q) ||
       String(i.gnamechr    || "").toLowerCase().includes(q) ||
-      String(i.Onhand_All  || "").toLowerCase().includes(q)
+      String(i[currentDynamicColumn]  || "").toLowerCase().includes(q)
     );
   }
 
-  // 3. HIDE ZERO / DASH
+  // 4. HIDE ZERO / DASH
   if(hideZero){
     result = result.filter(i => {
-      const v = String(i.Onhand_All || "").trim();
+      const v = String(i[currentDynamicColumn] || "").trim();
       if(v === "" || v === "-") return false;
       const n = parseFloat(v);
       if(!isNaN(n) && n === 0) return false;
@@ -403,7 +539,7 @@ function applyAll(){
 
   filteredData = result;
 
-  // 4. SORT
+  // 5. SORT
   if(sortState.key){
     applySortOnFiltered();
   } else {
@@ -429,9 +565,11 @@ function sortTable(key){
 
 function applySortOnFiltered(){
   const { key, dir } = sortState;
+  const targetKey = key === "dynamic" ? currentDynamicColumn : key;
+
   viewData = [...filteredData].sort((a, b) => {
-    let v1 = a[key] ?? "";
-    let v2 = b[key] ?? "";
+    let v1 = a[targetKey] ?? "";
+    let v2 = b[targetKey] ?? "";
     const n1 = parseFloat(v1);
     const n2 = parseFloat(v2);
     if(!isNaN(n1) && !isNaN(n2)){
@@ -449,6 +587,32 @@ function applySortOnFiltered(){
 }
 
 /* =========================
+   COPY ROW DATA TO CLIPBOARD
+========================= */
+function copyRowToClipboard(index) {
+  const item = viewData[index];
+  if (!item) return;
+
+  let rawVal = item[currentDynamicColumn] || "-";
+  let formattedVal = rawVal;
+  if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+    formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+  }
+
+  const textToCopy = `Item Code: ${item.gbarcode || "-"} | Description: ${item.name || "-"} | ${currentDynamicColumn}: ${formattedVal}`;
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    const toast = document.getElementById("copyToast");
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 1800);
+  }).catch(err => {
+    console.error("Could not copy text: ", err);
+  });
+}
+
+/* =========================
    RENDER TABLE DATA
 ========================= */
 function renderTable(data){
@@ -457,13 +621,22 @@ function renderTable(data){
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">No results found.</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(p => `
-    <tr>
-      <td class="col-code">${p.gbarcode    || "-"}</td>
-      <td class="col-desc">${p.name        || "-"}</td>
-      <td class="col-stock">${p.Onhand_All || "0"}</td>
-    </tr>
-  `).join("");
+  tbody.innerHTML = data.map((p, index) => {
+    let rawVal = p[currentDynamicColumn] || "-";
+    let formattedVal = rawVal;
+    
+    if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+    }
+
+    return `
+      <tr onclick="copyRowToClipboard(${index})">
+        <td class="col-code">${p.gbarcode    || "-"}</td>
+        <td class="col-desc">${p.name        || "-"}</td>
+        <td class="col-dynamic">${formattedVal}</td>
+      </tr>
+    `;
+  }).join("");
 }
 
 /* =========================
@@ -478,7 +651,7 @@ function updateResultCount(n){
    SORT ARROWS MANAGEMENT
 ========================= */
 function updateArrows(active, dir){
-  ["gbarcode", "name", "Onhand_All"].forEach(k => {
+  ["gbarcode", "name", "dynamic"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(!el) return;
     el.textContent = k === active ? (dir === "asc" ? "↑" : "↓") : "↕";
@@ -489,7 +662,17 @@ function updateArrows(active, dir){
    CHIP ACTIVE STATE STYLES
 ========================= */
 function updateChipStyles(){
+  // Categories
   CAT_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    const chip     = document.getElementById(f.chipId);
+    if(checkbox && chip) {
+      if(checkbox.checked) chip.classList.add("active");
+      else                 chip.classList.remove("active");
+    }
+  });
+  // Divisions
+  DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     const chip     = document.getElementById(f.chipId);
     if(checkbox && chip) {
@@ -506,7 +689,25 @@ window.addEventListener("load", () => {
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
 
+  const colSelector = document.getElementById("columnSelector");
+  colSelector.addEventListener("change", (e) => {
+    currentDynamicColumn = e.target.value;
+    document.getElementById("dynamic-th-label").innerHTML = `${currentDynamicColumn} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+    sortState = { key: null, dir: "asc" }; 
+    applyAll();
+  });
+
   CAT_FILTERS.forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    if(checkbox) {
+      checkbox.addEventListener("change", () => {
+        updateChipStyles();
+        applyAll();
+      });
+    }
+  });
+
+  DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
       checkbox.addEventListener("change", () => {
