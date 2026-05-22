@@ -245,11 +245,10 @@ body{
   display:block;
 }
 
-/* ป้ายสถานะ ตัวอักษรสีขาวสว่าง มองเห็นได้เด่นชัดขึ้น (ข้อ 2) */
 .status-badge {
   position: absolute;
   top: 10px;
-  left: 10px; /* ย้ายมามุมบนซ้ายตามรายละเอียด */
+  left: 10px;
   font-size: 11px;
   padding: 4px 10px;
   border-radius: 6px;
@@ -261,7 +260,6 @@ body{
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* แท็ก PromoType ในรูป มุมล่างขวา (ข้อ 1) */
 .promo-type-overlay {
   position: absolute;
   bottom: 10px;
@@ -321,7 +319,6 @@ body{
   word-break: break-word;
 }
 
-/* ปรับระยะและสัดส่วน Promo1 ให้เหมาะสมตามปกติ ไม่อ้วนเตี้ย (ข้อ 3) */
 .promo1-highlight {
   font-size: 15px;
   font-weight: 700;
@@ -616,12 +613,25 @@ function initMenuFix() {
 async function fetchPromotions() {
   try {
     const res = await fetch(SHEET_API);
-    allPromotions = await res.json();
+    if (!res.ok) throw new Error("Network error response");
+    const rawData = await res.json();
+    
+    // คลีนคีย์ข้อมูลทั้งหมดจาก API ให้เป็นพิมพ์เล็กเพื่อลดปัญหาคีย์เว้นวรรคหรือไม่ตรงกับรูปแบบหัวตารางเดิม
+    allPromotions = rawData.map(item => {
+      let cleanItem = {};
+      for (let key in item) {
+        cleanItem[key] = item[key]; // เก็บต้นฉบับไว้กันพลาด
+        const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '');
+        cleanItem[cleanKey] = item[key]; // แปลงคีย์ยืดหยุ่นไว้ใช้งานภายในสคริปต์
+      }
+      return cleanItem;
+    });
+
     processAndRender();
   } catch (error) {
     console.error("Fetch Error:", error);
     document.getElementById("promo-grid").innerHTML = `
-      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบการแชร์ลิงก์ชีต</div>
+      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบสถานะ API หรือการแชร์ไฟล์ชีต</div>
     `;
   }
 }
@@ -635,16 +645,16 @@ function processAndRender() {
 
   if (showActiveOnly) {
     targetData = targetData.filter(item => {
-      const status = String(item.PromoStatus || "").trim().toLowerCase();
+      const status = String(item.promostatus || item.PromoStatus || "").trim().toLowerCase();
       return status === "active";
     });
   } else {
-    targetData = targetData.filter(item => item.PromoCode);
+    targetData = targetData.filter(item => item.promocode || item.PromoCode);
   }
 
   if (checkedBrands.length > 0) {
     targetData = targetData.filter(p => {
-      const bName = String(p.Brand || "").trim();
+      const bName = String(p.brand || p.Brand || "").trim();
       return checkedBrands.some(b => bName.toLowerCase() === b.toLowerCase());
     });
   }
@@ -668,32 +678,30 @@ function processAndRender() {
   `;
 
   const promoCards = paginatedData.map(p => {
-    const code = p.PromoCode || 'PROMO';
+    const code = p.promocode || p.PromoCode || 'PROMO';
     const type = p.promotype || 'SPECIAL';
-    const condition = p.Promo_Condition || 'เงื่อนไขพิเศษแคมเปญ';
-    const imgUrl = (p.PhotoLink || "").trim();
-    const status = p.PromoStatus || 'Active';
-    const brand = p.Brand || 'SUPERPART';
+    const condition = p.promo_condition || p.Promo_Condition || 'เงื่อนไขพิเศษแคมเปญ';
+    const imgUrl = (p.photolink || p.PhotoLink || "").trim();
+    const status = p.promostatus || p.PromoStatus || 'Active';
+    const brand = p.brand || p.Brand || 'SUPERPART';
     
-    const rawPrice = p["ราคาขาย"] || "";
+    const rawPrice = p["ราคาขาย"] || p["ราคาขาย"] || "";
     let displayPrice = 'ราคาพิเศษ';
 
     if(rawPrice) {
-      // ลบเครื่องหมาย , ออกทั้งหมดก่อน (เช่น "6,600" จะกลายเป็น "6600") แล้วค่อยแปลงเป็นตัวเลข
       const cleanPrice = String(rawPrice).replace(/,/g, '');
       const parsed = parseFloat(cleanPrice);
-      
       displayPrice = !isNaN(parsed) ? `฿${parsed.toLocaleString()}` : rawPrice;
     }
-    // ปรับสีตัวอักษร Active/Inactive เป็นสีขาวสว่างให้อ่านออกง่าย (ข้อ 2)
+
     const isAct = status.toLowerCase() === 'active';
     const badgeStyle = isAct 
       ? `background: rgba(22, 163, 74, 0.65); border: 1px solid rgba(22, 163, 74, 0.2);` 
       : `background: rgba(100, 116, 139, 0.7); border: 1px solid rgba(100, 116, 139, 0.2);`;
 
-    const cleanPromo1 = p.Promo1 ? String(p.Promo1).trim() : "";
-    const cleanPromo2 = p.Promo2 ? String(p.Promo2).trim() : "";
-    const cleanPromo3 = p.Promo3 ? String(p.Promo3).trim() : "";
+    const cleanPromo1 = (p.promo1 || p.Promo1) ? String(p.promo1 || p.Promo1).trim() : "";
+    const cleanPromo2 = (p.promo2 || p.Promo2) ? String(p.promo2 || p.Promo2).trim() : "";
+    const cleanPromo3 = (p.promo3 || p.Promo3) ? String(p.promo3 || p.Promo3).trim() : "";
 
     let extraBulletsHtml = '';
     if (cleanPromo2 !== "") extraBulletsHtml += `<li>${cleanPromo2}</li>`;
@@ -703,9 +711,7 @@ function processAndRender() {
       <div class="card">
         <div class="img-wrap">
           <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/500x500?text=SUPERPART+PROMO'" alt="Promotion Image">
-          <!-- ย้ายตัวหนังสือ Active มาฝั่งบนซ้าย พร้อมตัวอักษรขาวสว่าง -->
           <span class="status-badge" style="${badgeStyle}">${status}</span>
-          <!-- ย้ายประเภทโปรโมชั่นมาซ้อนอยู่มุมขวาล่างของรูปภาพ (ข้อ 1) -->
           <div class="promo-type-overlay">${type}</div>
         </div>
         <div class="content">
@@ -716,7 +722,6 @@ function processAndRender() {
           
           <div class="condition-text">${condition}</div>
           
-          <!-- ปรับฟอนต์ให้สัดส่วนสมบูรณ์ปกติอ่านง่าย (ข้อ 3) -->
           ${cleanPromo1 ? `<div class="promo1-highlight">${cleanPromo1}</div>` : ''}
           
           ${extraBulletsHtml ? `<ul class="promo-bullets">${extraBulletsHtml}</ul>` : ''}
@@ -729,11 +734,11 @@ function processAndRender() {
           <div class="date-zone">
             <div class="date-line">
               <span>เริ่มแคมเปญ:</span>
-              <span>${p.StartDate || '-'}</span>
+              <span>${p.startdate || p.StartDate || '-'}</span>
             </div>
             <div class="date-line">
               <span>สิ้นสุดแคมเปญ:</span>
-              <span>${p.EndDate || 'จนกว่าจะเปลี่ยนแปลง'}</span>
+              <span>${p.enddate || p.EndDate || 'จนกว่าจะเปลี่ยนแปลง'}</span>
             </div>
           </div>
         </div>
