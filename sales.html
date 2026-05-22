@@ -31,6 +31,7 @@ body{
   max-width: 1350px;
   margin: 0 auto;
   padding: 90px 16px 40px;
+  width: 100%;
 }
 
 .dashboard-header {
@@ -74,6 +75,7 @@ body{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
 }
 .widget-stat-card .stat-label {
   font-size: 12px;
@@ -88,9 +90,11 @@ body{
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap; /* ป้องกันการเบียดหลุดขอบบนหน้าจอขนาดเล็กมาก */
 }
 .stat-val-block {
   flex: 1;
+  min-width: 120px;
 }
 .stat-val-block .year-tag {
   font-size: 11px;
@@ -170,6 +174,7 @@ body{
 ========================= */
 .section-top {
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .section-bottom-grid {
@@ -177,6 +182,7 @@ body{
   grid-template-columns: 1fr;
   gap: 16px;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 @media(min-width: 992px) {
@@ -193,6 +199,8 @@ body{
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
+  width: 100%;
+  overflow: hidden; /* ป้องกันเนื้อหาไหลทะลุขอบนอกของการ์ดหลัก */
 }
 
 .card-header-flex {
@@ -225,6 +233,8 @@ body{
 .chart-wrapper {
   position: relative;
   width: 100%;
+  min-width: 0; /* แก้ไขปัญหาฟลักซ์ความกว้างที่หดตัวไม่ได้ของ Canvas */
+  overflow-x: auto; /* เปิดระบบ Scrollbar แนวนอนระดับกล่องย่อย หากหน้าจอเล็กกว่าพื้นที่วิกฤตของชาร์ต */
 }
 
 #loader { text-align: center; padding: 40px; font-size: 14px; color: #64748b; }
@@ -318,7 +328,7 @@ body{
     <div class="section-top">
       <div class="chart-card">
         <h2>Team Sales Overview: Year-over-Year (YoY Comparison)</h2>
-        <div class="chart-wrapper" style="height: 240px;">
+        <div class="chart-wrapper" style="height: 240px; min-width: 320px;">
           <canvas id="yoyLineChart"></canvas>
         </div>
       </div>
@@ -334,7 +344,7 @@ body{
             <select id="monthSelector"></select>
           </div>
         </div>
-        <div class="chart-wrapper" style="height: 220px;">
+        <div class="chart-wrapper" style="height: 220px; min-width: 320px;">
           <canvas id="hpGaugeChart"></canvas>
         </div>
       </div>
@@ -343,7 +353,7 @@ body{
         <div class="card-header-flex">
           <h2>Sales Contribution Share</h2>
         </div>
-        <div class="chart-wrapper" style="height: 220px;">
+        <div class="chart-wrapper" style="height: 220px; min-width: 280px;">
           <canvas id="donutShareChart"></canvas>
         </div>
       </div>
@@ -359,9 +369,8 @@ body{
 <div id="footer-placeholder"></div>
 
 <script>
-// เปลี่ยนมาดึงข้อมูลผ่านระบบ API ปลอดภัยหลังบ้านของ Google Apps Script แทนลิงก์ชีตเดิมตรงๆ
-const secureApiUrl = "https://script.google.com/macros/s/AKfycbyZBB8OY2G-VBc4kQESdx75b_RBJ4Rmb0DVcKrOEIAhOQhkX6Tr59gQO-RP6NnSlWTF/exec?sheet=sales";
-
+// ดึงข้อมูลผ่านระบบ API ปลอดภัยหลังบ้านของ Google Apps Script
+const secureApiUrl = "https://script.google.com/macros/s/AKfycbzsRLz4-8Lenv2BbC4Lio_CeaymK3HSJhPHyerIVJ-rKv8T-_a6NJ0QA8skmlF2OXBe/exec?sheet=sales";
 const staffColorMap = {
   "แอนนี่": "#ec4899", "พรีม": "#a855f7", "ดอน": "#10b981", "นาเดียร์": "#f59e0b", "ฟ้า": "#0ea5e9"
 };
@@ -443,11 +452,13 @@ fetch(secureApiUrl, { method: 'GET', redirect: 'follow' })
       throw new Error("ไม่มีข้อมูลส่งกลับมาจาก API");
     }
 
-    // 1. ประมวลผลสร้างโครงสร้างช่วงเวลา (Timeline Keys) จากหัวข้อ JSON อัตโนมัติ
-    // โดยกรองดูจาก Keys ที่ขึ้นต้นด้วยปี ค.ศ. เช่น "2025-" หรือ "2026-"
+    // 1. ตรวจสอบหัวตารางเพื่อสร้าง Timeline Keys
     const sampleItem = jsonData[0];
     const rawKeys = Object.keys(sampleItem);
     
+    uniqueTimelineKeys = [];
+    monthOptions = [];
+
     rawKeys.forEach(key => {
       if (key.includes("2025-M") || key.includes("2026-M")) {
         uniqueTimelineKeys.push(key);
@@ -459,12 +470,16 @@ fetch(secureApiUrl, { method: 'GET', redirect: 'follow' })
       }
     });
 
-    // เรียงคีย์ข้อมูลให้ถูกต้อง (ม.ค. -> ธ.ค.)
+    // จัดระเบียบลำดับเวลา
     uniqueTimelineKeys.sort();
-    // เรียงตัวเลือกเงื่อนไขเวลาให้แสดงจากล่าสุดย้อนหลังลงไป
     monthOptions.sort((a,b) => b.key.localeCompare(a.key));
 
-    // 2. จัดการแปรสภาพข้อมูลรายบุคคลลงฐานข้อมูลแดชบอร์ด
+    // ล้างและตั้งค่าอาเรย์เริ่มต้น
+    globalSalesData = [];
+    globalTeamTotal2025 = Array(12).fill(0);
+    globalTeamTotal2026 = Array(12).fill(0);
+
+    // 2. ลูปดึงข้อมูลพนักงานขายและยอดขายรายเดือน
     jsonData.forEach(row => {
       const person = row["SalePerson"] || row["พนักงานขาย"]; 
       if (!person) return;
@@ -476,10 +491,14 @@ fetch(secureApiUrl, { method: 'GET', redirect: 'follow' })
       else if(person.includes("นาเดียร์")) nick = "นาเดียร์";
       else if(person.includes("ฟ้า")) nick = "ฟ้า";
 
-      // ดึงตัวเลขจากคีย์เวลาตามลำดับเส้นเวลา
+      // ประมวลผลดึงตัวเลขจาก Key รองรับทั้งรูปแบบ String และ Number จาก API
       const nums = uniqueTimelineKeys.map(key => {
-        const valStr = String(row[key] || "0");
-        return parseFloat(valStr.replace(/[^0-9.-]+/g, "")) || 0;
+        const rawVal = row[key];
+        if (rawVal === undefined || rawVal === null) return 0;
+        if (typeof rawVal === "number") return rawVal;
+        
+        const valStr = String(rawVal).replace(/[^0-9.-]+/g, "");
+        return parseFloat(valStr) || 0;
       });
 
       globalSalesData.push({ 
@@ -491,7 +510,7 @@ fetch(secureApiUrl, { method: 'GET', redirect: 'follow' })
       });
     });
     
-    // 3. รวมผลยอดขายยอดรวมทั้งทีมแบ่งแยกตามรายเดือนและรายปี
+    // 3. รวมยอดขายของทีมจำแนกตามรายปีและเดือน
     uniqueTimelineKeys.forEach((key, rawIdx) => {
       const parts = key.split("-");
       const y = parts[0];
@@ -511,6 +530,7 @@ fetch(secureApiUrl, { method: 'GET', redirect: 'follow' })
     renderYoYLineChart(globalTeamTotal2025, globalTeamTotal2026);
 
     const selector = document.getElementById("monthSelector");
+    selector.innerHTML = ""; 
     monthOptions.forEach(opt => {
       const el = document.createElement("option");
       el.value = opt.key;
@@ -599,6 +619,12 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
     },
     options: {
       indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      // เพิ่มความกว้าง Padding ฝั่งขวา 40px เพื่อให้มีพื้นที่เหลือสำหรับวาดตัวเลขทศนิยมไม่ให้หลุดจอกราฟ
+      layout: {
+        padding: {
+          right: 40
+        }
+      },
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
@@ -637,7 +663,12 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
     data: { labels: names, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1.5, borderColor: '#ffffff' }] },
     options: {
       responsive: true, maintainAspectRatio: false, cutout: '72%',
-      plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10, weight: 500 } } } },
+      plugins: { 
+        legend: { 
+          position: window.innerWidth < 480 ? 'bottom' : 'right', // บนมือถือแคบๆ ปรับเลเจนด์ลงล่างเพื่อเซฟพื้นที่ด้านข้าง
+          labels: { boxWidth: 10, font: { size: 10, weight: 500 } } 
+        } 
+      },
     },
     plugins: [
       {
@@ -645,7 +676,9 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
         afterDraw(chart) {
           const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
           ctx.save();
-          ctx.font = '900 38px Plus Jakarta Sans';
+          // ปรับขนาดฟอนต์ตรงกลางชาร์ตวงกลมตามขนาดของจอให้เหมาะสม
+          const fontSize = width < 160 ? '24px' : '32px';
+          ctx.font = `900 ${fontSize} Plus Jakarta Sans`;
           ctx.fillStyle = '#1c2434';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -675,7 +708,7 @@ function updateExecutiveAndBottomCharts(selectedMonthKey) {
               const x = arc.x + Math.cos(centerAngle) * r;
               const y = arc.y + Math.sin(centerAngle) * r;
               
-              if (arc.endAngle - arc.startAngle > 0.15) {
+              if (arc.endAngle - arc.startAngle > 0.25) { // ปรับความกว้างขั้นต่ำให้แสดงตัวอักษรได้พอดี
                 ctx.fillText(percent, x, y);
               }
             }
