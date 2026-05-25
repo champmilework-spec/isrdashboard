@@ -644,7 +644,6 @@ function applyAll(){
   if(q){
     result = result.filter(i =>
       String(i.code || "").toLowerCase().includes(q) ||
-      String(i.CodeMatch || "").toLowerCase().includes(q) ||
       String(i.gbarcode || "").toLowerCase().includes(q) ||
       String(i.name || "").toLowerCase().includes(q) ||
       String(i.gnamechr || "").toLowerCase().includes(q) ||
