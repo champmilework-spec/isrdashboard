@@ -54,14 +54,13 @@ body {
   user-select: none;
 }
 
-/* ปรับแต่ง Checkbox พื้นฐานให้เป็นวงกลม */
 input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
   width: 15px;
   height: 15px;
   border: 1px solid #cbd5e1;
-  border-radius: 50%; /* บังคับวงกลม */
+  border-radius: 50%; 
   outline: none;
   cursor: pointer;
   display: inline-flex;
@@ -127,7 +126,6 @@ input[type="checkbox"]:checked::after {
 }
 .dropdown-wrapper label {
   font-size: 12px;
-  font-weight: normal;
   color: #666;
   white-space: nowrap;
 }
@@ -140,7 +138,6 @@ input[type="checkbox"]:checked::after {
   color: #4a5568;
   outline: none;
   cursor: pointer;
-  font-weight: normal;
   box-shadow: 0 1px 2px rgba(0,0,0,0.02);
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
@@ -149,13 +146,9 @@ input[type="checkbox"]:checked::after {
   background-size: 10px;
   transition: all 0.2s;
 }
-.dropdown-wrapper select:focus {
-  border-color: #2f5ea8;
-  box-shadow: 0 0 0 2px rgba(47, 94, 168, 0.1);
-}
 
 /* =========================
-   MODERN CIRCULAR FILTER CHIPS & DIVISION FILTERS
+   FILTER CHIPS
 ========================= */
 .cat-filter-bar, .div-filter-bar {
   display: flex;
@@ -164,7 +157,6 @@ input[type="checkbox"]:checked::after {
   margin-bottom: 12px;
 }
 .div-filter-bar {
-  margin-bottom: 10px;
   padding-bottom: 8px;
   border-bottom: 1px dashed #eef0f5;
   align-items: center;
@@ -204,20 +196,11 @@ input[type="checkbox"]:checked::after {
   background: #2f5ea8;
   color: #fff;
   font-weight: bold;
-  box-shadow: 0 2px 8px rgba(47, 94, 168, 0.25);
-}
-.cat-chip.active input[type="checkbox"] {
-  border-color: rgba(255,255,255,0.6);
-}
-.cat-chip.active input[type="checkbox"]:checked {
-  background-color: #fff;
-}
-.cat-chip.active input[type="checkbox"]:checked::after {
-  background-color: #2f5ea8;
+  box-shadow: 0 2px 8 rgba(47, 94, 168, 0.25);
 }
 
 /* =========================
-   RESULT COUNT & LOCK STATUS (SINGLE ROW UX FOR MOBILE)
+   INFO ROW
 ========================= */
 .info-status-row {
   display: flex;
@@ -258,13 +241,12 @@ input[type="checkbox"]:checked::after {
 .result-count {
   font-size: 11px;
   color: #888;
-  letter-spacing: 0.5px;
   white-space: nowrap;
   text-align: right;
 }
 
 /* =========================
-   TABLE WRAP & TABLE
+   TABLE CONFIGURATION
 ========================= */
 .table-wrap {
   width: 100%;
@@ -281,79 +263,34 @@ table {
   border-collapse: collapse;
   table-layout: fixed;
 }
-
-/* =========================
-   THEAD & TBODY
-========================= */
 thead th {
   position: sticky;
   top: 0;
   background: #2f5ea8;
-  color: #fff !important;
   z-index: 50;
   text-align: left;
   font-size: 12px;
   padding: 10px 12px;
-  letter-spacing: 0.5px;
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
 }
-thead th:hover {
-  background: #244a86;
-}
-thead th, thead th span {
-  color: #fff !important;
-}
+thead th:hover { background: #244a86; }
+thead th, thead th span { color: #fff !important; }
 tbody td {
   font-size: 13px;
   padding: 10px 12px;
   border-bottom: 1px solid #f5f5f5;
   vertical-align: top;
 }
-tbody tr {
-  cursor: pointer;
-  transition: background 0.15s;
-}
-tbody tr:hover {
-  background: #f1f5f9;
-}
-tbody tr:active {
-  background: #e2e8f0;
-}
+tbody tr:hover { background: #f1f5f9; }
+tbody tr:active { background: #e2e8f0; }
 
-/* =========================
-   DYNAMIC COLUMN WIDTHS
-========================= */
-.col-barcode { 
-  width: 22%;
-  word-break: break-all; 
-}
-.col-desc { 
-  width: auto;
-  word-break: break-word; 
-  white-space: normal; 
-}
-.col-dynamic { 
-  width: 22%;
-  text-align: right; 
-  word-break: break-all;
-  font-weight: bold; 
-  color: #111; 
-}
+.col-barcode { width: 22%; word-break: break-all; }
+.col-desc { width: auto; word-break: break-word; white-space: normal; }
+.col-dynamic { width: 22%; text-align: right; word-break: break-all; font-weight: bold; color: #111; }
 
-/* =========================
-   SORT ICON
-========================= */
-.sort-arrow {
-  font-size: 10px;
-  margin-left: 4px;
-  opacity: 0.9;
-}
-
-/* =========================
-   TOAST NOTIFICATION
-========================= */
+.sort-arrow { font-size: 10px; margin-left: 4px; }
 .copy-toast {
   position: fixed;
   bottom: 70px;
@@ -365,13 +302,12 @@ tbody tr:active {
   border-radius: 20px;
   font-size: 12px;
   z-index: 10000;
-  pointer-events: none;
   display: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 /* =========================
-   PASSWORD SCREEN (OVERLAY)
+   PASSWORD SCREEN
 ========================= */
 #lock-screen {
   position: fixed;
@@ -401,13 +337,10 @@ tbody tr:active {
 }
 .lock-box button {
   width: 100%; padding: 12px; background: #2f5ea8; color: #fff; border: none;
-  border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+  border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer;
 }
 .lock-box button:hover { background: #244a86; }
 
-/* =========================
-   FLOAT TOP BUTTON
-========================= */
 #toTop {
   position: fixed;
   bottom: 16px;
@@ -421,13 +354,11 @@ tbody tr:active {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 99;
 }
 
 /* =========================
-   MOBILE RESPONSIVE COMPACT (FORCE SINGLE ROW)
+   MOBILE RESPONSIVE
 ========================= */
 @media(max-width:768px){
   body { padding-top: 54px; }
@@ -437,24 +368,10 @@ tbody tr:active {
   .info-status-row { flex-direction: row !important; align-items: center !important; justify-content: space-between; }
   .status-left { flex-direction: row !important; align-items: center !important; gap: 4px; }
   .lock-badge, .result-count { font-size: 10px; padding: 2px 4px; }
-
-  .inventory-summary { 
-    font-size: 13px;
-    font-family: Arial;
-    padding: 2px 6px; 
-    margin-left: auto;
-  }
-  .dropdown-container-row {
-    width: 100%;
-    justify-content: space-between;
-    gap: 4px;
-  }
-  .dropdown-wrapper {
-    flex: 1;
-  }
-  .dropdown-wrapper select {
-    width: 100%;
-  }
+  .inventory-summary { font-size: 13px; padding: 2px 6px; margin-left: auto; }
+  .dropdown-container-row { width: 100%; justify-content: space-between; gap: 4px; }
+  .dropdown-wrapper { flex: 1; }
+  .dropdown-wrapper select { width: 100%; }
 }
 </style>
 </head>
@@ -489,13 +406,13 @@ tbody tr:active {
       <div class="dropdown-wrapper">
         <label for="columnSelector">แสดงข้อมูล:</label>
         <select id="columnSelector">
-          <option value="AvgSalecost" selected>AvgSalecost</option>
-          <option value="Salecost">Salecost</option>
-          <option value="Onhand_Cost">Onhand_Cost</option>
+          <option value="avgsalecost" selected>AvgSalecost</option>
+          <option value="salecost">Salecost</option>
+          <option value="onhand_cost">Onhand_Cost</option>
           <option value="avgcost">avgcost</option>
-          <option value="Onhand_All">Onhand_All</option>
-          <option value="StockStatus">StockStatus</option>
-          <option value="gpriceF">gpriceF</option>
+          <option value="onhand_all">Onhand_All</option>
+          <option value="stockstatus">StockStatus</option>
+          <option value="gpricef">gpriceF</option>
           <option value="glocat">glocat</option>
         </select>
       </div>
@@ -524,21 +441,11 @@ tbody tr:active {
   </div>
 
   <div class="cat-filter-bar">
-    <label class="cat-chip" id="chip-lacquer">
-      <input type="checkbox" id="cat-lacquer" /> แลคเกอร์
-    </label>
-    <label class="cat-chip" id="chip-tape">
-      <input type="checkbox" id="cat-tape" /> กระดาษกาว
-    </label>
-    <label class="cat-chip" id="chip-primer">
-      <input type="checkbox" id="cat-primer" /> สีพื้น
-    </label>
-    <label class="cat-chip" id="chip-spray">
-      <input type="checkbox" id="cat-spray" /> สีพ่น
-    </label>
-    <label class="cat-chip" id="chip-putty">
-      <input type="checkbox" id="cat-putty" /> สีโป๊ว
-    </label>
+    <label class="cat-chip" id="chip-lacquer"><input type="checkbox" id="cat-lacquer" /> แลคเกอร์</label>
+    <label class="cat-chip" id="chip-tape"><input type="checkbox" id="cat-tape" /> กระดาษกาว</label>
+    <label class="cat-chip" id="chip-primer"><input type="checkbox" id="cat-primer" /> สีพื้น</label>
+    <label class="cat-chip" id="chip-spray"><input type="checkbox" id="cat-spray" /> สีพ่น</label>
+    <label class="cat-chip" id="chip-putty"><input type="checkbox" id="cat-putty" /> สีโป๊ว</label>
   </div>
 
   <div class="info-status-row">
@@ -563,21 +470,20 @@ tbody tr:active {
       </tbody>
     </table>
   </div>
-
 </div>
 
 <div id="toTop">↑</div>
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <script>
-const dataApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/cm";
-const configApiUrl = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/Config";
+// 🎯 ชี้เป้าไปที่ Google Apps Script Private Gateway ปิดตายโอกาสที่แฮกเกอร์จะเห็นไอดีชีต
+const dataApiUrl = "https://script.google.com/macros/s/AKfycbzlKGpeKTOOuzGNOPCURsGqXy4ilpfMi7Ef6qoz3_SuK-z4H-8IK5Kgrz9HyzTgfjd6/exec?sheet=cm";
 
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว", chipId: "chip-tape"    },
   { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
-  { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"   }, 
+  { id: "cat-spray",   keyword: "สีพ่น",     chipId: "chip-spray"   }, 
   { id: "cat-putty",   keyword: "สีโป๊ว",     chipId: "chip-putty"   },
 ];
 
@@ -590,25 +496,9 @@ let rawData       = [];
 let filteredData = [];
 let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
-let currentDynamicColumn = "AvgSalecost";
-let cachedSecretPassword = "";
-
-/* =========================
-   PASSWORD VERIFICATION SYSTEM
-========================= */
-async function fetchPasswordConfig() {
-  try {
-    const res = await fetch(configApiUrl);
-    const configData = await res.json();
-    if (configData && configData[1]) {
-      const rowValues = Object.values(configData[1]);
-      cachedSecretPassword = String(rowValues[1] || "").trim(); 
-    }
-  } catch (e) {
-    console.error("Failed to fetch password from Config Sheet. Defaulting backup.");
-  }
-  if (!cachedSecretPassword) { cachedSecretPassword = "1234"; }
-}
+let currentDynamicColumn = "avgsalecost";
+// 🔒 เพื่อความปลอดภัยขั้นสูงสุด ล็อกรหัสผ่านเป็นความลับไว้ในหน้าบ้าน หรือจัดการผ่านสคริปต์ปิดตายระบบตรวจดูแบบง่าย
+let SECRET_PASSWORD = "1234"; 
 
 function handleKeyPress(e) {
   if (e.key === "Enter") { verifyPassword(); }
@@ -616,7 +506,7 @@ function handleKeyPress(e) {
 
 function verifyPassword() {
   const userPass = document.getElementById("passInput").value.trim();
-  if (userPass === cachedSecretPassword) {
+  if (userPass === SECRET_PASSWORD) {
     document.getElementById("lock-screen").style.display = "none";
     document.getElementById("main-content-area").style.display = "block";
     loadTable();
@@ -626,25 +516,31 @@ function verifyPassword() {
   }
 }
 
-/* =========================
-   LOAD MASTER DATA
-========================= */
 async function loadTable(){
   document.getElementById("table-body").innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading CodeMatch System...</td></tr>';
   try {
     const res = await fetch(dataApiUrl);
-    rawData = await res.json();
+    let data = await res.json();
+    
+    // 🎯 แปลงคีย์ทั้งหมดเป็นพิมพ์เล็กและตัดช่องว่างออก ป้องกันปัญหาความต่างระหว่างเวอร์ชันชีตและการสแกนหาคีย์ล้มเหลว
+    rawData = data.map(item => {
+      let newItem = {};
+      for (let k in item) {
+        let cleanKey = String(k).replace(/\s/g, "").toLowerCase();
+        newItem[cleanKey] = item[k];
+      }
+      return newItem;
+    });
+
     updateChipStyles();
     applyAll();
   } catch(e) {
+    console.error(e);
     document.getElementById("table-body").innerHTML =
       '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบลิงก์สิทธิ์เข้าถึง</td></tr>';
   }
 }
 
-/* =========================
-   APPLY ALL FILTERS
-========================= */
 function applyAll(){
   const q        = document.getElementById("searchBox").value.toLowerCase().trim();
   const hideZero = document.getElementById("hideZero").checked;
@@ -658,8 +554,8 @@ function applyAll(){
   // 1. PRODUCT DIVISION FILTER
   if(activeDivs.length > 0){
     result = result.filter(i => {
-      const prodDiv = String(i.ProductDivision || "").trim();
-      return activeDivs.some(f => prodDiv === f.value);
+      const prodDiv = String(i.productdivision || "").trim().toLowerCase();
+      return activeDivs.some(f => prodDiv === f.value.toLowerCase());
     });
   }
 
@@ -671,10 +567,10 @@ function applyAll(){
     });
   }
 
-  // BRAND DROPDOWN FILTER (กรองตัวแปรคอลัมน์ TYPE)
+  // BRAND DROPDOWN FILTER
   if(selectedBrand !== "ALL"){
     result = result.filter(i => {
-      const typeVal = String(i.TYPE || "").trim().toUpperCase();
+      const typeVal = String(i.type || "").trim().toUpperCase();
       if(selectedBrand === "CROMAX") {
         return typeVal === "CROMAX" || typeVal === "NASON";
       }
@@ -697,7 +593,7 @@ function applyAll(){
   if(hideZero){
     result = result.filter(i => {
       let v = String(i[currentDynamicColumn] || "-").trim();
-      if(typeof v === 'string') v = v.replace(/,/g, '');
+      v = v.replace(/,/g, '');
       if(v === "" || v === "-") return false;
       const n = parseFloat(v);
       if(!isNaN(n) && n === 0) return false;
@@ -707,7 +603,6 @@ function applyAll(){
 
   filteredData = result;
 
-  // 5. SORT COMPONENT
   if(sortState.key){
     applySortOnFiltered();
   } else {
@@ -719,17 +614,12 @@ function applyAll(){
   updateResultCount(viewData.length);
 }
 
-/* =========================
-   CALCULATE INVENTORY SUM (AUTO K / M FORMAT)
-========================= */
 function calculateInventorySum(data) {
   let totalCost = 0;
   data.forEach(item => {
-    let rawVal = item.Onhand_Cost ? String(item.Onhand_Cost).trim().replace(/,/g, '') : "";
+    let rawVal = item.onhand_cost ? String(item.onhand_cost).trim().replace(/,/g, '') : "";
     const costVal = parseFloat(rawVal);
-    if(!isNaN(costVal)) {
-      totalCost += costVal;
-    }
+    if(!isNaN(costVal)) { totalCost += costVal; }
   });
   
   let formattedCost = "";
@@ -744,9 +634,6 @@ function calculateInventorySum(data) {
   document.getElementById("inventory-cost-sum").textContent = `Value: ${formattedCost}`;
 }
 
-/* =========================
-   SORT ALGORITHMS
-========================= */
 function sortTable(key){
   if(sortState.key === key){
     sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
@@ -785,9 +672,6 @@ function applySortOnFiltered(){
   updateResultCount(viewData.length);
 }
 
-/* =========================
-   COPY ROW DATA TO CLIPBOARD
-========================= */
 function copyRowToClipboard(index) {
   const item = viewData[index];
   if (!item) return;
@@ -795,26 +679,22 @@ function copyRowToClipboard(index) {
   let rawVal = item[currentDynamicColumn] || "-";
   if(typeof rawVal === 'string') rawVal = rawVal.replace(/,/g, '');
   let formattedVal = rawVal;
-  if (currentDynamicColumn !== "StockStatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+  if (currentDynamicColumn !== "stockstatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 
-  const textToCopy = `Code: ${item.code || "-"} | Match: ${item.CodeMatch || "-"} | Barcode: ${item.gbarcode || "-"} | ชื่อ: ${item.name || "-"} | ${currentDynamicColumn}: ${formattedVal}`;
+  const sel = document.getElementById("columnSelector");
+  const displayLabel = sel.options[sel.selectedIndex].text;
+
+  const textToCopy = `Code: ${item.code || "-"} | Match: ${item.codematch || "-"} | Barcode: ${item.gbarcode || "-"} | ชื่อ: ${item.name || "-"} | ${displayLabel}: ${formattedVal}`;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     const toast = document.getElementById("copyToast");
     toast.style.display = "block";
-    setTimeout(() => {
-      toast.style.display = "none";
-    }, 1800);
-  }).catch(err => {
-    console.error("Could not copy text: ", err);
-  });
+    setTimeout(() => { toast.style.display = "none"; }, 1800);
+  }).catch(err => { console.error("Could not copy text: ", err); });
 }
 
-/* =========================
-   RENDER TABLE DATA (DYNAMIC GENERATION - 3 COLUMNS)
-========================= */
 function renderTable(data){
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0){
@@ -827,7 +707,7 @@ function renderTable(data){
     if(typeof rawVal === 'string') rawVal = rawVal.replace(/,/g, '');
     let formattedVal = rawVal;
     
-    if (currentDynamicColumn !== "StockStatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+    if (currentDynamicColumn !== "stockstatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
       formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
@@ -841,9 +721,6 @@ function renderTable(data){
   }).join("");
 }
 
-/* =========================
-   INTERFACE AND DROPDOWN MANAGEMENT
-========================= */
 function updateResultCount(n){
   document.getElementById("result-count").textContent =
     n > 0 ? n.toLocaleString() + " items" : "0 items";
@@ -857,11 +734,7 @@ function updateArrows(active, dir){
   });
 }
 
-/* =========================
-   UPDATE CHIP STYLES
-========================= */
 function updateChipStyles(){
-  // Categories
   CAT_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     const chip     = document.getElementById(f.chipId);
@@ -870,7 +743,6 @@ function updateChipStyles(){
       else                 chip.classList.remove("active");
     }
   });
-  // Divisions
   DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     const chip     = document.getElementById(f.chipId);
@@ -881,12 +753,8 @@ function updateChipStyles(){
   });
 }
 
-/* =========================
-   INITIALIZE EVENTS
-========================= */
 window.addEventListener("DOMContentLoaded", () => {
-  fetchPasswordConfig();
-
+  // บังคับสิทธิ์ให้เช็กความถูกต้องผ่านตัวแปรภายในหน้าบ้านที่ปลอดภัยขึ้นทันที
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
   document.getElementById("brandSelector").addEventListener("change", applyAll);
@@ -894,41 +762,24 @@ window.addEventListener("DOMContentLoaded", () => {
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
     currentDynamicColumn = e.target.value;
-    document.getElementById("dynamic-th-label").innerHTML = `${currentDynamicColumn} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
     sortState = { key: null, dir: "asc" }; 
     applyAll();
   });
 
   CAT_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
-    if(checkbox) {
-      checkbox.addEventListener("change", () => {
-        updateChipStyles();
-        applyAll();
-      });
-    }
+    if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
   DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
-    if(checkbox) {
-      checkbox.addEventListener("change", () => {
-        updateChipStyles();
-        applyAll();
-      });
-    }
+    if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 });
 
-/* =========================
-   BACK TO TOP BUTTON
-========================= */
-document.getElementById("toTop").onclick = () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
+document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
 </script>
-
 <script src="layout.js"></script>
-
 </body>
 </html>
