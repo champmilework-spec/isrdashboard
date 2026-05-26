@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>OPERATION PIPELINE</title>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -26,79 +25,51 @@ body{
   overflow-x:hidden;
 }
 
+/* คุมพื้นที่หน้าจอ Desktop และลด Padding บน Mobile ให้เห็นตารางทันที */
 .container {
-  max-width: 1350px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 90px 16px 40px;
+  padding: 60px 12px 20px; /* ลด Padding รอบข้าง */
 }
 
+/* =========================
+   HEADER & LIVE MONITOR FLEX
+========================= */
 .dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 12px;
-  margin-bottom: 16px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  gap: 12px;
 }
 
 .dashboard-title h1 {
-  font-size: 24px;
+  font-size: 18px; /* ปรับขนาดให้พอดี ไม่ใหญ่เกินไป */
   font-weight: 700;
   color: #1c2434;
+  letter-spacing: -0.5px;
 }
 
-.dashboard-title p {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 2px;
-}
-
-/* =========================
-   CARDS & GRIDS
-========================= */
-.chart-card {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #e2e8f0;
-}
-
-.card-header-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chart-card h2 {
-  font-size: 15px;
-  color: #1c2434;
-  font-weight: 700;
-}
-
-/* =========================
-   LIVE PULSE & COUNTER HEADER
-========================= */
+/* ย้าย Live Monitoring มาไว้มุมขวาบนคู่กับ Title */
 .live-monitor-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   background: #fff5f5;
   border: 1px solid #fee2e2;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
+  border-radius: 6px;
+  padding: 4px 8px;
 }
 .live-pulse-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .pulse-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background-color: #ef4444;
   border-radius: 50%;
   box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
@@ -106,32 +77,50 @@ body{
 }
 @keyframes pulse-ring {
   0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 .live-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   color: #991b1b;
-  letter-spacing: 0.3px;
+  display: none; /* ซ่อนคำนี้บน Mobile เพื่อประหยัดพื้นที่ */
+}
+@media(min-width: 576px) {
+  .live-title { display: inline; }
+}
+.live-counter-label {
+  font-size: 11px;
+  color: #475569;
+  font-weight: 600;
 }
 .live-counter-badge {
   background: #ef4444;
   color: #fff;
-  padding: 4px 12px;
+  padding: 2px 8px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 /* =========================
-   CONTROL STRIP (SEARCH & STATUS)
+   CARDS & FILTER STRIP (COMPACT)
 ========================= */
+.chart-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px; /* ลด Padding เพื่อดันตารางขึ้นมา */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+}
+
 .control-strip {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 8px;
   width: 100%;
 }
 @media(min-width: 768px) {
@@ -144,12 +133,13 @@ body{
 .search-wrapper-block {
   flex: 1;
 }
+/* บังคับ Search Input ขนาด 16px ตามเงื่อนไข */
 .search-wrapper-block input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 16px; 
   outline: none;
   background: #f8fafc;
   transition: all 0.2s;
@@ -161,7 +151,7 @@ body{
 
 .status-filter-group {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 .status-chk-label {
@@ -169,7 +159,7 @@ body{
   align-items: center;
   gap: 6px;
   background: #f1f5f9;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 700;
@@ -178,33 +168,28 @@ body{
   user-select: none;
   border: 1px solid transparent;
   transition: all 0.2s;
+  flex: 1;
+  justify-content: center;
 }
-.status-chk-label input {
-  accent-color: #3c50e0;
+@media(min-width: 768px) {
+  .status-chk-label { flex: none; }
 }
-.status-chk-label.active-success {
-  background: #dcfce7;
-  color: #14532d;
-  border-color: #bbf7d0;
-}
-.status-chk-label.active-progress {
-  background: #fef3c7;
-  color: #78350f;
-  border-color: #fde68a;
-}
+.status-chk-label input { accent-color: #3c50e0; }
+.status-chk-label.active-success { background: #dcfce7; color: #14532d; border-color: #bbf7d0; }
+.status-chk-label.active-progress { background: #fef3c7; color: #78350f; border-color: #fde68a; }
 
 /* CATEGORY FILTER CHIPS */
 .cat-filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 .cat-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 6px 10px; /* ขนาดใหญ่พอให้กดง่ายบน Mobile */
   border-radius: 999px;
   border: 1px solid #e2e8f0;
   background: #fff;
@@ -215,9 +200,8 @@ body{
   font-weight: 500;
 }
 .cat-chip input[type="checkbox"] {
-  width: 13px;
-  height: 13px;
-  cursor: pointer;
+  width: 14px;
+  height: 14px;
   accent-color: #3c50e0;
 }
 .cat-chip.active {
@@ -227,15 +211,23 @@ body{
   font-weight: 600;
 }
 
+.result-count {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 4px;
+  text-align: right;
+  font-weight: 500;
+}
+
 /* =========================
-   MOBILE-FIRST FIXED TABLE
+   🎯 TABLE CONFIGURATION (FIXED คอลัมน์สำหรับ MOBILE)
 ========================= */
 .table-wrap {
   width: 100%;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #fff;
-  max-height: 65vh;
+  max-height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -259,7 +251,7 @@ thead th {
 }
 tbody td {
   font-size: 12px;
-  padding: 12px 8px;
+  padding: 10px 8px;
   border-bottom: 1px solid #f1f5f9;
   color: #1c2434;
   word-wrap: break-word;
@@ -267,9 +259,10 @@ tbody td {
   vertical-align: top;
 }
 
-.col-code { width: 22%; }
-.col-name { width: 33%; }
-.col-customer { width: 45%; }
+/* แบ่งสัดส่วนคอลัมน์: CASE_id (8 หลักพอดีเป๊ะ) | CaseType (กระชับ) | CustomerName (กว้างที่สุดที่เหลือ) */
+.col-code { width: 26%; font-weight: 600; letter-spacing: -0.2px; }
+.col-type { width: 24%; }
+.col-name { width: 50%; }
 
 .customer-cell-flex {
   display: flex;
@@ -287,36 +280,12 @@ tbody td {
   justify-content: center;
   color: #3c50e0;
   font-weight: 700;
-  font-size: 14px;
-  padding-left: 2px;
+  font-size: 11px;
   transition: transform 0.2s;
 }
-tbody tr:hover .modern-arrow-right {
-  transform: translateX(3px);
-}
-
-tbody tr {
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-tbody tr:hover {
-  background: #f8fafc;
-}
-tbody tr:active {
-  background: #f1f5f9;
-}
-
-.result-count {
-  font-size: 11px;
-  color: #64748b;
-  margin-bottom: 6px;
-  text-align: right;
-  font-weight: 500;
-}
-.sort-arrow {
-  font-size: 10px;
-  margin-left: 2px;
-}
+tbody tr:hover .modern-arrow-right { transform: translateX(2px); }
+tbody tr { cursor: pointer; transition: background-color 0.15s; }
+tbody tr:hover { background: #f8fafc; }
 
 /* =========================
    POPUP MODAL TIMELINE
@@ -333,46 +302,28 @@ tbody tr:active {
   pointer-events: none;
   transition: opacity 0.2s ease-out;
 }
-.modal-overlay.active { 
-  opacity: 1; 
-  pointer-events: auto; 
-}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
 
 .modal-card {
   background: #ffffff;
   width: 100%;
-  max-width: 550px;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-  padding: 20px 16px;
+  max-width: 500px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 16px;
   box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
   position: relative;
-  bottom: 0;
-  max-height: 82vh; 
+  max-height: 85vh; 
   display: flex;
   flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.25s ease-out;
 }
-.modal-overlay.active .modal-card { 
-  transform: translateY(0); 
-}
+.modal-overlay.active .modal-card { transform: translateY(0); }
 
 @media(min-width: 576px) {
-  .modal-overlay { 
-    align-items: center; 
-  }
-  .modal-card {
-    border-radius: 12px;
-    max-height: 75vh;
-    transform: translateY(20px);
-    bottom: auto;
-  }
-  .modal-overlay.active .modal-card { 
-    transform: translateY(0); 
-  }
+  .modal-overlay { align-items: center; }
+  .modal-card { border-radius: 8px; max-height: 75vh; }
 }
 
 .modal-header {
@@ -380,12 +331,12 @@ tbody tr:active {
   justify-content: space-between;
   align-items: flex-start;
   border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   position: relative;
 }
 .modal-close {
-  background: #f1f5f9; border: none; font-size: 20px; cursor: pointer; color: #64748b;
-  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: #f1f5f9; border: none; font-size: 18px; cursor: pointer; color: #64748b;
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
 }
 
 .case-age-badge {
@@ -396,46 +347,45 @@ tbody tr:active {
   border-radius: 4px;
   font-weight: 700;
   position: absolute;
-  right: 45px;
+  right: 36px;
   top: 2px;
 }
 
 .modal-scroll-body {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 2px 24px;
+  padding: 10px 2px;
   -webkit-overflow-scrolling: touch;
 }
 
 .timeline-list {
   border-left: 2px solid #e2e8f0;
   margin-left: 8px;
-  padding-left: 16px;
+  padding-left: 12px;
 }
 .timeline-item {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .timeline-item::before {
   content: '';
   position: absolute;
-  left: -22px; top: 4px;
-  width: 10px; height: 10px;
+  left: -18px; top: 4px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   background: #3c50e0;
 }
 .timeline-item.latest::before { background: #ef4444; }
 .timeline-title { font-size: 11px; font-weight: 700; color: #64748b; }
-.timeline-desc { font-size: 13px; margin-top: 2px; color: #1c2434; word-break: break-word; }
+.timeline-desc { font-size: 12.5px; margin-top: 1px; color: #1c2434; word-break: break-word; }
 
 #loader { text-align: center; padding: 40px; font-size: 14px; color: #64748b; }
-
 #toTop {
   position: fixed;
   bottom: 16px;
   right: 16px;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #1c2434;
   color: #fff;
@@ -443,7 +393,7 @@ tbody tr:active {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 99;
 }
@@ -459,37 +409,28 @@ tbody tr:active {
   <div class="dashboard-header">
     <div class="dashboard-title">
       <h1>OPERATION PIPELINE</h1>
-      <p>OPERATION LOGISTICS & TRACKING SYSTEM</p>
+    </div>
+    <div class="live-monitor-bar">
+      <div class="live-pulse-group">
+        <div class="pulse-dot"></div>
+        <span class="live-title">LIVE MONITORING</span>
+      </div>
+      <div>
+        <span class="live-counter-label">งานค้าง:</span>
+        <span class="live-counter-badge" id="live-progress-counter">0</span>
+      </div>
     </div>
   </div>
 
-  <div id="loader">กำลังเชื่อมต่อข้อมูลและจัดตำแหน่งระบบงาน...</div>
+  <div id="loader">กำลังเชื่อมต่อข้อมูลระบบงาน...</div>
 
   <div id="dashboardContent" style="display: none;">
 
-    <!-- ส่วนงานตารางข้อมูล Operation Pipeline -->
     <div class="chart-card">
       
-      <div class="card-header-flex" style="margin-bottom: 8px;">
-        <h2>Operation Pipeline</h2>
-      </div>
-
-      <!-- LIVE UPDATE ALERT COUNTER CARD -->
-      <div class="live-monitor-bar">
-        <div class="live-pulse-group">
-          <div class="pulse-dot"></div>
-          <span class="live-title">LIVE MONITORING</span>
-        </div>
-        <div>
-          <span style="font-size:12px; color:#475569; font-weight:600; margin-right:4px;">งานค้างที่ต้องทำ:</span>
-          <span class="live-counter-badge" id="live-progress-counter">0</span>
-        </div>
-      </div>
-
-      <!-- CONTROL BAR: SEARCH & STATUS SELECTOR -->
       <div class="control-strip">
         <div class="search-wrapper-block">
-          <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ชื่อเคส..." />
+          <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ประเภท / ชื่อลูกค้า / เซลล์..." />
         </div>
         <div class="status-filter-group">
           <label class="status-chk-label" id="lbl-status-success">
@@ -501,7 +442,6 @@ tbody tr:active {
         </div>
       </div>
 
-      <!-- CATEGORY FILTER CHIPS -->
       <div class="cat-filter-bar" id="catFilterBar">
         <label class="cat-chip" id="chip-bar">
           <input type="checkbox" id="cat-bar" checked /> เปิดบาร์
@@ -520,17 +460,15 @@ tbody tr:active {
         </label>
       </div>
 
-      <!-- RESULT COUNT -->
       <div class="result-count" id="result-count">0 items</div>
 
-      <!-- TABLE MAP DATA -->
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th onclick="sortOpTable('caseId')" class="col-code">CASE_id <span class="sort-arrow" id="arrow-caseId">↕</span></th>
-              <th onclick="sortOpTable('caseName')" class="col-name">CASENAME <span class="sort-arrow" id="arrow-caseName">↕</span></th>
-              <th onclick="sortOpTable('customerName')" class="col-customer">CustomerName/Item Name <span class="sort-arrow" id="arrow-customerName">↕</span></th>
+              <th onclick="sortOpTable('caseType')" class="col-type">CaseType <span class="sort-arrow" id="arrow-caseType">↕</span></th>
+              <th onclick="sortOpTable('nameDetails')" class="col-name">CustomerName <span class="sort-arrow" id="arrow-nameDetails">↕</span></th>
             </tr>
           </thead>
           <tbody id="table-body">
@@ -544,36 +482,32 @@ tbody tr:active {
   </div>
 </div>
 
-<!-- POPUP MODAL TIMELINE -->
 <div class="modal-overlay" id="timelineModal">
   <div class="modal-card">
     <div class="modal-header">
       <div>
-        <h3 id="modalCustomerName" style="font-size:15px; font-weight:700; padding-right:110px;">-</h3>
-        <p id="modalCaseName" style="font-size:12px; color:#64748b; margin-top:2px;">-</p>
+        <h3 id="modalCustomerName" style="font-size:14px; font-weight:700; padding-right:110px;">-</h3>
+        <p id="modalCaseName" style="font-size:11px; color:#64748b; margin-top:2px;">-</p>
       </div>
       <div class="case-age-badge" id="modalCaseAge">Age: 0d</div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     
     <div class="modal-scroll-body">
-      <div style="margin-bottom: 12px; font-size:13px;">
+      <div style="margin-bottom: 10px; font-size:12px;">
         <span style="font-weight:600; color:#475569;">ผู้รับผิดชอบ: </span><span id="modalOwner" style="font-weight:700; color:#1c2434;">-</span>
       </div>
       <div class="timeline-list" id="modalTimelineContent">
-        <!-- ข้อมูลไดนามิกย้อนหลัง -->
       </div>
     </div>
   </div>
 </div>
 
-<!-- FLOAT TOP BUTTON -->
 <div id="toTop">↑</div>
-
 <div id="footer-placeholder"></div>
 
 <script>
-const opCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTIXxyMMV6TXR0DiIcICDsq0mdT8bsa0tmXl2IlcEAiH7Ik6YIEw9lhOtmLOeYYxlaFomQgIiTKCCja/pub?gid=1693856458&single=true&output=csv";
+const opApiUrl = "https://script.google.com/macros/s/AKfycbzsRLz4-8Lenv2BbC4Lio_CeaymK3HSJhPHyerIVJ-rKv8T-_a6NJ0QA8skmlF2OXBe/exec?sheet=log";
 
 const OP_FILTERS = [
   { id: "cat-bar", keyword: "เปิดบาร์", chipId: "chip-bar" },
@@ -588,18 +522,11 @@ let filteredOpData = [];
 let viewOpData = [];
 let opSortState = { key: null, dir: "asc" };
 
-function parseCSVLine(text) {
-  let p = '', r = []; let q = false;
-  for (let i = 0; i < text.length; i++) {
-    let c = text[i];
-    if (c === '"') { q = !q; }
-    else if (c === ',' && !q) { r.push(p); p = ''; }
-    else { p += c; }
-  }
-  r.push(p); return r;
+function cleanString(str) { 
+  if (!str) return "";
+  if (typeof str === 'object') return ""; 
+  return String(str).trim(); 
 }
-
-function cleanString(str) { return str ? str.replace(/^["'\s\t\r\n]+|["'\s\t\r\n]+$/g, '').trim() : ""; }
 
 function loadLayoutTemplates() {
   Promise.all([
@@ -608,130 +535,84 @@ function loadLayoutTemplates() {
   ]).then(([headerHtml, footerHtml]) => {
     if(headerHtml) document.getElementById("header-placeholder").innerHTML = headerHtml;
     if(footerHtml) document.getElementById("footer-placeholder").innerHTML = footerHtml;
-    
-    const rebindMenuEvents = () => {
-      const btn = document.getElementById("menuBtn");
-      const dropdown = document.getElementById("menuDropdown");
-      if (btn && dropdown) {
-        btn.replaceWith(btn.cloneNode(true));
-        const newBtn = document.getElementById("menuBtn");
-        
-        newBtn.addEventListener("click", function(e) {
-          e.stopPropagation();
-          newBtn.classList.toggle("active");
-          dropdown.classList.toggle("active");
-        });
-        
-        document.addEventListener("click", function(e) {
-          if (!newBtn.contains(e.target) && !dropdown.contains(e.target)) {
-            newBtn.classList.remove("active");
-            dropdown.classList.remove("active");
-          }
-        });
-      }
-    };
-
-    setTimeout(rebindMenuEvents, 300);
-
-    const checkLoaderObserver = new MutationObserver(() => {
-      if (document.getElementById("dashboardContent").style.display === "block") {
-        rebindMenuEvents();
-        checkLoaderObserver.disconnect();
-      }
-    });
-    
-    const dashboardContainer = document.getElementById("dashboardContent");
-    if (dashboardContainer) {
-      checkLoaderObserver.observe(dashboardContainer, { attributes: true, attributeFilter: ['style'] });
-    }
   });
 }
 
 loadLayoutTemplates();
 
-fetch(opCsvUrl).then(res => res.text()).then(opCsv => {
+fetch(opApiUrl).then(res => res.json()).then(jsonData => {
   
-  // ENGINE B: LOGISTICS OPERATION PIPELINE
-  const opLines = opCsv.split(/\r?\n/).filter(l => l.trim() !== "");
-  const opRows = opLines.map(l => parseCSVLine(l));
-  
-  let opHeader = [];
-  let startRowIndex = 1;
-  
-  for (let r = 0; r < Math.min(opRows.length, 5); r++) {
-    if (opRows[r]) {
-      const rowTxt = opRows[r].join(" ").toUpperCase();
-      if (rowTxt.includes("STATUS") || rowTxt.includes("CASE_") || rowTxt.includes("CASENAME")) {
-        opHeader = opRows[r].map(h => cleanString(h));
-        startRowIndex = r + 1;
-        break;
-      }
-    }
-  }
-  
-  if (opHeader.length === 0 && opRows[1]) {
-    opHeader = opRows[1].map(h => cleanString(h));
-    startRowIndex = 2;
+  if (!jsonData || jsonData.length === 0 || jsonData.status === "error") {
+    throw new Error("API response mismatch");
   }
 
-  const idxCaseId = opHeader.findIndex(h => h.toUpperCase().replace(/\s/g, "") === "CASE_ID" || h.toUpperCase() === "CASEID");
-  const idxCaseName = opHeader.findIndex(h => h.toUpperCase() === "CASENAME");
-  const idxType = opHeader.findIndex(h => h.toUpperCase() === "CASETYPE");
-  const idxCust = opHeader.findIndex(h => h.toUpperCase().replace(/\s/g, "") === "CUSTOMERNAME/ITEMNAME" || h.toUpperCase() === "CUSTOMERNAME");
-  const idxStatus = opHeader.findIndex(h => h.toUpperCase() === "STATUS");
-  const idxOwner = opHeader.findIndex(h => h.toUpperCase() === "ชื่อเซลล์" || h.toUpperCase() === "OWNER");
-  const idxCaseAge = opHeader.findIndex(h => h.toUpperCase().replace(/\s/g, "") === "CASEAGE");
+  let structureRow = jsonData[0];
+  let keys = Object.keys(structureRow);
 
-  let fuIndices = [];
-  opHeader.forEach((h, colIdx) => {
-    const cleanH = h.toUpperCase().replace(/\s/g, "");
-    if (cleanH.startsWith("FU") && !isNaN(cleanH.replace("FU", ""))) {
-      const num = parseInt(cleanH.replace("FU", ""));
-      fuIndices.push({ label: `Follow up ${num}`, index: colIdx, order: num });
-    }
-  });
-  fuIndices.sort((a, b) => a.order - b.order);
+  // 🎯 แก้ไขคีย์แมปปิ้งให้ตรงตามหัวตารางจริงของคุณ
+  const keyCaseId = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASE_ID");
+  const keyCaseType = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASETYPE");
+  const keyNameDetails = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CUSTOMERNAME"); // เปลี่ยนเป็นจับคอลัมน์ CustomerName
+  const keyStatus = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "STATUS");
+  const keyOwner = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "ชื่อเซลล์");
+  const keyCaseAge = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASEAGE" || String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASEAGE");
+  const keyCustomerCode = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "P_KEY");
 
   globalOpData = [];
-  let liveProgressCounter = opRows.slice(startRowIndex).filter(row => {
-    if (!row || idxStatus === -1) return false;
-    return cleanString(row[idxStatus]).toUpperCase() === "IN PROGRESS";
-  }).length;
+  let liveProgressCounter = 0;
 
-  for(let i = startRowIndex; i < opRows.length; i++) {
-    const row = opRows[i];
-    if (!row || row.length === 0) continue;
-    if (idxCaseName !== -1 && !row[idxCaseName]) continue;
+  for (let i = 1; i < jsonData.length; i++) {
+    const row = jsonData[i];
+    if (!row) continue;
+
+    const caseId = cleanString(row[keyCaseId]);
+    const caseType = cleanString(row[keyCaseType]);
+    const nameDetails = cleanString(row[keyNameDetails]); // ดึงจาก CustomerName จริง
+    const status = cleanString(row[keyStatus]).toUpperCase() || "IN PROGRESS";
+    const owner = cleanString(row[keyOwner]);
     
-    const currentStatus = idxStatus !== -1 ? cleanString(row[idxStatus]).toUpperCase() : "IN PROGRESS";
+    // 🎯 แก้ไข Case Age ให้ดึงจากคีย์ "Case Age" (ตามตารางที่มีช่องว่าง)
+    let rawAge = row["Case Age"] || row["CASE AGE"] || row[keyCaseAge];
+    const ageDays = parseInt(cleanString(rawAge)) || 0;
+    
+    const customerCode = cleanString(row[keyCustomerCode]);
 
-    let followUpHistory = [];
-    fuIndices.forEach(fu => {
-      if (row[fu.index]) {
-        let commentText = cleanString(row[fu.index]);
-        if(commentText && commentText !== "" && commentText !== "-") {
-          followUpHistory.push({ stage: fu.label, text: commentText });
-        }
-      }
-    });
+    if (!caseId || caseId === "" || caseId === "-") continue;
 
-    let parsedAge = 0;
-    if(idxCaseAge !== -1 && row[idxCaseAge]) {
-      parsedAge = parseInt(row[idxCaseAge].replace(/[^0-9]/g, "")) || 0;
-    } else {
-      parsedAge = followUpHistory.length * 3;
+    if (status === "IN PROGRESS") {
+      liveProgressCounter++;
     }
 
+    // 🎯 แก้ไขปัญหาข้อมูล FU ไม่ขึ้น: วนดึงคีย์ของ Object แบบ Case-Insensitive
+    let followUpHistory = [];
+    
+    let commentText = cleanString(row["Comment"] || row["COMMENT"]);
+    if (commentText && commentText !== "" && commentText !== "-") {
+      followUpHistory.push({ stage: "รายละเอียดงาน (Comment เริ่มต้น)", text: commentText });
+    }
+    
+    // วนหา FU1 - FU10 จาก Object keys จริง ป้องกันปัญหาคีย์ตัวเล็ก/ตัวใหญ่ หรือช่องว่างหลุดมา
+    for (let f = 1; f <= 10; f++) {
+      let targetKey = keys.find(k => String(k).toUpperCase() === `FU${f}`);
+      if (targetKey) {
+        let fuText = cleanString(row[targetKey]);
+        if (fuText && fuText !== "" && fuText !== "-") {
+          followUpHistory.push({ stage: `Follow up ${f}`, text: fuText });
+        }
+      }
+    }
+
+    // สลับรายการล่าสุดขึ้นด้านบนสุดในประวัติ
     followUpHistory.reverse();
 
     globalOpData.push({
-      caseId: idxCaseId !== -1 ? (cleanString(row[idxCaseId]) || "-") : "-",
-      caseName: idxCaseName !== -1 ? (cleanString(row[idxCaseName]) || "ไม่มีชื่อเคส") : "ไม่มีชื่อเคส",
-      caseType: idxType !== -1 ? (cleanString(row[idxType]) || "-") : "-",
-      customerName: idxCust !== -1 ? (cleanString(row[idxCust]) || "ไม่ระบุชื่อลูกค้า") : "ไม่ระบุชื่อลูกค้า",
-      status: currentStatus,
-      owner: idxOwner !== -1 ? (cleanString(row[idxOwner]) || "ไม่ระบุชื่อ") : "ไม่ระบุชื่อ",
-      ageDays: parsedAge,
+      caseId: caseId,
+      caseType: caseType || "-",
+      nameDetails: nameDetails || "ไม่ระบุชื่อลูกค้า",
+      status: status,
+      owner: owner || "ไม่ระบุชื่อ",
+      ageDays: ageDays,
+      customerCode: customerCode || "-",
       history: followUpHistory
     });
   }
@@ -745,7 +626,7 @@ fetch(opCsvUrl).then(res => res.text()).then(opCsv => {
   document.getElementById("dashboardContent").style.display = "block";
 
 }).catch(err => {
-  document.getElementById("loader").textContent = "โครงสร้างเซิร์ฟเวอร์ฐานข้อมูลขัดข้อง กรุณาตรวจสอบการเข้าถึงไฟล์ชีต";
+  document.getElementById("loader").innerHTML = `<div style="color:#ef4444; font-weight:600; padding:20px;">สแกนพิกัดข้อมูลใน LOG ขัดข้อง กรุณาตรวจสอบหัวคอลัมน์</div>`;
   console.error(err);
 });
 
@@ -770,7 +651,7 @@ function initInventoryFilterEvents() {
   OP_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) {
-      checkbox.addEventListener("change", (e) => {
+      checkbox.addEventListener("change", () => {
         updateChipStyles();
         applyOpFilters();
       });
@@ -816,7 +697,10 @@ function applyOpFilters() {
   if(q) {
     result = result.filter(item => 
       String(item.caseId).toLowerCase().includes(q) ||
-      String(item.caseName).toLowerCase().includes(q)
+      String(item.caseType).toLowerCase().includes(q) ||
+      String(item.nameDetails).toLowerCase().includes(q) ||
+      String(item.owner).toLowerCase().includes(q) ||
+      String(item.customerCode).toLowerCase().includes(q)
     );
   }
 
@@ -852,7 +736,7 @@ function applySortOnOpFiltered() {
     return 0;
   });
   
-  ["caseId", "caseName", "customerName"].forEach(k => {
+  ["caseId", "caseType", "nameDetails"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(el) el.textContent = k === key ? (dir === "asc" ? "↑" : "↓") : "↕";
   });
@@ -870,10 +754,10 @@ function renderOpTable(data) {
   tbody.innerHTML = data.map((item, index) => `
     <tr onclick="getOpRowClickData(${index})">
       <td class="col-code">${item.caseId}</td>
-      <td class="col-name">${item.caseName}</td>
-      <td class="col-customer">
+      <td class="col-type">${item.caseType}</td>
+      <td class="col-name">
         <div class="customer-cell-flex">
-          <div class="customer-text-wrap">${item.customerName}</div>
+          <div class="customer-text-wrap">${item.nameDetails}</div>
           <div class="modern-arrow-right">➔</div>
         </div>
       </td>
@@ -896,8 +780,8 @@ function updateResultCount(n) {
 function openTimelineModal(item) {
   const modal = document.getElementById("timelineModal");
   
-  document.getElementById("modalCustomerName").textContent = item.customerName;
-  document.getElementById("modalCaseName").textContent = `เคส: ${item.caseName} | หมวด: ${item.caseType} | Status: ${item.status}`;
+  document.getElementById("modalCustomerName").textContent = item.nameDetails;
+  document.getElementById("modalCaseName").textContent = `รหัสเคส: ${item.caseId} | หมวด: ${item.caseType} | Status: ${item.status}`;
   document.getElementById("modalOwner").textContent = item.owner;
   document.getElementById("modalCaseAge").textContent = `Age: ${item.ageDays}d`;
 
@@ -905,7 +789,7 @@ function openTimelineModal(item) {
   timelineContent.innerHTML = "";
 
   if(!item.history || item.history.length === 0) {
-    timelineContent.innerHTML = `<p style="font-size:12px; color:#94a3b8; text-align:center; padding:16px 0;">ไม่มีประวัติการบันทึกข้อมูลติดตามงาน (Follow Up)</p>`;
+    timelineContent.innerHTML = `<p style="font-size:12px; color:#94a3b8; text-align:center; padding:16px 0;">ไม่มีประวัติรายละเอียดงานหรือข้อมูลติดตามงาน (Follow Up)</p>`;
   } else {
     item.history.forEach((hist, idx) => {
       const itemDiv = document.createElement("div");
