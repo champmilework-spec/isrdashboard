@@ -561,7 +561,8 @@ body{
 <div id="pagination-controls" class="pagination-bar"></div>
 
 <script>
-const SHEET_API = "https://opensheet.elk.sh/1c24KMRRKILXevLctZr-zaku6y0mD8UMmxo_ckp_ukxI/promo";
+// 🎯 ปรับลิงก์ API มาวิ่งผ่าน Secure Web App Gateway ร่วมกันและล็อกเป้าเรียกแท็บ promo
+const SHEET_API = "https://script.google.com/macros/s/AKfycbzlKGpeKTOOuzGNOPCURsGqXy4ilpfMi7Ef6qoz3_SuK-z4H-8IK5Kgrz9HyzTgfjd6/exec?sheet=promo";
 
 let allPromotions = [];
 let currentPage = 1;
@@ -607,7 +608,7 @@ function initMenuFix() {
     if (attempts >= maxAttempts) {
       clearInterval(bindInterval);
     }
-  }, 100);
+  }, 1000);
 }
 
 async function fetchPromotions() {
@@ -616,13 +617,13 @@ async function fetchPromotions() {
     if (!res.ok) throw new Error("Network error response");
     const rawData = await res.json();
     
-    // คลีนคีย์ข้อมูลทั้งหมดจาก API ให้เป็นพิมพ์เล็กเพื่อลดปัญหาคีย์เว้นวรรคหรือไม่ตรงกับรูปแบบหัวตารางเดิม
+    // จัดระเบียบคีย์ยืดหยุ่น ป้องกันชื่อหัวข้อคอลัมน์จากชีตต้นทางมีเว้นวรรค
     allPromotions = rawData.map(item => {
       let cleanItem = {};
       for (let key in item) {
-        cleanItem[key] = item[key]; // เก็บต้นฉบับไว้กันพลาด
+        cleanItem[key] = item[key]; 
         const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '');
-        cleanItem[cleanKey] = item[key]; // แปลงคีย์ยืดหยุ่นไว้ใช้งานภายในสคริปต์
+        cleanItem[cleanKey] = item[key]; 
       }
       return cleanItem;
     });
@@ -631,7 +632,7 @@ async function fetchPromotions() {
   } catch (error) {
     console.error("Fetch Error:", error);
     document.getElementById("promo-grid").innerHTML = `
-      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบสถานะ API หรือการแชร์ไฟล์ชีต</div>
+      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบสถานะ API หรือสิทธิ์การแชร์ไฟล์ชีต</div>
     `;
   }
 }
@@ -685,6 +686,7 @@ function processAndRender() {
     const status = p.promostatus || p.PromoStatus || 'Active';
     const brand = p.brand || p.Brand || 'SUPERPART';
     
+    // ดึงค่าราคาขายดั้งเดิม
     const rawPrice = p["ราคาขาย"] || p["ราคาขาย"] || "";
     let displayPrice = 'ราคาพิเศษ';
 
