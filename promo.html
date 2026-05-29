@@ -561,7 +561,6 @@ body{
 <div id="pagination-controls" class="pagination-bar"></div>
 
 <script>
-// 🎯 ปรับลิงก์ API มาวิ่งผ่าน Secure Web App Gateway ร่วมกันและล็อกเป้าเรียกแท็บ promo
 const SHEET_API = "https://script.google.com/macros/s/AKfycbzlKGpeKTOOuzGNOPCURsGqXy4ilpfMi7Ef6qoz3_SuK-z4H-8IK5Kgrz9HyzTgfjd6/exec?sheet=promo";
 
 let allPromotions = [];
@@ -611,13 +610,25 @@ function initMenuFix() {
   }, 1000);
 }
 
+// 🛠️ ฟังก์ชันแปลง ISO Date ให้แสดงผลสวยงาม (DD/MM/YYYY)
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
+  const dateObj = new Date(dateStr);
+  if (isNaN(dateObj.getTime())) return dateStr; // ถ้าไม่ใช่รูปแบบวันที่มาตรฐาน ให้คืนค่าเดิมกลับไป
+  
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const year = dateObj.getFullYear();
+  
+  return `${day}/${month}/${year}`;
+}
+
 async function fetchPromotions() {
   try {
     const res = await fetch(SHEET_API);
     if (!res.ok) throw new Error("Network error response");
     const rawData = await res.json();
     
-    // จัดระเบียบคีย์ยืดหยุ่น ป้องกันชื่อหัวข้อคอลัมน์จากชีตต้นทางมีเว้นวรรค
     allPromotions = rawData.map(item => {
       let cleanItem = {};
       for (let key in item) {
@@ -686,7 +697,6 @@ function processAndRender() {
     const status = p.promostatus || p.PromoStatus || 'Active';
     const brand = p.brand || p.Brand || 'SUPERPART';
     
-    // ดึงค่าราคาขายดั้งเดิม
     const rawPrice = p["ราคาขาย"] || p["ราคาขาย"] || "";
     let displayPrice = 'ราคาพิเศษ';
 
@@ -708,6 +718,13 @@ function processAndRender() {
     let extraBulletsHtml = '';
     if (cleanPromo2 !== "") extraBulletsHtml += `<li>${cleanPromo2}</li>`;
     if (cleanPromo3 !== "") extraBulletsHtml += `<li>${cleanPromo3}</li>`;
+
+    // 🕒 นำวันที่มาฟอร์แมตผ่านฟังก์ชัน formatDate
+    const rawStartDate = p.startdate || p.StartDate || '';
+    const rawEndDate = p.enddate || p.EndDate || '';
+    
+    const formattedStartDate = formatDate(rawStartDate);
+    const formattedEndDate = rawEndDate ? formatDate(rawEndDate) : 'จนกว่าจะเปลี่ยนแปลง';
 
     return `
       <div class="card">
@@ -736,11 +753,11 @@ function processAndRender() {
           <div class="date-zone">
             <div class="date-line">
               <span>เริ่มแคมเปญ:</span>
-              <span>${p.startdate || p.StartDate || '-'}</span>
+              <span>${formattedStartDate}</span>
             </div>
             <div class="date-line">
               <span>สิ้นสุดแคมเปญ:</span>
-              <span>${p.enddate || p.EndDate || 'จนกว่าจะเปลี่ยนแปลง'}</span>
+              <span>${formattedEndDate}</span>
             </div>
           </div>
         </div>
