@@ -479,10 +479,8 @@ function copyRowToClipboard(index) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   }
 
-  const sel = document.getElementById("columnSelector");
-  const displayLabel = sel.options[sel.selectedIndex].text;
-
-  const textToCopy = `Item Code: ${item.gbarcode || "-"} | Description: ${item.name || "-"} | ${displayLabel}: ${formattedVal}`;
+  // แก้ไขตรงนี้: ตัดข้อความหัวตารางออก เหลือเพียงค่าของข้อมูลล้วนๆ คั่นด้วยเครื่องหมาย | 
+  const textToCopy = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     const toast = document.getElementById("copyToast");
