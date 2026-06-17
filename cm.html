@@ -683,10 +683,8 @@ function copyRowToClipboard(index) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 
-  const sel = document.getElementById("columnSelector");
-  const displayLabel = sel.options[sel.selectedIndex].text;
-
-  const textToCopy = `Code: ${item.code || "-"} | Match: ${item.codematch || "-"} | Barcode: ${item.gbarcode || "-"} | ชื่อ: ${item.name || "-"} | ${displayLabel}: ${formattedVal}`;
+  // แก้ไขเป็นเว้นวรรคธรรมดาให้ครบทุกจุด
+  const textToCopy = `${item.code || "-"} ${item.codematch || "-"} ${item.gbarcode || "-"} ${item.name || "-"} ${formattedVal}`;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     const toast = document.getElementById("copyToast");
