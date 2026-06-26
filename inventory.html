@@ -3,50 +3,57 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SUPERPART | Inventory OnHand</title>
+<title>SUPERPART | Inventory OnHand (Compact Stable)</title>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <style>
-/* =========================
-   BASE
-========================= */
+/* ===================================================
+   BASE & COMPACT PREMIUM STYLING SYSTEM
+   =================================================== */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #fafafa;
-  color: #111;
-  padding-top: 80px; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  padding-top: 70px; /* ลดระยะด้านบนลง */
+  -webkit-font-smoothing: antialiased;
 }
 
-/* =========================
-   LAYOUT
-========================= */
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 5px 12px; /* กระชับพื้นที่ขอบ */
   position: relative;
   z-index: 1; 
 }
 
 /* =========================
-   BREADCRUMB ROW
+   BREADCRUMB ROW (COMPACT)
 ========================= */
 .breadcrumb-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 .breadcrumb {
-  font-size: 12px;
-  color: #777;
-  letter-spacing: 1px;
+  font-size: 11px;
+  color: #86868b;
+  letter-spacing: 0.5px;
+}
+.breadcrumb a {
+  color: #86868b;
+  text-decoration: none;
+  font-weight: bold;
 }
 .hide-zero-wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #777;
+  gap: 4px;
+  font-size: 11px;
+  color: #515154;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
@@ -55,208 +62,321 @@ body {
 input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 15px;
-  height: 15px;
-  border: 1px solid #cbd5e1;
+  width: 13px;
+  height: 13px;
+  border: 1px solid #d2d2d7;
   border-radius: 50%; 
   outline: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
   background: #fff;
 }
 input[type="checkbox"]:checked {
-  background-color: #2f5ea8;
-  border-color: #2f5ea8;
+  background-color: #004385; /* ปรับเป็นน้ำเงินเข้ม */
+  border-color: #004385;
 }
 input[type="checkbox"]:checked::after {
   content: '';
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   background-color: #fff;
   border-radius: 50%;
 }
 
-/* =========================
-   CONTROL BAR (SEARCH & DROPDOWN)
-========================= */
+/* ===================================================
+   INTERACTIVE CONTROL BAR (ULTRA COMPACT)
+   =================================================== */
 .control-bar {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
-@media(min-width: 600px) {
-  .control-bar {
-    flex-direction: row;
-    align-items: center;
-  }
+
+.search-container {
+  position: relative;
+  width: 100%;
 }
-.search-wrapper {
-  flex: 1;
-}
+
 .search-wrapper input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 8px 14px;
+  border: 1px solid #d2d2d7;
+  border-radius: 20px;
+  font-size: 16px; /* คงไว้ 16px ตามสั่ง */
   outline: none;
   box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+.search-wrapper input:focus {
+  border-color: #004385;
+}
+
+/* Search History Dropdown (1-2 อันเล็กๆ ด้านล่าง) */
+.search-history-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d2d2d7;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  display: none;
+}
+.search-history-item {
+  padding: 6px 14px;
+  font-size: 12px;
+  color: #515154;
+  cursor: pointer;
+  border-bottom: 1px solid #f2f2f7;
+}
+.search-history-item:last-child {
+  border-bottom: none;
+}
+.search-history-item:hover {
+  background: #f5f5f7;
+}
+
+.filters-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
 }
 
 .dropdown-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  width: 100%;
 }
 .dropdown-wrapper label {
-  font-size: 12px;
-  color: #666;
+  font-size: 11px; /* ลดขนาดลง */
+  color: #6e6e73;
   white-space: nowrap;
-}
-.dropdown-wrapper select {
-  padding: 6px 28px 6px 12px;
-  font-size: 13px;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  background: #fff;
-  color: #4a5568;
-  outline: none;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 12px;
-  transition: all 0.2s;
+  font-weight: 500;
 }
 
-/* =========================
-   FILTER CHIPS
-========================= */
+/* ปรับเมนู Dropdown เหลือ 15px ตามสั่ง และนิ่งไม่มีสั่น */
+.dropdown-wrapper select {
+  flex: 1;
+  width: 100%;
+  padding: 5px 20px 5px 8px;
+  font-size: 15px; 
+  border: 1px solid #d2d2d7;
+  border-radius: 6px;
+  background: #fff;
+  color: #1d1d1f;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236e6e73' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 10px;
+  box-sizing: border-box;
+}
+.dropdown-wrapper select:focus {
+  border-color: #004385;
+}
+
+@media(min-width: 600px) {
+  .control-bar { flex-direction: row; align-items: center; }
+  .search-container { flex: 1; }
+  .filters-group { display: flex; width: auto; gap: 8px; }
+  .dropdown-wrapper select { width: 135px; }
+}
+
+/* ===================================================
+   COMPACT CHIPS (ลดขนาด ใช้พื้นที่น้อยสุด ไม่เขย่า)
+   =================================================== */
 .cat-filter-bar, .div-filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 .div-filter-bar {
-  padding-bottom: 8px;
+  padding-bottom: 4px;
   border-bottom: 1px dashed #eef0f5;
   align-items: center;
 }
 .div-filter-title {
-  font-size: 12px;
-  color: #666;
+  font-size: 11px;
+  color: #6e6e73;
   font-weight: bold;
-  margin-right: 4px;
+  margin-right: 2px;
 }
 .cat-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  border: 1px solid #ddd;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #d2d2d7;
   background: #fff;
-  font-size: 11px;
-  color: #555;
+  font-size: 11px; /* ขนาดตัวอักษรเล็กประหยัดพื้นที่ */
+  color: #48484a;
   cursor: pointer;
   user-select: none;
-  transition: 0.15s;
 }
-.cat-chip input[type="checkbox"] {
-  width: 12px;
-  height: 12px;
-  margin: 0;
+.cat-chip input[type="checkbox"] { width: 10px; height: 10px; margin: 0; }
+.cat-chip:hover { 
+  border-color: #86868b; 
 }
-.cat-chip:hover {
-  border-color: #2f5ea8;
-  color: #2f5ea8;
-}
-.cat-chip.active {
-  border-color: #2f5ea8;
-  background: #2f5ea8;
-  color: #fff;
-  font-weight: bold;
+.cat-chip.active { 
+  border-color: #004385; 
+  background: #004385; /* สีน้ำเงินเข้มขึ้น */
+  color: #fff; 
+  font-weight: bold; 
 }
 
-/* =========================
-   TABLE
-========================= */
+/* ===================================================
+   TABLE SYSTEM (สีหัวข้อเข้มขึ้น / ตัวหนังสือเล็กลง)
+   =================================================== */
 .table-wrap {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #eee;
-  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   background: #fff;
-  max-height: 75vh;
+  max-height: 68vh;
+  -webkit-overflow-scrolling: touch;
 }
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 thead th {
   position: sticky;
   top: 0;
-  background: #2f5ea8;
+  background: #003366; /* เปลี่ยนเป็นสีน้ำเงินเข้มขึ้นตามสั่ง มืดลงไม่แยงตา */
   color: #fff;
   z-index: 50;
   text-align: left;
   font-size: 12px;
-  padding: 12px 10px;
+  font-weight: 600;
+  padding: 10px 8px;
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
 }
-thead th:hover { background: #244a86; }
+thead th:hover { background: #002244; }
 tbody td {
-  font-size: 13px;
-  padding: 10px;
-  border-bottom: 1px solid #f0f0f0;
+  font-size: 12.5px; /* ปรับลดลงเล็กน้อยให้อ่านง่ายบนจอเล็ก */
+  padding: 8px;
+  border-bottom: 1px solid #f2f2f7;
+  vertical-align: middle;
 }
-tbody tr:hover { background: #f7f7f7; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: #f5f5f7; }
 
-.col-code { width: 110px; white-space: nowrap; }
-.col-desc { width: auto; word-break: break-word; }
-.col-dynamic { width: 100px; text-align: right; font-weight: bold; }
-.result-count { font-size: 11px; color: #aaa; margin-bottom: 6px; text-align: right; }
+.col-code { width: 90px; white-space: nowrap; }
+.col-code-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.col-desc { width: auto; word-break: break-word; color: #1d1d1f; }
+.col-dynamic { width: 95px; text-align: right; font-weight: bold; white-space: nowrap; }
+
+.barcode-scan-icon {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+}
+.barcode-scan-icon svg { width: 14px; height: 14px; fill: #004385; }
+
+.sort-arrow { font-size: 10px; margin-left: 4px; display: inline-block; opacity: 0.9; }
+
+/* Meta Status Indicator */
+.meta-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.test-fetch-indicator {
+  font-size: 11px;
+  color: #24963e;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sync-btn {
+  background: #fff;
+  border: 1px solid #d2d2d7;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #004385;
+  cursor: pointer;
+}
+.result-count { font-size: 11px; color: #86868b; text-align: right; font-weight: 500; }
+
+/* ===================================================
+   MODALS OVERLAY DIALOGS (STABLE)
+   =================================================== */
+.custom-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; opacity: 0; pointer-events: none;
+}
+.custom-modal.active { opacity: 1; pointer-events: auto; }
+.modal-content {
+  background: #fff;
+  padding: 14px; border-radius: 12px;
+  width: 90%; max-width: 310px; 
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute; top: 10px; right: 12px;
+  font-size: 14px; font-weight: bold; color: #86868b; cursor: pointer; border: none; background: none;
+}
+.modal-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #1d1d1f; }
+
+/* แผ่นป้ายพิกัด 30x20mm คงที่นิ่ง */
+.sticker-preview-box {
+  width: 270px; height: 180px;
+  border: 1.5px solid #000; background: #fff;
+  margin: 8px auto; padding: 10px; box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: space-between;
+  color: #000; font-family: Arial, sans-serif;
+}
+.sticker-name { font-size: 11px; font-weight: bold; line-height: 1.25; height: 2.5em; overflow: hidden; text-align: left; }
+.sticker-subcode-left { font-size: 11px; font-weight: bold; text-align: left; margin-top: 1px; }
+.sticker-barcode-svg { width: 100%; height: 68px; }
+.sticker-footer-row { display: flex; justify-content: space-between; align-items: flex-end; font-size: 10.5px; font-weight: bold; }
+
+.btn-download-trigger {
+  display: block; width: 100%; background: #004385; color: #fff;
+  text-align: center; text-decoration: none; padding: 8px 0;
+  font-size: 12px; font-weight: 600; border-radius: 6px; margin-top: 6px;
+  border: none; cursor: pointer;
+}
 
 .copy-toast {
-  position: fixed;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(17, 24, 39, 0.9);
-  color: #fff;
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-size: 12px;
-  z-index: 10000;
-  display: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85); color: #fff; padding: 6px 14px;
+  border-radius: 10px; font-size: 11px; z-index: 10000; display: none;
 }
 
 #toTop {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #111;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 99;
+  position: fixed; bottom: 20px; right: 20px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #111; color: #fff; display: flex;
+  align-items: center; justify-content: center; cursor: pointer; z-index: 99; font-size: 14px;
 }
-.sort-arrow { font-size: 10px; margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -265,7 +385,7 @@ tbody tr:hover { background: #f7f7f7; }
 
 <div class="container">
   <div class="breadcrumb-row">
-    <div class="breadcrumb">HOME / INVENTORY</div>
+    <div class="breadcrumb"><a href="index.html">HOME</a> / INVENTORY</div>
     <label class="hide-zero-wrap">
       <input type="checkbox" id="hideZero" checked />
       Hide 0 / –
@@ -273,28 +393,45 @@ tbody tr:hover { background: #f7f7f7; }
   </div>
 
   <div class="control-bar">
-    <div class="search-wrapper">
-      <input id="searchBox" type="text" placeholder="Search Item Code / Description..." />
+    <div class="search-container">
+      <div class="search-wrapper">
+        <input id="searchBox" type="text" placeholder="Search Barcode / Description..." autocomplete="off" />
+      </div>
+      <div class="search-history-dropdown" id="searchHistoryBox">
+        <div class="search-history-item" onclick="applyHistorySearch('แลคเกอร์')">📋 ล่าสุด: แลคเกอร์</div>
+        <div class="search-history-item" onclick="applyHistorySearch('กระดาษกาว')">📋 ล่าสุด: กระดาษกาว</div>
+      </div>
     </div>
-    <div class="dropdown-wrapper">
-      <label for="columnSelector">แสดงข้อมูล:</label>
-      <select id="columnSelector">
-        <option value="gpricef">gpriceF</option>
-        <option value="onhand_all" selected>Onhand_All</option>
-        <option value="glocat">glocat</option>
-        <option value="onhandst">onhandST</option>
-      </select>
+    <div class="filters-group">
+      <div class="dropdown-wrapper">
+        <label for="brandSelector">แบรนด์:</label>
+        <select id="brandSelector">
+          <option value="">ทั้งหมด (All)</option>
+          <option value="3M">3M</option>
+          <option value="Nippon P">Nippon P</option>
+          <option value="CROMAX">CROMAX</option>
+          <option value="KURUMA">KURUMA</option>
+          <option value="TOA">TOA</option>
+          <option value="DOMAC">DOMAC</option>
+          <option value="HB BODY">HB BODY</option>
+        </select>
+      </div>
+      <div class="dropdown-wrapper">
+        <label for="columnSelector">แสดงข้อมูล:</label>
+        <select id="columnSelector">
+          <option value="Onhand_All" selected>Onhand_All</option>
+          <option value="gpriceF">gpriceF</option>
+          <option value="glocat">glocat</option>
+          <option value="onhandST">onhandST</option>
+          <option value="StockStatus">StockStatus</option> <option value="GRdateMax">GRdateMax</option>     </select>
+      </div>
     </div>
   </div>
 
   <div class="div-filter-bar">
     <span class="div-filter-title">Division:</span>
-    <label class="cat-chip" id="chip-div-tool">
-      <input type="checkbox" id="div-tool" /> Tool
-    </label>
-    <label class="cat-chip" id="chip-div-wos">
-      <input type="checkbox" id="div-wos" checked /> WOS
-    </label>
+    <label class="cat-chip" id="chip-div-tool"><input type="checkbox" id="div-tool" /> Tool</label>
+    <label class="cat-chip" id="chip-div-wos"><input type="checkbox" id="div-wos" checked /> WOS</label>
   </div>
 
   <div class="cat-filter-bar">
@@ -305,30 +442,70 @@ tbody tr:hover { background: #f7f7f7; }
     <label class="cat-chip" id="chip-putty"><input type="checkbox" id="cat-putty" /> สีโป๊ว</label>
   </div>
 
-  <div class="result-count" id="result-count"></div>
+  <div class="meta-status-row">
+    <div class="test-fetch-indicator" id="testFetchStatus">
+      <span id="statusText">Checking Storage Cache...</span>
+      <button class="sync-btn" id="manualSyncBtn" style="display:none;" onclick="forceRefreshData()">🔄 Sync ล่าสุด</button>
+    </div>
+    <div class="result-count" id="result-count"></div>
+  </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th onclick="sortTable('gbarcode')" class="col-code">Item Code <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
+          <th onclick="sortTable('gbarcode')" class="col-code">Barcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
           <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
           <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
         </tr>
       </thead>
       <tbody id="table-body">
-        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading Inventory Master Data...</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:15px; color:#777;">Loading Master Inventory Stream...</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 
+<div class="custom-modal" id="infoModal">
+  <div class="modal-content">
+    <button class="modal-close-btn" onclick="closeModal('infoModal')">✕</button>
+    <div class="modal-title" style="border-bottom:1px solid #e2e8f0; padding-bottom:4px;">📋 ข้อมูลสินค้าฉบับเต็ม</div>
+    <div id="infoModalBody" style="font-size:12px; line-height:1.5; padding:8px 0; color:#1d1d1f;"></div>
+    <button class="btn-download-trigger" style="background:#424245; margin-top:4px;" onclick="copyCurrentModalText()">📋 คัดลอกข้อความแถวนี้</button>
+  </div>
+</div>
+
+<div class="custom-modal" id="barcodeModal">
+  <div class="modal-content">
+    <button class="modal-close-btn" onclick="closeModal('barcodeModal')">✕</button>
+    <div class="modal-title">🏷️ Preview ฉลากสินค้า (30x20mm)</div>
+    
+    <div class="sticker-preview-box" id="stickerTarget">
+      <div>
+        <div class="sticker-name" id="lblProductName">ชื่อสินค้า...</div>
+        <div class="sticker-subcode-left" id="lblSPCODESField">-</div>
+      </div>
+      <svg class="sticker-barcode-svg" id="svgBarcodeElement"></svg>
+      <div class="sticker-footer-row">
+        <span id="lblDivisionField">-</span>
+        <span id="lblLocationField">-</span>
+      </div>
+    </div>
+
+    <div id="resultImageContainer" style="margin-top:6px;">
+      <button class="btn-download-trigger" onclick="snapAndGenerateLabelImage()">⚡ สร้างไฟล์รูปภาพฉลาก</button>
+    </div>
+  </div>
+</div>
+
 <div id="toTop">↑</div>
-<div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
+<div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลเรียบร้อย!</div>
 
 <script>
-// 🎯 เชื่อมต่อไปยังตัว Web App ส่วนตัวของคุณ พร้อมระบุพารามิเตอร์แท็บดึงข้อมูลความปลอดภัยสูง
-const API = "https://script.google.com/macros/s/AKfycbzlKGpeKTOOuzGNOPCURsGqXy4ilpfMi7Ef6qoz3_SuK-z4H-8IK5Kgrz9HyzTgfjd6/exec?sheet=itemmaster";
+const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
+const TABLE_NAME = "itemmaster";
+const CACHE_KEY = "superpart_inventory_cache";
 
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
@@ -347,51 +524,94 @@ let rawData      = [];
 let filteredData = [];
 let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
-let currentDynamicColumn = "onhand_all"; 
+let currentDynamicColumn = "Onhand_All"; 
+let activeSelectedModalText = ""; 
+let currentStickerData = {};
 
-async function loadTable(){
+async function loadTable() {
+  const statusText = document.getElementById("statusText");
+  const syncBtn = document.getElementById("manualSyncBtn");
+  
+  const cachedData = localStorage.getItem(CACHE_KEY);
+  if (cachedData) {
+    try {
+      rawData = JSON.parse(cachedData);
+      statusText.textContent = `💾 Loaded Cache (${rawData.length.toLocaleString()} items)`;
+      syncBtn.style.display = "inline-block"; 
+      updateChipStyles();
+      applyAll();
+      return; 
+    } catch (e) {
+      console.error("Cache corrupt, refetching...", e);
+    }
+  }
+  await streamDataFromServer();
+}
+
+async function streamDataFromServer() {
+  const statusText = document.getElementById("statusText");
+  const syncBtn = document.getElementById("manualSyncBtn");
   try {
-    const res = await fetch(API);
-    if (!res.ok) throw new Error("Network response error");
-    let data = await res.json();
-    
-    // ระบบลูปจัดฟอร์แมตคีย์ตัวเล็กล้วนเพื่อความทนทานและเสถียรสูงสุดในการกรองเงื่อนไข
-    rawData = data.map(item => {
-      let newItem = {};
-      for (let k in item) {
-        let cleanKey = String(k).replace(/\s/g, "").toLowerCase();
-        newItem[cleanKey] = item[k];
-      }
-      return newItem;
-    });
+    let offset = 0;
+    const pageSize = 500; 
+    let keepFetching = true;
+    rawData = [];
+    syncBtn.style.display = "none";
 
-    updateChipStyles();
-    applyAll();
+    while(keepFetching) {
+      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&limit=${pageSize}&offset=${offset}`;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!res.ok) throw new Error("Stream Failed");
+      let chunk = await res.json();
+      rawData = rawData.concat(chunk);
+      offset += pageSize;
+
+      updateChipStyles();
+      applyAll();
+
+      statusText.textContent = `🔄 Fetching: ${rawData.length.toLocaleString()}...`;
+      if (chunk.length < pageSize || rawData.length >= 12000) { keepFetching = false; }
+    }
+
+    localStorage.setItem(CACHE_KEY, JSON.stringify(rawData));
+    statusText.textContent = `🚀 Connected (${rawData.length.toLocaleString()} items)`;
+    syncBtn.style.display = "inline-block";
   } catch(e) {
     console.error(e);
-    document.getElementById("table-body").innerHTML =
-      '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">Failed to load data from Secure API.</td></tr>';
+    statusText.textContent = "⚠️ Stream paused.";
   }
 }
 
+function forceRefreshData() {
+  localStorage.removeItem(CACHE_KEY);
+  streamDataFromServer();
+}
+
 function applyAll(){
-  const q        = document.getElementById("searchBox").value.toLowerCase().trim();
-  const hideZero = document.getElementById("hideZero").checked;
+  const q         = document.getElementById("searchBox").value.toLowerCase().trim();
+  const hideZero  = document.getElementById("hideZero").checked;
+  const selectedBrand = document.getElementById("brandSelector").value.toLowerCase().trim();
 
   const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
   const activeDivs = DIV_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
 
   let result = rawData;
 
-  // 1. PRODUCT DIVISION FILTER
   if(activeDivs.length > 0){
     result = result.filter(i => {
-      const prodDiv = String(i.productdivision || "").trim().toLowerCase();
-      return activeDivs.some(f => prodDiv === f.value.toLowerCase());
+      const prodDiv = String(i.ProductDivision || "").trim().toLowerCase();
+      return activeDivs.some(f => prodDiv === f.value.toLowerCase() || prodDiv.includes(f.value.toLowerCase()));
     });
   }
 
-  // 2. CATEGORY FILTER
   if(activeCats.length > 0){
     result = result.filter(i => {
       const gname = String(i.gnamechr || "").toLowerCase();
@@ -399,18 +619,21 @@ function applyAll(){
     });
   }
 
-  // 3. TEXT SEARCH
-  if(q){
+  if(selectedBrand){
     result = result.filter(i => {
-      const dynVal = String(i[currentDynamicColumn] || "").toLowerCase();
-      return String(i.gbarcode || "").toLowerCase().includes(q) ||
-             String(i.name || "").toLowerCase().includes(q) ||
-             String(i.gnamechr || "").toLowerCase().includes(q) ||
-             dynVal.includes(q);
+      const brandType = String(i.TYPE || "").trim().toLowerCase();
+      return brandType === selectedBrand;
     });
   }
 
-  // 4. HIDE ZERO / DASH
+  if(q){
+    result = result.filter(i => {
+      return String(i.gbarcode || "").toLowerCase().includes(q) || 
+             String(i.name || "").toLowerCase().includes(q) ||
+             String(i.gnamechr || "").toLowerCase().includes(q);
+    });
+  }
+
   if(hideZero){
     result = result.filter(i => {
       const v = String(i[currentDynamicColumn] || "").trim();
@@ -429,7 +652,6 @@ function applyAll(){
     viewData = filteredData;
     renderTable(viewData);
   }
-
   updateResultCount(viewData.length);
 }
 
@@ -450,74 +672,135 @@ function applySortOnFiltered(){
   viewData = [...filteredData].sort((a, b) => {
     let v1 = a[targetKey] ?? "";
     let v2 = b[targetKey] ?? "";
-    
     const n1 = parseFloat(v1);
     const n2 = parseFloat(v2);
-    
-    if(!isNaN(n1) && !isNaN(n2)){
-      return dir === "asc" ? n1 - n2 : n2 - n1;
-    }
-    
+    if(!isNaN(n1) && !isNaN(n2)){ return dir === "asc" ? n1 - n2 : n2 - n1; }
     v1 = String(v1).toLowerCase();
     v2 = String(v2).toLowerCase();
     if(v1 < v2) return dir === "asc" ? -1 : 1;
     if(v1 > v2) return dir === "asc" ?  1 : -1;
     return 0;
   });
-  
   updateArrows(key, dir);
   renderTable(viewData);
-}
-
-function copyRowToClipboard(index) {
-  const item = viewData[index];
-  if (!item) return;
-
-  let rawVal = item[currentDynamicColumn] ?? "-";
-  let formattedVal = rawVal;
-  if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
-    formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
-  }
-
-  // แก้ไขตรงนี้: ตัดข้อความหัวตารางออก เหลือเพียงค่าของข้อมูลล้วนๆ คั่นด้วยเครื่องหมาย | 
-  const textToCopy = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
-
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    const toast = document.getElementById("copyToast");
-    toast.style.display = "block";
-    setTimeout(() => { toast.style.display = "none"; }, 1800);
-  }).catch(err => { console.error("Could not copy text: ", err); });
 }
 
 function renderTable(data){
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">No results found.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:15px;">No results.</td></tr>';
     return;
   }
   
   tbody.innerHTML = data.map((p, index) => {
     let rawVal = p[currentDynamicColumn] ?? "-";
     let formattedVal = rawVal;
-     
-    if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+       
+    if (currentDynamicColumn !== "glocat" && currentDynamicColumn !== "GRdateMax" && currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
       formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
     }
 
     return `
-      <tr onclick="copyRowToClipboard(${index})">
-        <td class="col-code">${p.gbarcode    || "-"}</td>
-        <td class="col-desc">${p.name        || "-"}</td>
+      <tr onclick="openInfoModal(${index})">
+        <td class="col-code">
+          <div class="col-code-inner">
+            <span>${p.gbarcode || "-"}</span>
+            <div class="barcode-scan-icon" onclick="triggerBarcodeGenerator(${index}, event)">
+              <svg viewBox="0 0 24 24"><path d="M3 4h2v16H3V4zm4 0h1v16H7V4zm3 0h3v16h-3V4zm5 0h2v16h-2V4zm4 0h2v16h-2V4z"/></svg>
+            </div>
+          </div>
+        </td>
+        <td class="col-desc">${p.name || "-"}</td>
         <td class="col-dynamic">${formattedVal}</td>
       </tr>
     `;
   }).join("");
 }
 
-function updateResultCount(n){
-  document.getElementById("result-count").textContent =
-    n > 0 ? n.toLocaleString() + " items" : "0 items";
+function triggerBarcodeGenerator(index, event) {
+  if (event) event.stopPropagation(); 
+  const item = viewData[index];
+  if(!item) return;
+  const barcodeValue = String(item.gbarcode || "").trim();
+  if(!barcodeValue || barcodeValue === "-") { return; }
+
+  currentStickerData = {
+    name: item.name || "-",
+    code: barcodeValue,
+    SPCODES: item.SPCODES || "-",
+    div: item.ProductDivision || "-",
+    loc: item.glocat || ""
+  };
+
+  document.getElementById("lblProductName").innerText = currentStickerData.name;
+  document.getElementById("lblSPCODESField").innerText = currentStickerData.SPCODES;
+  document.getElementById("lblDivisionField").innerText = currentStickerData.div;
+  document.getElementById("lblLocationField").innerText = currentStickerData.loc;
+
+  document.getElementById("resultImageContainer").innerHTML = `
+    <button class="btn-download-trigger" onclick="snapAndGenerateLabelImage()">⚡ สร้างไฟล์รูปภาพฉลาก</button>
+  `;
+
+  try {
+    JsBarcode("#svgBarcodeElement", barcodeValue, {
+      format: "CODE128", width: 2, height: 44, displayValue: true, fontSize: 12, margin: 1
+    });
+  } catch (err) { console.error(err); }
+  openModal('barcodeModal');
 }
+
+function snapAndGenerateLabelImage() {
+  const target = document.getElementById("stickerTarget");
+  const imgContainer = document.getElementById("resultImageContainer");
+  imgContainer.innerHTML = "<span style='color:#86868b; font-size:11px;'>Generating Snapshot...</span>";
+  setTimeout(() => {
+    html2canvas(target, { scale: 2, useCORS: true }).then(canvas => {
+      const imageData = canvas.toDataURL("image/jpeg");
+      imgContainer.innerHTML = `
+        <div style="text-align: center; width: 100%;">
+          <img src="${imageData}" style="width: 100%; max-width: 270px; border: 1px solid #d2d2d7; border-radius: 6px;" />
+          <a href="${imageData}" download="label-${currentStickerData.code}.jpg" class="btn-download-trigger">💾 ดาวน์โหลดภาพฉลาก</a>
+        </div>
+      `;
+    }).catch(err => { imgContainer.innerHTML = "<span>Error label</span>"; });
+  }, 100);
+}
+
+function openInfoModal(index) {
+  const item = viewData[index];
+  if(!item) return;
+  let rawVal = item[currentDynamicColumn] ?? "-";
+  let formattedVal = rawVal;
+  if (currentDynamicColumn !== "glocat" && currentDynamicColumn !== "GRdateMax" && currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+    formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+  }
+
+  activeSelectedModalText = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
+  const bodyEl = document.getElementById("infoModalBody");
+  bodyEl.innerHTML = `
+    <strong>Barcode:</strong> ${item.gbarcode || "-"}<br>
+    <strong>Internal Code (SPCODES):</strong> ${item.SPCODES || "-"}<br>
+    <strong>Description:</strong> ${item.name || "-"}<br>
+    <strong>Division:</strong> ${item.ProductDivision || "-"}<br>
+    <strong>Brand (TYPE):</strong> ${item.TYPE || "-"}<br>
+    <strong>StockStatus:</strong> ${item.StockStatus || "-"}<br>
+    <strong>GRdateMax:</strong> ${item.GRdateMax || "-"}<br>
+    <strong>${currentDynamicColumn}:</strong> <span style="color:#004385; font-weight:bold;">${formattedVal}</span>
+  `;
+  openModal('infoModal');
+}
+
+function copyCurrentModalText() {
+  navigator.clipboard.writeText(activeSelectedModalText).then(() => {
+    const toast = document.getElementById("copyToast");
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 1500);
+  });
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function updateResultCount(n){ document.getElementById("result-count").textContent = n > 0 ? n.toLocaleString() + " items" : "0 items"; }
 
 function updateArrows(active, dir){
   ["gbarcode", "name", "dynamic"].forEach(k => {
@@ -529,40 +812,35 @@ function updateArrows(active, dir){
 
 function updateChipStyles(){
   CAT_FILTERS.forEach(f => {
-    const checkbox = document.getElementById(f.id);
-    const chip     = document.getElementById(f.chipId);
-    if(checkbox && chip) {
-      if(checkbox.checked) chip.classList.add("active");
-      else                 chip.classList.remove("active");
-    }
+    const cb = document.getElementById(f.id); const chip = document.getElementById(f.chipId);
+    if(cb && chip) { if(cb.checked) chip.classList.add("active"); else chip.classList.remove("active"); }
   });
   DIV_FILTERS.forEach(f => {
-    const checkbox = document.getElementById(f.id);
-    const chip     = document.getElementById(f.chipId);
-    if(checkbox && chip) {
-      if(checkbox.checked) chip.classList.add("active");
-      else                 chip.classList.remove("active");
-    }
+    const cb = document.getElementById(f.id); const chip = document.getElementById(f.chipId);
+    if(cb && chip) { if(cb.checked) chip.classList.add("active"); else chip.classList.remove("active"); }
   });
 }
 
+function applyHistorySearch(text) {
+  const sb = document.getElementById("searchBox");
+  sb.value = text;
+  document.getElementById("searchHistoryBox").style.display = "none";
+  applyAll();
+}
+
 window.addEventListener("DOMContentLoaded", () => {
-  const chips = document.querySelectorAll('.cat-chip');
-  chips.forEach(chip => {
-    chip.addEventListener('click', (e) => {
-      if(e.target.tagName !== 'INPUT') {
-        e.preventDefault();
-        const cb = chip.querySelector('input[type="checkbox"]');
-        if(cb) {
-          cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event('change'));
-        }
-      }
-    });
+  const searchInput = document.getElementById("searchBox");
+  const historyBox = document.getElementById("searchHistoryBox");
+
+  // เปิด/ปิด dropdown ประวัติขนาดเล็ก เมื่อโฟกัสที่ช่องค้นหา (ไม่มีคำแปลกปลอมขึ้นบัง)
+  searchInput.addEventListener("focus", () => { historyBox.style.display = "block"; });
+  document.addEventListener("click", (e) => {
+    if (!searchInput.contains(e.target) && !historyBox.contains(e.target)) { historyBox.style.display = "none"; }
   });
 
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
+  document.getElementById("brandSelector").addEventListener("change", applyAll);
 
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
@@ -576,27 +854,15 @@ window.addEventListener("DOMContentLoaded", () => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
-
   DIV_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
   loadTable();
-
-  setTimeout(() => {
-    const headerEl = document.getElementById("header-placeholder");
-    if (headerEl && headerEl.innerHTML.trim() === "") {
-      headerEl.innerHTML = `
-        <div style="position:fixed; top:0; left:0; width:100%; height:60px; background:#2f5ea8; color:white; display:flex; align-items:center; padding:0 20px; box-shadow:0 2px 5px rgba(0,0,0,0.1); z-index:100; box-sizing:border-box;">
-          <h2 style="margin:0; font-size:20px; letter-spacing:1px;">SUPERPART</h2>
-        </div>
-      `;
-    }
-  }, 1000);
 });
 
-document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
+document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0 }); };
 </script>
 <script src="layout.js"></script>
 </body>
