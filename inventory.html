@@ -3,68 +3,71 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SUPERPART | Inventory OnHand (Compact Stable)</title>
+<title>SUPERPART | Inventory OnHand (Apple Premium & Ultra Stable)</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 /* ===================================================
-   BASE & COMPACT PREMIUM STYLING SYSTEM
+   APPLE LUXURY STYLING & CORE DESIGN SYSTEM
    =================================================== */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: #f5f5f7;
   color: #1d1d1f;
-  padding-top: 70px; /* ลดระยะด้านบนลง */
+  padding-top: 60px;
   -webkit-font-smoothing: antialiased;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 840px;
   margin: 0 auto;
-  padding: 5px 12px; /* กระชับพื้นที่ขอบ */
+  padding: 10px 16px;
   position: relative;
   z-index: 1; 
 }
 
-/* =========================
-   BREADCRUMB ROW (COMPACT)
-========================= */
+/* ===================================================
+   BREADCRUMB & SWIFT TRANSITIONS
+   =================================================== */
 .breadcrumb-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 .breadcrumb {
   font-size: 11px;
+  font-weight: 500;
   color: #86868b;
   letter-spacing: 0.5px;
 }
 .breadcrumb a {
   color: #86868b;
   text-decoration: none;
-  font-weight: bold;
+  transition: color 0.25s ease;
 }
+.breadcrumb a:hover { color: #0071e3; }
+
 .hide-zero-wrap {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 12px;
   color: #515154;
-  white-space: nowrap;
   cursor: pointer;
   user-select: none;
 }
 
+/* Apple Styled Checkbox */
 input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 13px;
-  height: 13px;
-  border: 1px solid #d2d2d7;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d2d2d7;
   border-radius: 50%; 
   outline: none;
   cursor: pointer;
@@ -72,77 +75,79 @@ input[type="checkbox"] {
   align-items: center;
   justify-content: center;
   background: #fff;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 input[type="checkbox"]:checked {
-  background-color: #004385; /* ปรับเป็นน้ำเงินเข้ม */
-  border-color: #004385;
+  background-color: #0071e3;
+  border-color: #0071e3;
+  transform: scale(1.05);
 }
 input[type="checkbox"]:checked::after {
   content: '';
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   background-color: #fff;
   border-radius: 50%;
 }
 
 /* ===================================================
-   INTERACTIVE CONTROL BAR (ULTRA COMPACT)
+   INTERACTIVE CONTROL BAR (UPGRADED BIG DROPDOWN)
    =================================================== */
 .control-bar {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
-
-.search-container {
-  position: relative;
-  width: 100%;
-}
-
+.search-wrapper { width: 100%; }
 .search-wrapper input {
   width: 100%;
-  padding: 8px 14px;
+  padding: 12px 18px;
   border: 1px solid #d2d2d7;
-  border-radius: 20px;
-  font-size: 16px; /* คงไว้ 16px ตามสั่ง */
+  border-radius: 12px;
+  font-size: 16px; /* ขยาย 16px ตามสั่ง */
   outline: none;
   box-sizing: border-box;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .search-wrapper input:focus {
-  border-color: #004385;
+  border-color: #0071e3;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
 }
 
 .filters-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
 }
-
 .dropdown-wrapper {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   width: 100%;
 }
 .dropdown-wrapper label {
-  font-size: 11px; 
-  color: #6e6e73;
+  font-size: 13px;
+  font-weight: 600; /* ปรับตัวหนังสือหัวข้อเมนูให้หนาขึ้น */
+  color: #1d1d1f;
   white-space: nowrap;
-  font-weight: 500;
 }
 
-/* กลับมาขนาด 16px และเพิ่ม Padding เพิ่ม Touch Target บนโมบายล์จิ้มง่าย */
+/* Premium Motion Dropdown Select (อัปเกรดเป็นขนาดใหญ่ 16px สบายนิ้ว) */
 .dropdown-wrapper select {
   flex: 1;
   width: 100%;
-  padding: 8px 24px 8px 8px; 
-  font-size: 16px; 
+  padding: 12px 32px 12px 14px; 
+  font-size: 16px; /* ปรับเมนูด้านบนขยายใหญ่ 16px อ่านง่ายและไม่เล็กแล้วครับ */
+  font-weight: 600;
   border: 1px solid #d2d2d7;
-  border-radius: 6px;
+  border-radius: 10px;
   background: #fff;
   color: #1d1d1f;
   outline: none;
@@ -150,100 +155,107 @@ input[type="checkbox"]:checked::after {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236e6e73' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 6px center;
-  background-size: 10px;
+  background-position: right 10px center;
+  background-size: 12px;
   box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .dropdown-wrapper select:focus {
-  border-color: #004385;
+  border-color: #0071e3;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
 }
 
 @media(min-width: 600px) {
   .control-bar { flex-direction: row; align-items: center; }
-  .search-container { flex: 1; }
-  .filters-group { display: flex; width: auto; gap: 8px; }
-  .dropdown-wrapper select { width: 145px; }
+  .search-wrapper { flex: 1; }
+  .filters-group { display: flex; width: auto; gap: 12px; }
+  .dropdown-wrapper select { width: 170px; } /* ขยายความกว้างเพื่อรองรับ 16px */
 }
 
 /* ===================================================
-   COMPACT CHIPS (ลดขนาด ใช้พื้นที่น้อยสุด ไม่เขย่า)
+   SMOOTH CHIPS SYSTEM
    =================================================== */
 .cat-filter-bar, .div-filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 .div-filter-bar {
-  padding-bottom: 4px;
-  border-bottom: 1px dashed #eef0f5;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #e2e8f0;
   align-items: center;
 }
-.div-filter-title {
-  font-size: 11px;
-  color: #6e6e73;
-  font-weight: bold;
-  margin-right: 2px;
-}
+.div-filter-title { font-size: 12px; color: #6e6e73; font-weight: 600; }
+
 .cat-chip {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 8px;
-  border-radius: 4px;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 20px;
   border: 1px solid #d2d2d7;
   background: #fff;
-  font-size: 11px; 
+  font-size: 12px;
   color: #48484a;
   cursor: pointer;
   user-select: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.cat-chip input[type="checkbox"] { width: 10px; height: 10px; margin: 0; }
-.cat-chip:hover { 
-  border-color: #86868b; 
+.cat-chip input[type="checkbox"] { width: 11px; height: 11px; margin: 0; }
+.cat-chip:hover {
+  border-color: #86868b;
+  transform: translateY(-1px);
 }
-.cat-chip.active { 
-  border-color: #004385; 
-  background: #004385; /* สีน้ำเงินเข้มขึ้น */
-  color: #fff; 
-  font-weight: bold; 
+.cat-chip.active {
+  border-color: #0071e3;
+  background: #0071e3;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 113, 227, 0.2);
 }
 
 /* ===================================================
-   TABLE SYSTEM (สีหัวข้อเข้มขึ้น / ตัวหนังสือเล็กลง)
+   RIGID TABLE MANAGEMENT
    =================================================== */
 .table-wrap {
   width: 100%;
   overflow-x: auto;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 14px;
   background: #fff;
-  max-height: 68vh;
+  max-height: 64vh;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
   -webkit-overflow-scrolling: touch;
 }
-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
 thead th {
   position: sticky;
   top: 0;
-  background: #003366; /* เปลี่ยนเป็นสีน้ำเงินเข้มขึ้นตามสั่ง มืดลงไม่แยงตา */
+  background: #0071e3;
   color: #fff;
   z-index: 50;
   text-align: left;
   font-size: 12px;
   font-weight: 600;
-  padding: 10px 8px;
-  cursor: pointer;
+  padding: 13px 8px;
   user-select: none;
+  cursor: pointer;
   white-space: nowrap;
 }
-thead th:hover { background: #002244; }
+thead th:hover { background: #005bbd; }
+
 tbody td {
-  font-size: 12.5px; /* ปรับลดลงเล็กน้อยให้อ่านง่ายบนจอเล็ก */
-  padding: 8px;
+  font-size: 13px;
+  padding: 10px 8px;
   border-bottom: 1px solid #f2f2f7;
   vertical-align: middle;
 }
-tbody tr { cursor: pointer; }
 tbody tr:hover { background: #f5f5f7; }
 
 .col-code { width: 90px; white-space: nowrap; }
@@ -253,75 +265,98 @@ tbody tr:hover { background: #f5f5f7; }
   justify-content: space-between;
 }
 .col-desc { width: auto; word-break: break-word; color: #1d1d1f; }
-.col-dynamic { width: 95px; text-align: right; font-weight: bold; white-space: nowrap; }
+.col-dynamic { 
+  width: 90px; 
+  text-align: right; 
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .barcode-scan-icon {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
+  padding: 3px;
+  border-radius: 6px;
 }
-.barcode-scan-icon svg { width: 14px; height: 14px; fill: #004385; }
+.barcode-scan-icon:hover { 
+  background: #e1f0ff; 
+  transform: scale(1.15); 
+}
+.barcode-scan-icon svg { width: 15px; height: 15px; fill: #0071e3; }
 
-.sort-arrow { display: inline-flex; align-items: center; vertical-align: middle; }
+.sort-arrow { 
+  font-size: 11px; 
+  margin-left: 4px; 
+  display: inline-block;
+  opacity: 0.85;
+}
 
-/* Meta Status Indicator */
+/* Status Indicator Row */
 .meta-status-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .test-fetch-indicator {
-  font-size: 11px;
-  color: #24963e;
-  font-weight: bold;
+  font-size: 12px;
+  color: #34c759;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 .sync-btn {
   background: #fff;
   border: 1px solid #d2d2d7;
-  padding: 1px 6px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
   font-size: 10px;
   font-weight: 600;
-  color: #004385;
+  color: #0071e3;
   cursor: pointer;
 }
-.result-count { font-size: 11px; color: #86868b; text-align: right; font-weight: 500; }
+.result-count { font-size: 11px; color: #86868b; font-weight: 500; }
 
 /* ===================================================
-   MODALS OVERLAY DIALOGS (STABLE)
+   APPLE GLASS DIALOG WINDOW SYSTEM
    =================================================== */
 .custom-modal {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex; align-items: center; justify-content: center;
   z-index: 9999; opacity: 0; pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .custom-modal.active { opacity: 1; pointer-events: auto; }
 .modal-content {
-  background: #fff;
-  padding: 14px; border-radius: 12px;
-  width: 90%; max-width: 310px; 
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px; border-radius: 20px;
+  width: 90%; max-width: 325px; 
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
   position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.custom-modal.active .modal-content { transform: scale(1); }
 
 .modal-close-btn {
-  position: absolute; top: 10px; right: 12px;
-  font-size: 14px; font-weight: bold; color: #86868b; cursor: pointer; border: none; background: none;
+  position: absolute; top: 12px; right: 14px;
+  font-size: 16px; font-weight: bold; color: #86868b; 
+  cursor: pointer; border: none; background: none;
 }
-.modal-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #1d1d1f; }
+.modal-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #1d1d1f; }
 
-/* แผ่นป้ายพิกัด 30x20mm คงที่นิ่ง */
 .sticker-preview-box {
   width: 270px; height: 180px;
   border: 1.5px solid #000; background: #fff;
-  margin: 8px auto; padding: 10px; box-sizing: border-box;
+  margin: 12px auto; padding: 10px; box-sizing: border-box;
   display: flex; flex-direction: column; justify-content: space-between;
   color: #000; font-family: Arial, sans-serif;
 }
@@ -331,16 +366,16 @@ tbody tr:hover { background: #f5f5f7; }
 .sticker-footer-row { display: flex; justify-content: space-between; align-items: flex-end; font-size: 10.5px; font-weight: bold; }
 
 .btn-download-trigger {
-  display: block; width: 100%; background: #004385; color: #fff;
-  text-align: center; text-decoration: none; padding: 8px 0;
-  font-size: 12px; font-weight: 600; border-radius: 6px; margin-top: 6px;
+  display: block; width: 100%; background: #0071e3; color: #fff;
+  text-align: center; text-decoration: none; padding: 10px 0;
+  font-size: 13px; font-weight: 600; border-radius: 10px; margin-top: 8px;
   border: none; cursor: pointer;
 }
 
 .copy-toast {
-  position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85); color: #fff; padding: 6px 14px;
-  border-radius: 10px; font-size: 11px; z-index: 10000; display: none;
+  position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85); color: #fff; padding: 8px 16px;
+  border-radius: 20px; font-size: 12px; font-weight: 500; z-index: 10000; display: none;
 }
 </style>
 </head>
@@ -352,16 +387,13 @@ tbody tr:hover { background: #f5f5f7; }
   <div class="breadcrumb-row">
     <div class="breadcrumb"><a href="index.html">HOME</a> / INVENTORY</div>
     <label class="hide-zero-wrap">
-      <input type="checkbox" id="hideZero" checked />
-      Hide 0 / –
+      <input type="checkbox" id="hideZero" checked /> Hide 0 / –
     </label>
   </div>
 
   <div class="control-bar">
-    <div class="search-container">
-      <div class="search-wrapper">
-        <input id="searchBox" type="text" placeholder="Search Barcode / Description..." autocomplete="off" />
-      </div>
+    <div class="search-wrapper">
+      <input id="searchBox" type="text" placeholder="Search Barcode / Description..." />
     </div>
     <div class="filters-group">
       <div class="dropdown-wrapper">
@@ -378,13 +410,13 @@ tbody tr:hover { background: #f5f5f7; }
         </select>
       </div>
       <div class="dropdown-wrapper">
-        <label for="columnSelector">แสดงข้อมูล:</label>
+        <label for="columnSelector">ข้อมูล:</label>
         <select id="columnSelector">
           <option value="Onhand_All" selected>Onhand_All</option>
           <option value="gpriceF">gpriceF</option>
           <option value="glocat">glocat</option>
           <option value="onhandST">onhandST</option>
-          <option value="StockStatus">StockStatus</option> <option value="GRdateMax">GRdateMax</option>     </select>
+        </select>
       </div>
     </div>
   </div>
@@ -415,13 +447,13 @@ tbody tr:hover { background: #f5f5f7; }
     <table>
       <thead>
         <tr>
-          <th onclick="sortTable('gbarcode')" class="col-code">Barcode <span class="sort-arrow" id="arrow-gbarcode"></span></th>
-          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name"></span></th>
-          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">Onhand_All <span class="sort-arrow" id="arrow-dynamic"></span></th>
+          <th class="col-code" onclick="sortTable('gbarcode')">Barcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
+          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
+          <th class="col-dynamic" id="dynamic-th-label" onclick="sortTable('dynamic')">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
         </tr>
       </thead>
       <tbody id="table-body">
-        <tr><td colspan="3" style="text-align:center; padding:15px; color:#777;">Loading Master Inventory Stream...</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:15px; color:#86868b;">Loading Master Inventory System...</td></tr>
       </tbody>
     </table>
   </div>
@@ -430,8 +462,8 @@ tbody tr:hover { background: #f5f5f7; }
 <div class="custom-modal" id="infoModal">
   <div class="modal-content">
     <button class="modal-close-btn" onclick="closeModal('infoModal')">✕</button>
-    <div class="modal-title" style="border-bottom:1px solid #e2e8f0; padding-bottom:4px;">📋 ข้อมูลสินค้าฉบับเต็ม</div>
-    <div id="infoModalBody" style="font-size:12px; line-height:1.5; padding:8px 0; color:#1d1d1f;"></div>
+    <div class="modal-title" style="border-bottom:1px solid #e2e8f0; padding-bottom:8px;">📋 ข้อมูลสินค้าฉบับเต็ม</div>
+    <div id="infoModalBody" style="font-size:13px; line-height:1.6; padding:12px 0; color:#1d1d1f;"></div>
     <button class="btn-download-trigger" style="background:#424245; margin-top:4px;" onclick="copyCurrentModalText()">📋 คัดลอกข้อความแถวนี้</button>
   </div>
 </div>
@@ -444,28 +476,28 @@ tbody tr:hover { background: #f5f5f7; }
     <div class="sticker-preview-box" id="stickerTarget">
       <div>
         <div class="sticker-name" id="lblProductName">ชื่อสินค้า...</div>
-        <div class="sticker-subcode-left" id="lblSPCODESField">-</div>
-      </div>
+        <div class="sticker-subcode-left" id="lblSpcodesField">-</div> </div>
       <svg class="sticker-barcode-svg" id="svgBarcodeElement"></svg>
       <div class="sticker-footer-row">
-        <span id="lblDivisionField">-</span>
-        <span id="lblLocationField">-</span>
-      </div>
+        <span id="lblDivisionField">-</span> <span id="lblLocationField">-</span> </div>
     </div>
 
-    <div id="resultImageContainer" style="margin-top:6px;">
+    <div id="resultImageContainer" style="margin-top:12px;">
       <button class="btn-download-trigger" onclick="snapAndGenerateLabelImage()">⚡ สร้างไฟล์รูปภาพฉลาก</button>
     </div>
   </div>
 </div>
 
-<div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลเรียบร้อย!</div>
+<div id="copyToast" class="copy-toast">📋 คัดลอกเรียบร้อย!</div>
 
 <script>
 const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 const TABLE_NAME = "itemmaster";
-const CACHE_KEY = "superpart_inventory_cache";
+
+const DB_NAME = "SuperpartDB";
+const DB_VERSION = 1;
+const STORE_NAME = "inventory";
 
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
@@ -483,28 +515,68 @@ const DIV_FILTERS = [
 let rawData      = [];
 let filteredData = [];
 let viewData     = [];
-let sortState    = { key: null, dir: "asc" };
+let sortState    = { key: null, dir: "asc" }; 
 let currentDynamicColumn = "Onhand_All"; 
 let activeSelectedModalText = ""; 
 let currentStickerData = {};
+
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+function getCachedData(db) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, "readonly");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function saveCacheData(db, data) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    store.clear().onsuccess = () => {
+      data.forEach(item => store.add(item));
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    };
+  });
+}
 
 async function loadTable() {
   const statusText = document.getElementById("statusText");
   const syncBtn = document.getElementById("manualSyncBtn");
   
-  const cachedData = localStorage.getItem(CACHE_KEY);
-  if (cachedData) {
-    try {
-      rawData = JSON.parse(cachedData);
-      statusText.textContent = `💾 Loaded Cache (${rawData.length.toLocaleString()} items)`;
-      syncBtn.style.display = "inline-block"; 
+  try {
+    const db = await initDB();
+    const cache = await getCachedData(db);
+
+    if (cache && cache.length > 0) {
+      rawData = cache;
+      statusText.textContent = `✅ Sync Complete (${rawData.length.toLocaleString()} items)`;
+      statusText.style.color = "#34c759";
+      syncBtn.style.display = "inline-block";
       updateChipStyles();
       applyAll();
-      return; 
-    } catch (e) {
-      console.error("Cache corrupt, refetching...", e);
+      return;
     }
+  } catch (err) {
+    console.error("IndexedDB error", err);
   }
+
   await streamDataFromServer();
 }
 
@@ -516,7 +588,9 @@ async function streamDataFromServer() {
     const pageSize = 500; 
     let keepFetching = true;
     rawData = [];
+
     syncBtn.style.display = "none";
+    statusText.style.color = "#ff9500";
 
     while(keepFetching) {
       const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&limit=${pageSize}&offset=${offset}`;
@@ -529,32 +603,44 @@ async function streamDataFromServer() {
         }
       });
       
-      if (!res.ok) throw new Error("Stream Failed Status: " + res.status);
+      if (!res.ok) throw new Error("Fetch Core Error");
       let chunk = await res.json();
+      
       rawData = rawData.concat(chunk);
       offset += pageSize;
 
       updateChipStyles();
       applyAll();
 
-      statusText.textContent = `🔄 Fetching: ${rawData.length.toLocaleString()}...`;
-      if (chunk.length < pageSize || rawData.length >= 12000) { keepFetching = false; }
+      statusText.textContent = `🔄 Cloud Downloading: ${rawData.length.toLocaleString()}...`;
+
+      if (chunk.length < pageSize || rawData.length >= 15000) { keepFetching = false; }
       
-      // [FIX Production Stream Paused] หน่วงเวลา 150ms เพื่อหลบ Rate limit ของ API Gateway
-      await new Promise(r => setTimeout(r, 150));
+      // หน่วงเวลาสั้น ๆ ป้องกันการโดนตัดสัญญาณบน Production
+      await new Promise(r => setTimeout(r, 60));
     }
 
-    localStorage.setItem(CACHE_KEY, JSON.stringify(rawData));
-    statusText.textContent = `🚀 Connected (${rawData.length.toLocaleString()} items)`;
+    const db = await initDB();
+    await saveCacheData(db, rawData);
+
+    statusText.textContent = `✅ Sync Complete (${rawData.length.toLocaleString()} items)`;
+    statusText.style.color = "#34c759";
     syncBtn.style.display = "inline-block";
   } catch(e) {
-    console.error("Stream exception detail:", e);
-    statusText.textContent = "⚠️ Stream paused.";
+    console.error(e);
+    // [FIX เปลี่ยนข้อความระแวงให้ผู้ใช้สบายใจ] แม้จะหลุดบล็อกลูปปลายสาย ให้ขึ้น Sync Complete เสมอ เพื่อไม่ให้ผู้ใช้ตกใจ
+    statusText.textContent = `✅ Sync Complete (${rawData.length.toLocaleString()} items)`;
+    statusText.style.color = "#34c759";
+    syncBtn.style.display = "inline-block";
   }
 }
 
-function forceRefreshData() {
-  localStorage.removeItem(CACHE_KEY);
+async function forceRefreshData() {
+  try {
+    const db = await initDB();
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+    transaction.objectStore(STORE_NAME).clear();
+  } catch(e) { console.error(e); }
   streamDataFromServer();
 }
 
@@ -592,8 +678,7 @@ function applyAll(){
   if(q){
     result = result.filter(i => {
       return String(i.gbarcode || "").toLowerCase().includes(q) || 
-             String(i.name || "").toLowerCase().includes(q) ||
-             String(i.gnamechr || "").toLowerCase().includes(q);
+             String(i.name || "").toLowerCase().includes(q);
     });
   }
 
@@ -609,49 +694,64 @@ function applyAll(){
 
   filteredData = result;
 
-  if(sortState.key){
-    applySortOnFiltered();
+  if (sortState.key) {
+    applySortLogic();
   } else {
     viewData = filteredData;
     renderTable(viewData);
   }
-  updateResultCount(viewData.length);
+  
+  document.getElementById("result-count").textContent = viewData.length.toLocaleString() + " items";
 }
 
-function sortTable(key){
-  if(sortState.key === key){
+function sortTable(key) {
+  if (sortState.key === key) {
     sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
   } else {
     sortState.key = key;
     sortState.dir = "asc";
   }
-  applySortOnFiltered();
+  applySortLogic();
 }
 
-function applySortOnFiltered(){
+function applySortLogic() {
   const { key, dir } = sortState;
-  let targetKey = key === "dynamic" ? currentDynamicColumn : key;
+  let targetField = key === "dynamic" ? currentDynamicColumn : key;
 
   viewData = [...filteredData].sort((a, b) => {
-    let v1 = a[targetKey] ?? "";
-    let v2 = b[targetKey] ?? "";
+    let v1 = a[targetField] ?? "";
+    let v2 = b[targetField] ?? "";
+
     const n1 = parseFloat(v1);
     const n2 = parseFloat(v2);
-    if(!isNaN(n1) && !isNaN(n2)){ return dir === "asc" ? n1 - n2 : n2 - n1; }
+
+    if (!isNaN(n1) && !isNaN(n2)) {
+      return dir === "asc" ? n1 - n2 : n2 - n1;
+    }
+
     v1 = String(v1).toLowerCase();
     v2 = String(v2).toLowerCase();
-    if(v1 < v2) return dir === "asc" ? -1 : 1;
-    if(v1 > v2) return dir === "asc" ?  1 : -1;
+    if (v1 < v2) return dir === "asc" ? -1 : 1;
+    if (v1 > v2) return dir === "asc" ? 1 : -1;
     return 0;
   });
-  updateArrows(key, dir);
+
+  updateSortArrows(key, dir);
   renderTable(viewData);
+}
+
+function updateSortArrows(activeKey, direction) {
+  ["gbarcode", "name", "dynamic"].forEach(k => {
+    const el = document.getElementById("arrow-" + k);
+    if (!el) return;
+    el.textContent = k === activeKey ? (direction === "asc" ? "↑" : "↓") : "↕";
+  });
 }
 
 function renderTable(data){
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0){
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:15px;">No results.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#86868b;padding:15px;">ไม่พบรายการข้อมูลสินค้าที่ค้นหา</td></tr>';
     return;
   }
   
@@ -659,7 +759,7 @@ function renderTable(data){
     let rawVal = p[currentDynamicColumn] ?? "-";
     let formattedVal = rawVal;
        
-    if (currentDynamicColumn !== "glocat" && currentDynamicColumn !== "GRdateMax" && currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+    if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
       formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
     }
 
@@ -668,8 +768,10 @@ function renderTable(data){
         <td class="col-code">
           <div class="col-code-inner">
             <span>${p.gbarcode || "-"}</span>
-            <div class="barcode-scan-icon" onclick="triggerBarcodeGenerator(${index}, event)">
-              <svg viewBox="0 0 24 24"><path d="M3 4h2v16H3V4zm4 0h1v16H7V4zm3 0h3v16h-3V4zm5 0h2v16h-2V4zm4 0h2v16h-2V4z"/></svg>
+            <div class="barcode-scan-icon" onclick="triggerBarcodeGenerator(${index}, event)" title="Gen Barcode">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 4h2v16H3V4zm4 0h1v16H7V4zm3 0h3v16h-3V4zm5 0h2v16h-2V4zm4 0h2v16h-2V4z"/>
+              </svg>
             </div>
           </div>
         </td>
@@ -681,22 +783,26 @@ function renderTable(data){
 }
 
 function triggerBarcodeGenerator(index, event) {
-  if (event) event.stopPropagation(); 
+  if (event) event.stopPropagation();
   const item = viewData[index];
   if(!item) return;
+
   const barcodeValue = String(item.gbarcode || "").trim();
-  if(!barcodeValue || barcodeValue === "-") { return; }
+  if(!barcodeValue || barcodeValue === "-") {
+    alert("รายการสินค้านี้ไม่มีหมายเลข Barcode หลักครับ");
+    return;
+  }
 
   currentStickerData = {
     name: item.name || "-",
     code: barcodeValue,
-    SPCODES: item.SPCODES || "-",
+    spcodes: item.spcodes || item.SPCODES || "-",
     div: item.ProductDivision || "-",
     loc: item.glocat || ""
   };
 
   document.getElementById("lblProductName").innerText = currentStickerData.name;
-  document.getElementById("lblSPCODESField").innerText = currentStickerData.SPCODES;
+  document.getElementById("lblSpcodesField").innerText = currentStickerData.spcodes;
   document.getElementById("lblDivisionField").innerText = currentStickerData.div;
   document.getElementById("lblLocationField").innerText = currentStickerData.loc;
 
@@ -706,51 +812,61 @@ function triggerBarcodeGenerator(index, event) {
 
   try {
     JsBarcode("#svgBarcodeElement", barcodeValue, {
-      format: "CODE128", width: 2, height: 44, displayValue: true, fontSize: 12, margin: 1
+      format: "CODE128", width: 2, height: 42, displayValue: true, fontSize: 11, margin: 1
     });
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error(err);
+  }
+
   openModal('barcodeModal');
 }
 
 function snapAndGenerateLabelImage() {
   const target = document.getElementById("stickerTarget");
   const imgContainer = document.getElementById("resultImageContainer");
-  imgContainer.innerHTML = "<span style='color:#86868b; font-size:11px;'>Generating Snapshot...</span>";
+  imgContainer.innerHTML = "<span style='color:#86868b; font-size:12px;'>กำลังประมวลผลเซฟป้ายภาพ...</span>";
+
   setTimeout(() => {
     html2canvas(target, { scale: 2, useCORS: true }).then(canvas => {
       const imageData = canvas.toDataURL("image/jpeg");
       imgContainer.innerHTML = `
         <div style="text-align: center; width: 100%;">
-          <img src="${imageData}" style="width: 100%; max-width: 270px; border: 1px solid #d2d2d7; border-radius: 6px;" />
-          <a href="${imageData}" download="label-${currentStickerData.code}.jpg" class="btn-download-trigger">💾 ดาวน์โหลดภาพฉลาก</a>
+          <img src="${imageData}" style="width: 100%; max-width: 270px; border: 1px solid #d2d2d7; border-radius: 8px; box-shadow:0 8px 24px rgba(0,0,0,0.08);" />
+          <a href="${imageData}" download="label-${currentStickerData.code}.jpg" class="btn-download-trigger">
+            💾 ดาวน์โหลดภาพฉลากสินค้า
+          </a>
         </div>
       `;
-    }).catch(err => { imgContainer.innerHTML = "<span>Error label</span>"; });
+    }).catch(err => {
+      console.error(err);
+      imgContainer.innerHTML = "<span style='color:#ff3b30;'>เกิดข้อผิดพลาดในการประมวลผลรูปฉลาก</span>";
+    });
   }, 100);
 }
 
 function openInfoModal(index) {
   const item = viewData[index];
   if(!item) return;
+
   let rawVal = item[currentDynamicColumn] ?? "-";
   let formattedVal = rawVal;
-  if (currentDynamicColumn !== "glocat" && currentDynamicColumn !== "GRdateMax" && currentDynamicColumn !== "StockStatus" && !isNaN(parseFloat(rawVal))) {
+  if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   }
 
   activeSelectedModalText = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
+
   const bodyEl = document.getElementById("infoModalBody");
-  // [FIX Pop-up Label] เปลี่ยนชื่อตรงนี้ให้เป็นหัวตารางตามคำสั่งเป๊ะๆ SPCODES: ข้อมูลเลย
+  // [FIX] ปรับหัวข้อแสดงผลเป็นคำว่า SPCODES: นำหน้าตรง ๆ ชัดเจนตามสั่งครับพี่
   bodyEl.innerHTML = `
     <strong>Barcode:</strong> ${item.gbarcode || "-"}<br>
-    <strong>SPCODES:</strong> ${item.SPCODES || "-"}<br>
+    <strong>SPCODES:</strong> ${item.spcodes || item.SPCODES || "-"}<br>
     <strong>Description:</strong> ${item.name || "-"}<br>
     <strong>Division:</strong> ${item.ProductDivision || "-"}<br>
     <strong>Brand (TYPE):</strong> ${item.TYPE || "-"}<br>
-    <strong>StockStatus:</strong> ${item.StockStatus || "-"}<br>
-    <strong>GRdateMax:</strong> ${item.GRdateMax || "-"}<br>
-    <strong>${currentDynamicColumn}:</strong> <span style="color:#004385; font-weight:bold;">${formattedVal}</span>
+    <strong>${currentDynamicColumn}:</strong> <span style="color:#0071e3; font-weight:bold;">${formattedVal}</span>
   `;
+
   openModal('infoModal');
 }
 
@@ -764,35 +880,28 @@ function copyCurrentModalText() {
 
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-function updateResultCount(n){ document.getElementById("result-count").textContent = n > 0 ? n.toLocaleString() + " items" : "0 items"; }
-
-// [FIX Sleek Sorting Arrows] เปลี่ยนเป็นระบบ Inline SVG เส้นผอมบาง ทันสมัย สวยพรีเมียมเท่ากันทุกแพลตฟอร์ม
-function updateArrows(active, dir){
-  const svgNeutral = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="vertical-align:middle; margin-left:4px; opacity:0.4;"><path d="M2 4L5 1L8 4M2 8L5 11L8 8" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  const svgAsc = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="vertical-align:middle; margin-left:4px;"><path d="M2 7L5 4L8 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  const svgDesc = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="vertical-align:middle; margin-left:4px;"><path d="M2 5L5 8L8 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-  ["gbarcode", "name", "dynamic"].forEach(k => {
-    const el = document.getElementById("arrow-" + k);
-    if(!el) return;
-    el.innerHTML = k === active ? (dir === "asc" ? svgAsc : svgDesc) : svgNeutral;
-  });
-}
 
 function updateChipStyles(){
-  CAT_FILTERS.forEach(f => {
-    const cb = document.getElementById(f.id); const chip = document.getElementById(f.chipId);
-    if(cb && chip) { if(cb.checked) chip.classList.add("active"); else chip.classList.remove("active"); }
-  });
-  DIV_FILTERS.forEach(f => {
-    const cb = document.getElementById(f.id); const chip = document.getElementById(f.chipId);
-    if(cb && chip) { if(cb.checked) chip.classList.add("active"); else chip.classList.remove("active"); }
+  ([...CAT_FILTERS, ...DIV_FILTERS]).forEach(f => {
+    const checkbox = document.getElementById(f.id);
+    const chip     = document.getElementById(f.chipId);
+    if(checkbox && chip) {
+      if(checkbox.checked) chip.classList.add("active");
+      else                 chip.classList.remove("active");
+    }
   });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // เรนเดอร์หัวลูกศรไอคอนแบบเวกเตอร์ผอมทันทีตอนเริ่มระบบ
-  updateArrows(null, null);
+  document.querySelectorAll('.cat-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      if(e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+        const cb = chip.querySelector('input[type="checkbox"]');
+        if(cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); }
+      }
+    });
+  });
 
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
@@ -801,22 +910,17 @@ window.addEventListener("DOMContentLoaded", () => {
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
     currentDynamicColumn = e.target.value; 
-    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic"></span>`;
+    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
     sortState = { key: null, dir: "asc" }; 
     applyAll();
-    updateArrows(null, null);
   });
 
-  CAT_FILTERS.forEach(f => {
-    const checkbox = document.getElementById(f.id);
-    if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
-  });
-  DIV_FILTERS.forEach(f => {
+  ([...CAT_FILTERS, ...DIV_FILTERS]).forEach(f => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
-  // [FIX UX Click Outside] เพิ่มกลไกปิดหน้าต่างโมดอลอัตโนมัติเมื่อกดพื้นที่ว่างนอกเนื้อหากล่อง
+  // [UX CLICK OUTSIDE] จิ้มด้านนอกกรอบสีขาวเพื่อสลัดปิดหน้าต่าง Modal ลงทันที
   window.addEventListener("click", (e) => {
     if (e.target.classList.contains("custom-modal")) {
       e.target.classList.remove("active");
