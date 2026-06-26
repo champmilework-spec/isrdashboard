@@ -115,34 +115,6 @@ input[type="checkbox"]:checked::after {
   border-color: #004385;
 }
 
-/* Search History Dropdown (1-2 อันเล็กๆ ด้านล่าง) */
-.search-history-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 1px solid #d2d2d7;
-  border-radius: 8px;
-  margin-top: 4px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  z-index: 100;
-  display: none;
-}
-.search-history-item {
-  padding: 6px 14px;
-  font-size: 12px;
-  color: #515154;
-  cursor: pointer;
-  border-bottom: 1px solid #f2f2f7;
-}
-.search-history-item:last-child {
-  border-bottom: none;
-}
-.search-history-item:hover {
-  background: #f5f5f7;
-}
-
 .filters-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -157,18 +129,18 @@ input[type="checkbox"]:checked::after {
   width: 100%;
 }
 .dropdown-wrapper label {
-  font-size: 11px; /* ลดขนาดลง */
+  font-size: 11px; 
   color: #6e6e73;
   white-space: nowrap;
   font-weight: 500;
 }
 
-/* ปรับเมนู Dropdown เหลือ 15px ตามสั่ง และนิ่งไม่มีสั่น */
+/* กลับมาขนาด 16px และเพิ่ม Padding เพิ่ม Touch Target บนโมบายล์จิ้มง่าย */
 .dropdown-wrapper select {
   flex: 1;
   width: 100%;
-  padding: 5px 20px 5px 8px;
-  font-size: 15px; 
+  padding: 8px 24px 8px 8px; 
+  font-size: 16px; 
   border: 1px solid #d2d2d7;
   border-radius: 6px;
   background: #fff;
@@ -190,7 +162,7 @@ input[type="checkbox"]:checked::after {
   .control-bar { flex-direction: row; align-items: center; }
   .search-container { flex: 1; }
   .filters-group { display: flex; width: auto; gap: 8px; }
-  .dropdown-wrapper select { width: 135px; }
+  .dropdown-wrapper select { width: 145px; }
 }
 
 /* ===================================================
@@ -221,7 +193,7 @@ input[type="checkbox"]:checked::after {
   border-radius: 4px;
   border: 1px solid #d2d2d7;
   background: #fff;
-  font-size: 11px; /* ขนาดตัวอักษรเล็กประหยัดพื้นที่ */
+  font-size: 11px; 
   color: #48484a;
   cursor: pointer;
   user-select: none;
@@ -292,7 +264,7 @@ tbody tr:hover { background: #f5f5f7; }
 }
 .barcode-scan-icon svg { width: 14px; height: 14px; fill: #004385; }
 
-.sort-arrow { font-size: 10px; margin-left: 4px; display: inline-block; opacity: 0.9; }
+.sort-arrow { display: inline-flex; align-items: center; vertical-align: middle; }
 
 /* Meta Status Indicator */
 .meta-status-row {
@@ -370,13 +342,6 @@ tbody tr:hover { background: #f5f5f7; }
   background: rgba(0, 0, 0, 0.85); color: #fff; padding: 6px 14px;
   border-radius: 10px; font-size: 11px; z-index: 10000; display: none;
 }
-
-#toTop {
-  position: fixed; bottom: 20px; right: 20px;
-  width: 36px; height: 36px; border-radius: 50%;
-  background: #111; color: #fff; display: flex;
-  align-items: center; justify-content: center; cursor: pointer; z-index: 99; font-size: 14px;
-}
 </style>
 </head>
 <body>
@@ -396,10 +361,6 @@ tbody tr:hover { background: #f5f5f7; }
     <div class="search-container">
       <div class="search-wrapper">
         <input id="searchBox" type="text" placeholder="Search Barcode / Description..." autocomplete="off" />
-      </div>
-      <div class="search-history-dropdown" id="searchHistoryBox">
-        <div class="search-history-item" onclick="applyHistorySearch('แลคเกอร์')">📋 ล่าสุด: แลคเกอร์</div>
-        <div class="search-history-item" onclick="applyHistorySearch('กระดาษกาว')">📋 ล่าสุด: กระดาษกาว</div>
       </div>
     </div>
     <div class="filters-group">
@@ -454,9 +415,9 @@ tbody tr:hover { background: #f5f5f7; }
     <table>
       <thead>
         <tr>
-          <th onclick="sortTable('gbarcode')" class="col-code">Barcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
-          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
-          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
+          <th onclick="sortTable('gbarcode')" class="col-code">Barcode <span class="sort-arrow" id="arrow-gbarcode"></span></th>
+          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name"></span></th>
+          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">Onhand_All <span class="sort-arrow" id="arrow-dynamic"></span></th>
         </tr>
       </thead>
       <tbody id="table-body">
@@ -498,7 +459,6 @@ tbody tr:hover { background: #f5f5f7; }
   </div>
 </div>
 
-<div id="toTop">↑</div>
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลเรียบร้อย!</div>
 
 <script>
@@ -569,7 +529,7 @@ async function streamDataFromServer() {
         }
       });
       
-      if (!res.ok) throw new Error("Stream Failed");
+      if (!res.ok) throw new Error("Stream Failed Status: " + res.status);
       let chunk = await res.json();
       rawData = rawData.concat(chunk);
       offset += pageSize;
@@ -579,13 +539,16 @@ async function streamDataFromServer() {
 
       statusText.textContent = `🔄 Fetching: ${rawData.length.toLocaleString()}...`;
       if (chunk.length < pageSize || rawData.length >= 12000) { keepFetching = false; }
+      
+      // [FIX Production Stream Paused] หน่วงเวลา 150ms เพื่อหลบ Rate limit ของ API Gateway
+      await new Promise(r => setTimeout(r, 150));
     }
 
     localStorage.setItem(CACHE_KEY, JSON.stringify(rawData));
     statusText.textContent = `🚀 Connected (${rawData.length.toLocaleString()} items)`;
     syncBtn.style.display = "inline-block";
   } catch(e) {
-    console.error(e);
+    console.error("Stream exception detail:", e);
     statusText.textContent = "⚠️ Stream paused.";
   }
 }
@@ -777,9 +740,10 @@ function openInfoModal(index) {
 
   activeSelectedModalText = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
   const bodyEl = document.getElementById("infoModalBody");
+  // [FIX Pop-up Label] เปลี่ยนชื่อตรงนี้ให้เป็นหัวตารางตามคำสั่งเป๊ะๆ SPCODES: ข้อมูลเลย
   bodyEl.innerHTML = `
     <strong>Barcode:</strong> ${item.gbarcode || "-"}<br>
-    <strong>Internal Code (SPCODES):</strong> ${item.SPCODES || "-"}<br>
+    <strong>SPCODES:</strong> ${item.SPCODES || "-"}<br>
     <strong>Description:</strong> ${item.name || "-"}<br>
     <strong>Division:</strong> ${item.ProductDivision || "-"}<br>
     <strong>Brand (TYPE):</strong> ${item.TYPE || "-"}<br>
@@ -802,11 +766,16 @@ function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 function updateResultCount(n){ document.getElementById("result-count").textContent = n > 0 ? n.toLocaleString() + " items" : "0 items"; }
 
+// [FIX Sleek Sorting Arrows] เปลี่ยนเป็นระบบ Inline SVG เส้นผอมบาง ทันสมัย สวยพรีเมียมเท่ากันทุกแพลตฟอร์ม
 function updateArrows(active, dir){
+  const svgNeutral = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="vertical-align:middle; margin-left:4px; opacity:0.4;"><path d="M2 4L5 1L8 4M2 8L5 11L8 8" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const svgAsc = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="vertical-align:middle; margin-left:4px;"><path d="M2 7L5 4L8 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const svgDesc = `<svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="vertical-align:middle; margin-left:4px;"><path d="M2 5L5 8L8 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
   ["gbarcode", "name", "dynamic"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(!el) return;
-    el.textContent = k === active ? (dir === "asc" ? "↑" : "↓") : "↕";
+    el.innerHTML = k === active ? (dir === "asc" ? svgAsc : svgDesc) : svgNeutral;
   });
 }
 
@@ -821,22 +790,9 @@ function updateChipStyles(){
   });
 }
 
-function applyHistorySearch(text) {
-  const sb = document.getElementById("searchBox");
-  sb.value = text;
-  document.getElementById("searchHistoryBox").style.display = "none";
-  applyAll();
-}
-
 window.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("searchBox");
-  const historyBox = document.getElementById("searchHistoryBox");
-
-  // เปิด/ปิด dropdown ประวัติขนาดเล็ก เมื่อโฟกัสที่ช่องค้นหา (ไม่มีคำแปลกปลอมขึ้นบัง)
-  searchInput.addEventListener("focus", () => { historyBox.style.display = "block"; });
-  document.addEventListener("click", (e) => {
-    if (!searchInput.contains(e.target) && !historyBox.contains(e.target)) { historyBox.style.display = "none"; }
-  });
+  // เรนเดอร์หัวลูกศรไอคอนแบบเวกเตอร์ผอมทันทีตอนเริ่มระบบ
+  updateArrows(null, null);
 
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
@@ -845,9 +801,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
     currentDynamicColumn = e.target.value; 
-    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic"></span>`;
     sortState = { key: null, dir: "asc" }; 
     applyAll();
+    updateArrows(null, null);
   });
 
   CAT_FILTERS.forEach(f => {
@@ -859,10 +816,15 @@ window.addEventListener("DOMContentLoaded", () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
+  // [FIX UX Click Outside] เพิ่มกลไกปิดหน้าต่างโมดอลอัตโนมัติเมื่อกดพื้นที่ว่างนอกเนื้อหากล่อง
+  window.addEventListener("click", (e) => {
+    if (e.target.classList.contains("custom-modal")) {
+      e.target.classList.remove("active");
+    }
+  });
+
   loadTable();
 });
-
-document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0 }); };
 </script>
 <script src="layout.js"></script>
 </body>
