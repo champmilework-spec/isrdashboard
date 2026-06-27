@@ -226,10 +226,9 @@ input[type="checkbox"]:checked::after {
   font-weight: bold;
   white-space: nowrap;
 }
-/* จุดแสดงสถานะตัวหนังสือสีเหลือง ด้านบนซ้ายของตารางตามที่คุณระบุ */
 .sync-progress-text {
   font-size: 12px;
-  color: #b25e00; /* สีส้มอมเหลืองเข้มเพื่อความชัดเจนบนพื้นขาว */
+  color: #b25e00; 
   font-weight: bold;
   white-space: nowrap;
   display: none;
@@ -384,7 +383,6 @@ tbody tr:active { background: #e2e8f0; }
   .dropdown-wrapper select { width: 100%; }
 }
 
-/* สไตล์ปุ่ม Sync ฉุกเฉินเพิ่มเติมเพื่อให้เข้ากับธีมเดิม */
 .sync-badge-btn {
   font-size: 11px;
   color: #2f5ea8;
@@ -434,15 +432,13 @@ tbody tr:active { background: #e2e8f0; }
       <div class="dropdown-wrapper">
         <label for="columnSelector">แสดงข้อมูล:</label>
         <select id="columnSelector">
-          <option value="avgsalecost" selected>AvgSalecost</option>
-          <option value="salecost">Salecost</option>
+          <option value="avgsalecost">AvgSalecost</option>
+          <option value="salecost">Salecost</option> 
           <option value="onhand_cost">Onhand_Cost</option>
-          <option value="avgcost">avgcost</option>
-          <option value="onhand_all">Onhand_All</option>
-          <option value="stockstatus">StockStatus</option>
+          <option value="onhand_all" selected>Onhand_All</option> <option value="stockstatus">StockStatus</option>
           <option value="gpricef">gpriceF</option>
           <option value="glocat">glocat</option>
-        </select>
+          <option value="GRdateMax">GRdateMax</option> </select>
       </div>
       <div class="dropdown-wrapper">
         <label for="brandSelector">แบรนด์:</label>
@@ -453,6 +449,10 @@ tbody tr:active { background: #e2e8f0; }
           <option value="DOMAC">DOMAC</option>
           <option value="CROMAX">CROMAX / NASON</option>
           <option value="KINGTONY">KINGTONY</option>
+          <option value="TOA">TOA</option> <option value="KURUMA">KURUMA</option>
+          <option value="HHW">HHW</option>
+          <option value="LEZZON">LEZZON</option>
+          <option value="HB BODY">HB BODY</option>
         </select>
       </div>
     </div>
@@ -492,7 +492,7 @@ tbody tr:active { background: #e2e8f0; }
         <tr>
           <th onclick="sortTable('gbarcode')" class="col-barcode">gbarcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
           <th onclick="sortTable('name')" class="col-desc">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
-          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">AvgSalecost <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
+          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
         </tr>
       </thead>
       <tbody id="table-body">
@@ -506,7 +506,6 @@ tbody tr:active { background: #e2e8f0; }
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <script>
-// 🛰️ ช่องทางยิง API เดิมของคุณ
 const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cm";
 const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
@@ -532,9 +531,9 @@ let rawData       = [];
 let filteredData = [];
 let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
-let currentDynamicColumn = "avgsalecost";
+// 1. บังคับตัวแปรระบบเริ่มต้นภายในให้ถือค่าฟิลด์ "onhand_all" ทันทีตั้งแต่โหลดหน้าแรก
+let currentDynamicColumn = "onhand_all";
 
-// 🔐 รหัสผ่านเดิม
 let SECRET_PASSWORD = "11111"; 
 
 function handleKeyPress(e) {
@@ -553,7 +552,6 @@ function verifyPassword() {
   }
 }
 
-// 🗄️ เริ่มต้นระบบแคชฐานข้อมูล IndexedDB ล่วงหน้า
 function initIndexedDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -571,7 +569,6 @@ function initIndexedDB() {
   });
 }
 
-// 🎯 ฟังก์ชันดึงข้อมูลแบบวนลูป Pagination ให้ครบทุกแถว และเก็บลง Cache อัตโนมัติ (วันละครั้ง)
 async function loadTable(){
   const tbody = document.getElementById("table-body");
   tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังตรวจสอบฐานข้อมูลแคชความเร็วสูง...</td></tr>';
@@ -579,7 +576,6 @@ async function loadTable(){
   try {
     const db = await initIndexedDB();
     
-    // ตรวจสอบข้อมูลเก่าและ timestamp
     const tx = db.transaction([STORE_DATA, STORE_META], "readonly");
     const dataStore = tx.objectStore(STORE_DATA);
     const metaStore = tx.objectStore(STORE_META);
@@ -590,7 +586,6 @@ async function loadTable(){
     const oneDayMs = 24 * 60 * 60 * 1000;
     const now = Date.now();
     
-    // หากมีข้อมูลแคช และอัปเดตไม่เกิน 24 ชม. ให้โหลดใช้ได้ทันที
     if (cachedItems && cachedItems.length > 0 && lastUpdate && (now - lastUpdate < oneDayMs)) {
       rawData = cachedItems;
       updateChipStyles();
@@ -598,7 +593,6 @@ async function loadTable(){
       return;
     }
     
-    // หากเกินกำหนด หรือไม่มีข้อมูล ให้ดึงใหม่จากคลาวด์อัตโนมัติ
     await fetchAllDataFromServer(db);
   } catch(e) {
     console.error(e);
@@ -606,7 +600,6 @@ async function loadTable(){
   }
 }
 
-// 🛰️ ฟังก์ชันลูปดึงข้อมูลจาก Server ทีละก้อน ค่อย ๆ ไหลเข้าตารางทีละนัดตามที่คุณต้องการเป๊ะ ๆ
 async function fetchAllDataFromServer(db) {
   const tbody = document.getElementById("table-body");
   const syncBtn = document.getElementById("syncBtn");
@@ -615,15 +608,14 @@ async function fetchAllDataFromServer(db) {
   try {
     syncBtn.disabled = true;
     syncBtn.innerText = "⏳ กำลังโหลด...";
-    progressText.style.display = "inline"; // เปิดไฟแสดงตัวอักษรเหลืองด้านซ้ายบน
+    progressText.style.display = "inline"; 
     
-    rawData = []; // เคลียร์รอรับข้อมูลดิบชุดใหม่
+    rawData = []; 
     let offset = 0;
     const limit = 1000;
     let hasMore = true;
     
     while (hasMore) {
-      // แสดงอัปเดตสถานะจำนวน Row สีเหลืองสดทางด้านซ้ายบนตาราง
       progressText.textContent = `⏳ Loading: ${rawData.length.toLocaleString()} rows...`;
       
       const response = await fetch(`${SUPABASE_BASE_URL}?select=*&limit=${limit}&offset=${offset}`, {
@@ -638,7 +630,6 @@ async function fetchAllDataFromServer(db) {
       
       const chunk = await response.json();
       
-      // ทำความสะอาดและแปลงคีย์เป็นพิมพ์เล็กของ Chunk นี้ทีละชิ้นทันที
       const cleanChunk = chunk.map(item => {
         let newItem = {};
         for (let k in item) {
@@ -648,10 +639,8 @@ async function fetchAllDataFromServer(db) {
         return newItem;
       });
       
-      // เติมเข้า rawData ส่วนกลาง
       rawData = rawData.concat(cleanChunk);
       
-      // ⚡ จุดเด่นหลัก: โหลด 1 ครั้ง เรนเดอร์ขึ้นหน้าจอให้ User เห็นทันที ข้อมูลค่อย ๆ เติมไหลต่อเนื่อง ไม่รู้สึกว่าค้าง!
       updateChipStyles();
       applyAll(); 
       
@@ -662,10 +651,8 @@ async function fetchAllDataFromServer(db) {
       }
     }
     
-    // เมื่อโหลดเสร็จสิ้น 100% ปรับข้อความตัวหนังสือสีเหลืองให้รู้ว่าจบสมบูรณ์ครบถ้วน
     progressText.textContent = `✅ Loaded: ${rawData.length.toLocaleString()} rows (100%)`;
     
-    // บันทึกลง IndexedDB Cache ก้อนใหญ่รอบเดียวเพื่อความเร็วในการเปิดใช้วันนี้
     const writeTx = db.transaction([STORE_DATA, STORE_META], "readwrite");
     const dataStore = writeTx.objectStore(STORE_DATA);
     const metaStore = writeTx.objectStore(STORE_META);
@@ -685,12 +672,11 @@ async function fetchAllDataFromServer(db) {
   }
 }
 
-// ปุ่มกด Sync กรณีฉุกเฉินเพื่อล้างแคชและบังคับดึงข้อมูลล่าสุดทันที
 async function forceSyncFromServer() {
   try {
     const db = await initIndexedDB();
     await fetchAllDataFromServer(db);
-    alert("⚡ ทำการรีเฟรชอัปเดตข้อมูลล่าสุดเรียบร้อยแล้วครับ!");
+    // เอาแจ้งเตือน alert() ออกตามสั่งเรียบร้อยครับ
   } catch (e) {
     console.error(e);
     alert("❌ ไม่สามารถดึงข้อมูลแบบบังคับรีเฟรชได้ในขณะนี้");
@@ -707,7 +693,6 @@ function applyAll(){
 
   let result = rawData;
 
-  // 1. PRODUCT DIVISION FILTER
   if(activeDivs.length > 0){
     result = result.filter(i => {
       const prodDiv = String(i.productdivision || "").trim().toLowerCase();
@@ -715,7 +700,6 @@ function applyAll(){
     });
   }
 
-  // 2. CATEGORY FILTER
   if(activeCats.length > 0){
     result = result.filter(i => {
       const gname = String(i.gnamechr || "").toLowerCase();
@@ -723,7 +707,6 @@ function applyAll(){
     });
   }
 
-  // BRAND DROPDOWN FILTER
   if(selectedBrand !== "ALL"){
     result = result.filter(i => {
       const typeVal = String(i.type || "").trim().toUpperCase();
@@ -734,7 +717,6 @@ function applyAll(){
     });
   }
 
-  // 3. TEXT SEARCH MULTI-COLUMNS
   if(q){
     result = result.filter(i =>
       String(i.code || "").toLowerCase().includes(q) ||
@@ -745,7 +727,6 @@ function applyAll(){
     );
   }
 
-  // 4. HIDE ZERO / DASH ON DYNAMIC COLUMN
   if(hideZero){
     result = result.filter(i => {
       let v = String(i[currentDynamicColumn] || "-").trim();
