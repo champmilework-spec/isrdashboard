@@ -4,7 +4,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SUPERPART | CodeMatch Master</title>
+<title>SUPERPART | CodeMatch Master (CM Only)</title>
 <style>
 /* =========================
    BASE & MOBILE SPACE OPTIMIZATION
@@ -196,7 +196,7 @@ input[type="checkbox"]:checked::after {
   background: #2f5ea8;
   color: #fff;
   font-weight: bold;
-  box-shadow: 0 2px 8 rgba(47, 94, 168, 0.25);
+  box-shadow: 0 2px 8px rgba(47, 94, 168, 0.25);
 }
 
 /* =========================
@@ -219,9 +219,9 @@ input[type="checkbox"]:checked::after {
 }
 .lock-badge {
   font-size: 11px;
-  color: #155724;
-  background-color: #d4edda;
-  padding: 2px 6px;
+  color: #fff;
+  background-color: #dc2626;
+  padding: 2px 8px;
   border-radius: 4px;
   font-weight: bold;
   white-space: nowrap;
@@ -307,12 +307,12 @@ tbody tr:active { background: #e2e8f0; }
 }
 
 /* =========================
-   PASSWORD SCREEN
+   PASSWORD SCREEN (CM SECURITY OVERLAY)
 ========================= */
 #lock-screen {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: #f1f5f9;
+  background: #0f172a;
   z-index: 99999;
   display: flex;
   align-items: center;
@@ -320,26 +320,28 @@ tbody tr:active { background: #e2e8f0; }
   flex-direction: column;
 }
 .lock-box {
-  background: #fff;
-  padding: 30px;
+  background: #1e293b;
+  padding: 35px;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
   text-align: center;
-  max-width: 360px;
+  max-width: 380px;
   width: 90%;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #334155;
 }
-.lock-box h2 { font-size: 18px; margin-bottom: 8px; color: #1c2434; font-weight: 700; }
-.lock-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+.lock-box h2 { font-size: 20px; margin-bottom: 8px; color: #f8fafc; font-weight: 700; }
+.lock-box p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
 .lock-box input {
-  width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px;
-  font-size: 16px; text-align: center; outline: none; margin-bottom: 12px;
+  width: 100%; padding: 12px; border: 1px solid #475569; border-radius: 8px;
+  font-size: 16px; text-align: center; outline: none; margin-bottom: 14px;
+  background: #0f172a; color: #fff; box-sizing: border-box;
 }
+.lock-box input:focus { border-color: #38bdf8; }
 .lock-box button {
-  width: 100%; padding: 12px; background: #2f5ea8; color: #fff; border: none;
-  border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer;
+  width: 100%; padding: 12px; background: #0284c7; color: #fff; border: none;
+  border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s;
 }
-.lock-box button:hover { background: #244a86; }
+.lock-box button:hover { background: #0369a1; }
 
 #toTop {
   position: fixed;
@@ -379,9 +381,9 @@ tbody tr:active { background: #e2e8f0; }
 
 <div id="lock-screen">
   <div class="lock-box">
-    <h2>🔒 ระบบป้องกันข้อมูล</h2>
-    <p>กรุณาระบุรหัสผ่านเพื่อเข้าใช้งานหน้า CodeMatch</p>
-    <input type="password" id="passInput" placeholder="ใส่รหัสผ่านที่นี่..." onkeypress="handleKeyPress(event)" />
+    <h2>🔒 ระบบรักษาความปลอดภัย CM</h2>
+    <p>หน้านี้เฉพาะเจ้าหน้าที่ CM เท่านั้น ห้ามเซลล์เข้าใช้งานโดยเด็ดขาด</p>
+    <input type="password" id="passInput" placeholder="กรอกรหัสผ่านลับทีม CM..." onkeypress="handleKeyPress(event)" />
     <button onclick="verifyPassword()">ยืนยันความปลอดภัย</button>
   </div>
 </div>
@@ -391,7 +393,7 @@ tbody tr:active { background: #e2e8f0; }
 <div class="container" id="main-content-area" style="display:none;">
 
   <div class="breadcrumb-row">
-    <div class="breadcrumb">HOME / CODEMATCH MASTER</div>
+    <div class="breadcrumb">HOME / CODEMATCH MASTER (CM ONLY)</div>
     <label class="hide-zero-wrap">
       <input type="checkbox" id="hideZero" checked />
       Hide 0 / –
@@ -450,7 +452,7 @@ tbody tr:active { background: #e2e8f0; }
 
   <div class="info-status-row">
     <div class="status-left">
-      <span class="lock-badge">✓ Verified</span>
+      <span class="lock-badge">⚠️ CM INTERNAL ONLY</span>
       <span class="inventory-summary" id="inventory-cost-sum">Value: 0.00</span>
     </div>
     <div class="result-count" id="result-count"></div>
@@ -476,8 +478,9 @@ tbody tr:active { background: #e2e8f0; }
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <script>
-// 🎯 ชี้เป้าไปที่ Google Apps Script Private Gateway ปิดตายโอกาสที่แฮกเกอร์จะเห็นไอดีชีต
-const dataApiUrl = "https://script.google.com/macros/s/AKfycbzlKGpeKTOOuzGNOPCURsGqXy4ilpfMi7Ef6qoz3_SuK-z4H-8IK5Kgrz9HyzTgfjd6/exec?sheet=cm";
+// 🛰️ ปรับปรุงช่องทางยิง API ด้วยกุญแจสาธารณะโปรเจกต์ที่ยืนยันผลทดสอบแล้วเรียบร้อย
+const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cm?select=*";
+const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
@@ -497,8 +500,9 @@ let filteredData = [];
 let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
 let currentDynamicColumn = "avgsalecost";
-// 🔒 เพื่อความปลอดภัยขั้นสูงสุด ล็อกรหัสผ่านเป็นความลับไว้ในหน้าบ้าน หรือจัดการผ่านสคริปต์ปิดตายระบบตรวจดูแบบง่าย
-let SECRET_PASSWORD = "1234"; 
+
+// 🔐 รหัสผ่านลับป้องกันหน้าเว็บ (พี่ปรับเปลี่ยนความยากได้ตรงนี้เลยครับเพื่อไม่ให้เซลล์สุ่มผ่านเข้าดูต้นทุนสินค้า)
+let SECRET_PASSWORD = "11111"; 
 
 function handleKeyPress(e) {
   if (e.key === "Enter") { verifyPassword(); }
@@ -511,7 +515,7 @@ function verifyPassword() {
     document.getElementById("main-content-area").style.display = "block";
     loadTable();
   } else {
-    alert("❌ รหัสผ่านไม่ถูกต้อง! ระบบปฏิเสธการเข้าถึงข้อมูล");
+    alert("❌ รหัสผ่านไม่ถูกต้อง! หน้านี้จำกัดสิทธิ์เฉพาะแผนก CM เท่านั้น");
     document.getElementById("passInput").value = "";
   }
 }
@@ -519,10 +523,18 @@ function verifyPassword() {
 async function loadTable(){
   document.getElementById("table-body").innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading CodeMatch System...</td></tr>';
   try {
-    const res = await fetch(dataApiUrl);
+    const res = await fetch(SUPABASE_URL, {
+      method: "GET",
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": "Bearer " + ANON_KEY
+      }
+    });
+    
+    if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
     let data = await res.json();
     
-    // 🎯 แปลงคีย์ทั้งหมดเป็นพิมพ์เล็กและตัดช่องว่างออก ป้องกันปัญหาความต่างระหว่างเวอร์ชันชีตและการสแกนหาคีย์ล้มเหลว
+    // 🎯 แปลงคีย์ทั้งหมดเป็นพิมพ์เล็กเพื่อนำไปเข้าเงื่อนไขฟิลเตอร์ได้อย่างแม่นยำ
     rawData = data.map(item => {
       let newItem = {};
       for (let k in item) {
@@ -537,7 +549,7 @@ async function loadTable(){
   } catch(e) {
     console.error(e);
     document.getElementById("table-body").innerHTML =
-      '<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบลิงก์สิทธิ์เข้าถึง</td></tr>';
+      `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบสิทธิ์เชื่อมต่อ</td></tr>`;
   }
 }
 
@@ -683,8 +695,7 @@ function copyRowToClipboard(index) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 
-  // แก้ไขเป็นเว้นวรรคธรรมดาให้ครบทุกจุด
-  const textToCopy = `${item.code || "-"} ${item.codematch || "-"} ${item.gbarcode || "-"} ${item.name || "-"} ${formattedVal}`;
+  const textToCopy = `${item.code || "-"} | ${item.codematch || "-"} | ${item.gbarcode || "-"} | ${item.name || "-"} | ${formattedVal}`;
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     const toast = document.getElementById("copyToast");
@@ -752,7 +763,6 @@ function updateChipStyles(){
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // บังคับสิทธิ์ให้เช็กความถูกต้องผ่านตัวแปรภายในหน้าบ้านที่ปลอดภัยขึ้นทันที
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
   document.getElementById("brandSelector").addEventListener("change", applyAll);
