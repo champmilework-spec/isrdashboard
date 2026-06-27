@@ -226,6 +226,14 @@ input[type="checkbox"]:checked::after {
   font-weight: bold;
   white-space: nowrap;
 }
+/* จุดแสดงสถานะตัวหนังสือสีเหลือง ด้านบนซ้ายของตารางตามที่คุณระบุ */
+.sync-progress-text {
+  font-size: 12px;
+  color: #b25e00; /* สีส้มอมเหลืองเข้มเพื่อความชัดเจนบนพื้นขาว */
+  font-weight: bold;
+  white-space: nowrap;
+  display: none;
+}
 .inventory-summary {
   font-size: 13px;
   color: #2f5ea8;
@@ -472,6 +480,7 @@ tbody tr:active { background: #e2e8f0; }
     <div class="status-left">
       <span class="lock-badge">⚠️ CM INTERNAL ONLY</span>
       <button class="sync-badge-btn" id="syncBtn" onclick="forceSyncFromServer()">🔄 Sync ข้อมูล</button>
+      <span class="sync-progress-text" id="syncProgress">⏳ Loading: 0 rows...</span>
       <span class="inventory-summary" id="inventory-cost-sum">Value: 0.00</span>
     </div>
     <div class="result-count" id="result-count"></div>
@@ -597,23 +606,25 @@ async function loadTable(){
   }
 }
 
-// 🛰️ ฟังก์ชันลูปดึงข้อมูลจาก Server ทีละส่วนเพื่อไม่ให้ตกหล่น
+// 🛰️ ฟังก์ชันลูปดึงข้อมูลจาก Server ทีละก้อน ค่อย ๆ ไหลเข้าตารางทีละนัดตามที่คุณต้องการเป๊ะ ๆ
 async function fetchAllDataFromServer(db) {
   const tbody = document.getElementById("table-body");
   const syncBtn = document.getElementById("syncBtn");
+  const progressText = document.getElementById("syncProgress");
   
   try {
     syncBtn.disabled = true;
     syncBtn.innerText = "⏳ กำลังโหลด...";
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังดาวน์โหลดข้อมูล Master ครบถ้วนจาก Cloud...</td></tr>';
+    progressText.style.display = "inline"; // เปิดไฟแสดงตัวอักษรเหลืองด้านซ้ายบน
     
-    let allFetchedData = [];
+    rawData = []; // เคลียร์รอรับข้อมูลดิบชุดใหม่
     let offset = 0;
     const limit = 1000;
     let hasMore = true;
     
     while (hasMore) {
-      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">ดาวน์โหลดข้อมูลชุดที่: ${(allFetchedData.length).toLocaleString()} รายการ...</td></tr>`;
+      // แสดงอัปเดตสถานะจำนวน Row สีเหลืองสดทางด้านซ้ายบนตาราง
+      progressText.textContent = `⏳ Loading: ${rawData.length.toLocaleString()} rows...`;
       
       const response = await fetch(`${SUPABASE_BASE_URL}?select=*&limit=${limit}&offset=${offset}`, {
         method: "GET",
@@ -626,7 +637,23 @@ async function fetchAllDataFromServer(db) {
       if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
       
       const chunk = await response.json();
-      allFetchedData = allFetchedData.concat(chunk);
+      
+      // ทำความสะอาดและแปลงคีย์เป็นพิมพ์เล็กของ Chunk นี้ทีละชิ้นทันที
+      const cleanChunk = chunk.map(item => {
+        let newItem = {};
+        for (let k in item) {
+          let cleanKey = String(k).replace(/\s/g, "").toLowerCase();
+          newItem[cleanKey] = item[k];
+        }
+        return newItem;
+      });
+      
+      // เติมเข้า rawData ส่วนกลาง
+      rawData = rawData.concat(cleanChunk);
+      
+      // ⚡ จุดเด่นหลัก: โหลด 1 ครั้ง เรนเดอร์ขึ้นหน้าจอให้ User เห็นทันที ข้อมูลค่อย ๆ เติมไหลต่อเนื่อง ไม่รู้สึกว่าค้าง!
+      updateChipStyles();
+      applyAll(); 
       
       if (chunk.length < limit) {
         hasMore = false;
@@ -635,17 +662,10 @@ async function fetchAllDataFromServer(db) {
       }
     }
     
-    // ทำความสะอาดและแปลงคีย์เป็นพิมพ์เล็กเหมือนโค้ดดั้งเดิมของคุณทั้งหมด
-    rawData = allFetchedData.map(item => {
-      let newItem = {};
-      for (let k in item) {
-        let cleanKey = String(k).replace(/\s/g, "").toLowerCase();
-        newItem[cleanKey] = item[k];
-      }
-      return newItem;
-    });
+    // เมื่อโหลดเสร็จสิ้น 100% ปรับข้อความตัวหนังสือสีเหลืองให้รู้ว่าจบสมบูรณ์ครบถ้วน
+    progressText.textContent = `✅ Loaded: ${rawData.length.toLocaleString()} rows (100%)`;
     
-    // บันทึกลง IndexedDB Cache สำหรับใช้งานในครั้งต่อไป
+    // บันทึกลง IndexedDB Cache ก้อนใหญ่รอบเดียวเพื่อความเร็วในการเปิดใช้วันนี้
     const writeTx = db.transaction([STORE_DATA, STORE_META], "readwrite");
     const dataStore = writeTx.objectStore(STORE_DATA);
     const metaStore = writeTx.objectStore(STORE_META);
@@ -656,13 +676,11 @@ async function fetchAllDataFromServer(db) {
     
     syncBtn.disabled = false;
     syncBtn.innerText = "🔄 Sync ข้อมูล";
-    
-    updateChipStyles();
-    applyAll();
   } catch (error) {
     console.error(error);
     syncBtn.disabled = false;
     syncBtn.innerText = "🔄 Sync ข้อมูล";
+    progressText.textContent = `❌ Load Failed`;
     tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">การเชื่อมต่อล้มเหลว ดึงข้อมูลไม่สำเร็จ</td></tr>`;
   }
 }
