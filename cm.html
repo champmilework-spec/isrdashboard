@@ -375,6 +375,24 @@ tbody tr:active { background: #e2e8f0; }
   .dropdown-wrapper { flex: 1; }
   .dropdown-wrapper select { width: 100%; }
 }
+
+/* สไตล์ปุ่ม Sync ฉุกเฉินเพิ่มเติมเพื่อให้เข้ากับธีมเดิม */
+.sync-badge-btn {
+  font-size: 11px;
+  color: #2f5ea8;
+  background-color: #fff;
+  border: 1px solid #2f5ea8;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.sync-badge-btn:hover {
+  background-color: #2f5ea8;
+  color: #fff;
+}
 </style>
 </head>
 <body>
@@ -453,6 +471,7 @@ tbody tr:active { background: #e2e8f0; }
   <div class="info-status-row">
     <div class="status-left">
       <span class="lock-badge">⚠️ CM INTERNAL ONLY</span>
+      <button class="sync-badge-btn" id="syncBtn" onclick="forceSyncFromServer()">🔄 Sync ข้อมูล</button>
       <span class="inventory-summary" id="inventory-cost-sum">Value: 0.00</span>
     </div>
     <div class="result-count" id="result-count"></div>
@@ -478,16 +497,21 @@ tbody tr:active { background: #e2e8f0; }
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลทั้งแถวเรียบร้อย!</div>
 
 <script>
-// 🛰️ ปรับปรุงช่องทางยิง API ด้วยกุญแจสาธารณะโปรเจกต์ที่ยืนยันผลทดสอบแล้วเรียบร้อย
-const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cm?select=*";
+// 🛰️ ช่องทางยิง API เดิมของคุณ
+const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cm";
 const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
+
+const DB_NAME = "CM_Cache_DB";
+const DB_VERSION = 1;
+const STORE_DATA = "cm_data";
+const STORE_META = "cm_meta";
 
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว", chipId: "chip-tape"    },
   { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
-  { id: "cat-spray",   keyword: "สีพ่น",     chipId: "chip-spray"   }, 
-  { id: "cat-putty",   keyword: "สีโป๊ว",     chipId: "chip-putty"   },
+  { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"   }, 
+  { id: "cat-putty",   keyword: "สีโป๊ว",      chipId: "chip-putty"   },
 ];
 
 const DIV_FILTERS = [
@@ -501,7 +525,7 @@ let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
 let currentDynamicColumn = "avgsalecost";
 
-// 🔐 รหัสผ่านลับป้องกันหน้าเว็บ (พี่ปรับเปลี่ยนความยากได้ตรงนี้เลยครับเพื่อไม่ให้เซลล์สุ่มผ่านเข้าดูต้นทุนสินค้า)
+// 🔐 รหัสผ่านเดิม
 let SECRET_PASSWORD = "11111"; 
 
 function handleKeyPress(e) {
@@ -520,22 +544,99 @@ function verifyPassword() {
   }
 }
 
-async function loadTable(){
-  document.getElementById("table-body").innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">Loading CodeMatch System...</td></tr>';
-  try {
-    const res = await fetch(SUPABASE_URL, {
-      method: "GET",
-      headers: {
-        "apikey": ANON_KEY,
-        "Authorization": "Bearer " + ANON_KEY
+// 🗄️ เริ่มต้นระบบแคชฐานข้อมูล IndexedDB ล่วงหน้า
+function initIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_DATA)) {
+        db.createObjectStore(STORE_DATA, { keyPath: "id", autoIncrement: true });
       }
-    });
+      if (!db.objectStoreNames.contains(STORE_META)) {
+        db.createObjectStore(STORE_META);
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// 🎯 ฟังก์ชันดึงข้อมูลแบบวนลูป Pagination ให้ครบทุกแถว และเก็บลง Cache อัตโนมัติ (วันละครั้ง)
+async function loadTable(){
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังตรวจสอบฐานข้อมูลแคชความเร็วสูง...</td></tr>';
+  
+  try {
+    const db = await initIndexedDB();
     
-    if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
-    let data = await res.json();
+    // ตรวจสอบข้อมูลเก่าและ timestamp
+    const tx = db.transaction([STORE_DATA, STORE_META], "readonly");
+    const dataStore = tx.objectStore(STORE_DATA);
+    const metaStore = tx.objectStore(STORE_META);
     
-    // 🎯 แปลงคีย์ทั้งหมดเป็นพิมพ์เล็กเพื่อนำไปเข้าเงื่อนไขฟิลเตอร์ได้อย่างแม่นยำ
-    rawData = data.map(item => {
+    const cachedItems = await new Promise(r => { dataStore.getAll().onsuccess = e => r(e.target.result); });
+    const lastUpdate = await new Promise(r => { metaStore.get("last_sync").onsuccess = e => r(e.target.result); });
+    
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    
+    // หากมีข้อมูลแคช และอัปเดตไม่เกิน 24 ชม. ให้โหลดใช้ได้ทันที
+    if (cachedItems && cachedItems.length > 0 && lastUpdate && (now - lastUpdate < oneDayMs)) {
+      rawData = cachedItems;
+      updateChipStyles();
+      applyAll();
+      return;
+    }
+    
+    // หากเกินกำหนด หรือไม่มีข้อมูล ให้ดึงใหม่จากคลาวด์อัตโนมัติ
+    await fetchAllDataFromServer(db);
+  } catch(e) {
+    console.error(e);
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">เกิดข้อผิดพลาดในการโหลดระบบภายในฐานข้อมูลแคช</td></tr>`;
+  }
+}
+
+// 🛰️ ฟังก์ชันลูปดึงข้อมูลจาก Server ทีละส่วนเพื่อไม่ให้ตกหล่น
+async function fetchAllDataFromServer(db) {
+  const tbody = document.getElementById("table-body");
+  const syncBtn = document.getElementById("syncBtn");
+  
+  try {
+    syncBtn.disabled = true;
+    syncBtn.innerText = "⏳ กำลังโหลด...";
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังดาวน์โหลดข้อมูล Master ครบถ้วนจาก Cloud...</td></tr>';
+    
+    let allFetchedData = [];
+    let offset = 0;
+    const limit = 1000;
+    let hasMore = true;
+    
+    while (hasMore) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">ดาวน์โหลดข้อมูลชุดที่: ${(allFetchedData.length).toLocaleString()} รายการ...</td></tr>`;
+      
+      const response = await fetch(`${SUPABASE_BASE_URL}?select=*&limit=${limit}&offset=${offset}`, {
+        method: "GET",
+        headers: {
+          "apikey": ANON_KEY,
+          "Authorization": "Bearer " + ANON_KEY
+        }
+      });
+      
+      if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
+      
+      const chunk = await response.json();
+      allFetchedData = allFetchedData.concat(chunk);
+      
+      if (chunk.length < limit) {
+        hasMore = false;
+      } else {
+        offset += limit;
+      }
+    }
+    
+    // ทำความสะอาดและแปลงคีย์เป็นพิมพ์เล็กเหมือนโค้ดดั้งเดิมของคุณทั้งหมด
+    rawData = allFetchedData.map(item => {
       let newItem = {};
       for (let k in item) {
         let cleanKey = String(k).replace(/\s/g, "").toLowerCase();
@@ -543,13 +644,38 @@ async function loadTable(){
       }
       return newItem;
     });
-
+    
+    // บันทึกลง IndexedDB Cache สำหรับใช้งานในครั้งต่อไป
+    const writeTx = db.transaction([STORE_DATA, STORE_META], "readwrite");
+    const dataStore = writeTx.objectStore(STORE_DATA);
+    const metaStore = writeTx.objectStore(STORE_META);
+    
+    dataStore.clear();
+    rawData.forEach(item => dataStore.add(item));
+    metaStore.put(Date.now(), "last_sync");
+    
+    syncBtn.disabled = false;
+    syncBtn.innerText = "🔄 Sync ข้อมูล";
+    
     updateChipStyles();
     applyAll();
-  } catch(e) {
+  } catch (error) {
+    console.error(error);
+    syncBtn.disabled = false;
+    syncBtn.innerText = "🔄 Sync ข้อมูล";
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">การเชื่อมต่อล้มเหลว ดึงข้อมูลไม่สำเร็จ</td></tr>`;
+  }
+}
+
+// ปุ่มกด Sync กรณีฉุกเฉินเพื่อล้างแคชและบังคับดึงข้อมูลล่าสุดทันที
+async function forceSyncFromServer() {
+  try {
+    const db = await initIndexedDB();
+    await fetchAllDataFromServer(db);
+    alert("⚡ ทำการรีเฟรชอัปเดตข้อมูลล่าสุดเรียบร้อยแล้วครับ!");
+  } catch (e) {
     console.error(e);
-    document.getElementById("table-body").innerHTML =
-      `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">ไม่สามารถดึงข้อมูลไอเทมมาสเตอร์ได้สำเร็จ กรุณาตรวจสอบสิทธิ์เชื่อมต่อ</td></tr>`;
+    alert("❌ ไม่สามารถดึงข้อมูลแบบบังคับรีเฟรชได้ในขณะนี้");
   }
 }
 
