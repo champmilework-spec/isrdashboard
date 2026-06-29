@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* =========================
-       BASE & MOBILE SPACE OPTIMIZATION
+        BASE & MOBILE SPACE OPTIMIZATION
     ========================= */
     body {
       margin: 0;
@@ -19,7 +19,7 @@
     }
 
     /* =========================
-       LAYOUT
+        LAYOUT
     ========================= */
     .container {
       max-width: 1000px;
@@ -30,7 +30,7 @@
     }
 
     /* =========================
-       BREADCRUMB ROW
+        BREADCRUMB ROW
     ========================= */
     .breadcrumb-row {
       display: flex;
@@ -83,7 +83,7 @@
     }
 
     /* =========================
-       CONTROL BAR (SEARCH & DROPDOWN)
+        CONTROL BAR (SEARCH & DROPDOWN)
     ========================= */
     .control-bar {
       display: flex;
@@ -149,7 +149,7 @@
     }
 
     /* =========================
-       FILTER CHIPS
+        FILTER CHIPS
     ========================= */
     .cat-filter-bar, .div-filter-bar {
       display: flex;
@@ -201,7 +201,7 @@
     }
 
     /* =========================
-       INFO ROW
+        INFO ROW
     ========================= */
     .info-status-row {
       display: flex;
@@ -254,7 +254,7 @@
     }
 
     /* =========================
-       TABLE CONFIGURATION
+        TABLE CONFIGURATION
     ========================= */
     .table-wrap {
       width: 100%;
@@ -315,7 +315,7 @@
     }
 
     /* =========================
-       PASSWORD SCREEN (CM SECURITY OVERLAY)
+        PASSWORD SCREEN (CM SECURITY OVERLAY)
     ========================= */
     #lock-screen {
       position: fixed;
@@ -368,7 +368,7 @@
     }
 
     /* =========================
-       MOBILE RESPONSIVE
+        MOBILE RESPONSIVE
     ========================= */
     @media(max-width:768px){
       body { padding-top: 54px; }
@@ -514,9 +514,6 @@
 const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cm";
 const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
-// ✅ แก้ไขการประกาศสร้าง Client ให้ถูกต้องตามมาตรฐาน Supabase CDN v2
-const supabase = supabase.createClient("https://lhnhmjbdowlmurpvxzew.supabase.co", ANON_KEY);
-
 const DB_NAME = "CM_Cache_DB";
 const DB_VERSION = 1;
 const STORE_DATA = "cm_data";
@@ -558,14 +555,17 @@ async function verifyPassword() {
     verifyBtn.disabled = true;
     verifyBtn.innerText = "⏳ กำลังตรวจสอบ...";
 
+    // ดึงไคลเอนต์ผ่าน window.supabase เพื่อความปลอดภัยสูงสุด
+    const supabaseClient = window.supabase.createClient("https://lhnhmjbdowlmurpvxzew.supabase.co", ANON_KEY);
+
     // เรียก RPC ไปที่หลังบ้าน
-    const { data: isCorrect, error } = await supabase.rpc('verify_cm_password', {
+    const { data: isCorrect, error } = await supabaseClient.rpc('verify_cm_password', {
       user_input_password: userPass
     });
 
     if (error) throw error;
 
-    // ✅ ครอบคลุมการเช็คทั้งรูปแบบ Boolean ตรงๆ หรือ Object wrapper
+    // ตรวจสอบเงื่อนไข Boolean
     if (isCorrect === true || (isCorrect && isCorrect.success === true)) {
       document.getElementById("lock-screen").style.display = "none";
       document.getElementById("main-content-area").style.display = "block";
@@ -944,6 +944,14 @@ window.addEventListener("DOMContentLoaded", () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 });
+
+// ทำงานอัตโนมัติเมื่อเปิดหน้าจอ: Focus ไปที่ช่องรหัสผ่านทันทีเพื่อให้พร้อมกด Enter ได้เลย
+window.onload = function() {
+  const passInput = document.getElementById("passInput");
+  if (passInput) {
+    passInput.focus();
+  }
+};
 
 document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
 </script>
