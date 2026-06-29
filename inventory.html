@@ -134,17 +134,17 @@ input[type="checkbox"]:checked::after {
 }
 .dropdown-wrapper label {
   font-size: 13px;
-  font-weight: 500; /* ปรับตัวหนังสือหัวข้อเมนูให้หนาขึ้น */
+  font-weight: 500; 
   color: #1d1d1f;
   white-space: nowrap;
 }
 
-/* Premium Motion Dropdown Select (อัปเกรดเป็นขนาดใหญ่ 16px สบายนิ้ว) */
+/* Premium Motion Dropdown Select */
 .dropdown-wrapper select {
   flex: 1;
   width: 100%;
   padding: 10px 30px 10px 12px; 
-  font-size: 15px; /* ปรับเมนูด้านบนขยายใหญ่ 16px อ่านง่ายและไม่เล็กแล้วครับ */
+  font-size: 15px; 
   font-weight: 400;
   border: 1px solid #d2d2d7;
   border-radius: 8px;
@@ -170,7 +170,7 @@ input[type="checkbox"]:checked::after {
   .control-bar { flex-direction: row; align-items: center; }
   .search-wrapper { flex: 1; }
   .filters-group { display: flex; width: auto; gap: 12px; }
-  .dropdown-wrapper select { width: 170px; } /* ขยายความกว้างเพื่อรองรับ 16px */
+  .dropdown-wrapper select { width: 170px; } 
 }
 
 /* ===================================================
@@ -288,10 +288,11 @@ tbody tr:hover { background: #f5f5f7; }
 .barcode-scan-icon svg { width: 15px; height: 15px; fill: #0071e3; }
 
 .sort-arrow { 
-  font-size: 11px; 
+  font-size: 12px; 
   margin-left: 4px; 
   display: inline-block;
-  opacity: 0.85;
+  opacity: 0.9;
+  font-family: Arial, sans-serif; /* ป้องกันมือถือเปลี่ยนเป็น Emoji */
 }
 
 /* Status Indicator Row */
@@ -393,7 +394,7 @@ tbody tr:hover { background: #f5f5f7; }
 
   <div class="control-bar">
     <div class="search-wrapper">
-      <input id="searchBox" type="text" placeholder="Search Barcode / Description..." />
+      <input id="searchBox" type="text" placeholder="Search Barcode / Description / SPCODES..." />
     </div>
     <div class="filters-group">
       <div class="dropdown-wrapper">
@@ -416,6 +417,8 @@ tbody tr:hover { background: #f5f5f7; }
           <option value="gpriceF">gpriceF</option>
           <option value="glocat">glocat</option>
           <option value="onhandST">onhandST</option>
+          <option value="GRdateMax">GRdateMax</option>
+          <option value="StockStatus">StockStatus</option>
         </select>
       </div>
     </div>
@@ -447,9 +450,9 @@ tbody tr:hover { background: #f5f5f7; }
     <table>
       <thead>
         <tr>
-          <th class="col-code" onclick="sortTable('gbarcode')">Barcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
-          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
-          <th class="col-dynamic" id="dynamic-th-label" onclick="sortTable('dynamic')">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
+          <th class="col-code" onclick="sortTable('gbarcode')">Barcode <span class="sort-arrow" id="arrow-gbarcode">↑↓</span></th>
+          <th onclick="sortTable('name')">Description <span class="sort-arrow" id="arrow-name">↑↓</span></th>
+          <th class="col-dynamic" id="dynamic-th-label" onclick="sortTable('dynamic')">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↑↓</span></th>
         </tr>
       </thead>
       <tbody id="table-body">
@@ -616,7 +619,6 @@ async function streamDataFromServer() {
 
       if (chunk.length < pageSize || rawData.length >= 15000) { keepFetching = false; }
       
-      // หน่วงเวลาสั้น ๆ ป้องกันการโดนตัดสัญญาณบน Production
       await new Promise(r => setTimeout(r, 60));
     }
 
@@ -628,7 +630,6 @@ async function streamDataFromServer() {
     syncBtn.style.display = "inline-block";
   } catch(e) {
     console.error(e);
-    // [FIX เปลี่ยนข้อความระแวงให้ผู้ใช้สบายใจ] แม้จะหลุดบล็อกลูปปลายสาย ให้ขึ้น Sync Complete เสมอ เพื่อไม่ให้ผู้ใช้ตกใจ
     statusText.textContent = `✅ Sync Complete (${rawData.length.toLocaleString()} items)`;
     statusText.style.color = "#34c759";
     syncBtn.style.display = "inline-block";
@@ -675,10 +676,13 @@ function applyAll(){
     });
   }
 
+  // 1. ค้นหาทะลุ SPCODES และ Dynamic Column ที่กำลังเปิดดูอยู่ได้ด้วย
   if(q){
     result = result.filter(i => {
       return String(i.gbarcode || "").toLowerCase().includes(q) || 
-             String(i.name || "").toLowerCase().includes(q);
+             String(i.name || "").toLowerCase().includes(q) ||
+             String(i.spcodes || i.SPCODES || "").toLowerCase().includes(q) ||
+             String(i[currentDynamicColumn] || "").toLowerCase().includes(q);
     });
   }
 
@@ -686,6 +690,8 @@ function applyAll(){
     result = result.filter(i => {
       const v = String(i[currentDynamicColumn] || "").trim();
       if(v === "" || v === "-" || v === "0") return false;
+      
+      // ป้องกันการซ่อน Date หรือตัวอักษร 
       const n = parseFloat(v);
       if(!isNaN(n) && n === 0) return false;
       return true;
@@ -718,14 +724,17 @@ function applySortLogic() {
   const { key, dir } = sortState;
   let targetField = key === "dynamic" ? currentDynamicColumn : key;
 
+  // คอลัมน์ที่ไม่ใช่ตัวเลข ให้ Sort เป็น String แทนเพื่อป้องกันบัค
+  let isStringOnly = ["glocat", "stockstatus", "grdatemax"].includes(targetField.toLowerCase());
+
   viewData = [...filteredData].sort((a, b) => {
     let v1 = a[targetField] ?? "";
     let v2 = b[targetField] ?? "";
 
-    const n1 = parseFloat(v1);
-    const n2 = parseFloat(v2);
+    const n1 = parseFloat(String(v1).replace(/,/g, ''));
+    const n2 = parseFloat(String(v2).replace(/,/g, ''));
 
-    if (!isNaN(n1) && !isNaN(n2)) {
+    if (!isStringOnly && !isNaN(n1) && !isNaN(n2)) {
       return dir === "asc" ? n1 - n2 : n2 - n1;
     }
 
@@ -744,7 +753,8 @@ function updateSortArrows(activeKey, direction) {
   ["gbarcode", "name", "dynamic"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if (!el) return;
-    el.textContent = k === activeKey ? (direction === "asc" ? "↑" : "↓") : "↕";
+    // 2. ล้างลูกศรอ้วนๆทิ้ง เปลี่ยนเป็นบางๆ
+    el.textContent = k === activeKey ? (direction === "asc" ? "↑" : "↓") : "↑↓";
   });
 }
 
@@ -758,8 +768,10 @@ function renderTable(data){
   tbody.innerHTML = data.map((p, index) => {
     let rawVal = p[currentDynamicColumn] ?? "-";
     let formattedVal = rawVal;
-       
-    if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+        
+    let isStringOnly = ["glocat", "stockstatus", "grdatemax"].includes(currentDynamicColumn.toLowerCase());
+        
+    if (!isStringOnly && !isNaN(parseFloat(rawVal))) {
       formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
     }
 
@@ -850,14 +862,16 @@ function openInfoModal(index) {
 
   let rawVal = item[currentDynamicColumn] ?? "-";
   let formattedVal = rawVal;
-  if (currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
+  
+  let isStringOnly = ["glocat", "stockstatus", "grdatemax"].includes(currentDynamicColumn.toLowerCase());
+  
+  if (!isStringOnly && !isNaN(parseFloat(rawVal))) {
     formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   }
 
   activeSelectedModalText = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
 
   const bodyEl = document.getElementById("infoModalBody");
-  // [FIX] ปรับหัวข้อแสดงผลเป็นคำว่า SPCODES: นำหน้าตรง ๆ ชัดเจนตามสั่งครับพี่
   bodyEl.innerHTML = `
     <strong>Barcode:</strong> ${item.gbarcode || "-"}<br>
     <strong>SPCODES:</strong> ${item.spcodes || item.SPCODES || "-"}<br>
@@ -910,7 +924,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
     currentDynamicColumn = e.target.value; 
-    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+    // อัปเดตหัวตาราง + ป้องกัน Emoji ลูกศรตอนสลับเมนู
+    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↑↓</span>`;
     sortState = { key: null, dir: "asc" }; 
     applyAll();
   });
@@ -920,7 +935,6 @@ window.addEventListener("DOMContentLoaded", () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
-  // [UX CLICK OUTSIDE] จิ้มด้านนอกกรอบสีขาวเพื่อสลัดปิดหน้าต่าง Modal ลงทันที
   window.addEventListener("click", (e) => {
     if (e.target.classList.contains("custom-modal")) {
       e.target.classList.remove("active");
