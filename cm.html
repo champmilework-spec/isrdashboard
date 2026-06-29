@@ -4,11 +4,11 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SUPERPART | CodeMatch Master (CM Only)</title>
+<title>SUPERPART | CodeMatch Master (CM Only) - Brutal Secured</title>
 <style>
-/* =========================
-   BASE & MOBILE SPACE OPTIMIZATION
-========================= */
+/* ==========================================================================
+   1. BASE & MOBILE SPACE OPTIMIZATION
+   ========================================================================== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -17,9 +17,9 @@ body {
   padding-top: 60px;
 }
 
-/* =========================
-   LAYOUT
-========================= */
+/* ==========================================================================
+   2. LAYOUT & CONTAINER SYSTEM
+   ========================================================================== */
 .container {
   max-width: 1000px;
   margin: 0 auto;
@@ -28,9 +28,9 @@ body {
   z-index: 1;
 }
 
-/* =========================
-   BREADCRUMB ROW
-========================= */
+/* ==========================================================================
+   3. BREADCRUMB ROW & HEADERS
+   ========================================================================== */
 .breadcrumb-row {
   display: flex;
   justify-content: space-between;
@@ -81,9 +81,9 @@ input[type="checkbox"]:checked::after {
   border-radius: 50%;
 }
 
-/* =========================
-   CONTROL BAR (SEARCH & DROPDOWN)
-========================= */
+/* ==========================================================================
+   4. CONTROL BAR (SEARCH, DROPDOWNS & FILTER CHIPS)
+   ========================================================================== */
 .control-bar {
   display: flex;
   flex-direction: column;
@@ -147,9 +147,6 @@ input[type="checkbox"]:checked::after {
   transition: all 0.2s;
 }
 
-/* =========================
-   FILTER CHIPS
-========================= */
 .cat-filter-bar, .div-filter-bar {
   display: flex;
   flex-wrap: wrap;
@@ -199,9 +196,9 @@ input[type="checkbox"]:checked::after {
   box-shadow: 0 2px 8px rgba(47, 94, 168, 0.25);
 }
 
-/* =========================
-   INFO ROW
-========================= */
+/* ==========================================================================
+   5. DYNAMIC DATA TABLE & VISUAL STATUS ROW
+   ========================================================================== */
 .info-status-row {
   display: flex;
   justify-content: space-between;
@@ -252,9 +249,6 @@ input[type="checkbox"]:checked::after {
   text-align: right;
 }
 
-/* =========================
-   TABLE CONFIGURATION
-========================= */
 .table-wrap {
   width: 100%;
   overflow-x: hidden;
@@ -313,42 +307,50 @@ tbody tr:active { background: #e2e8f0; }
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* =========================
-   PASSWORD SCREEN (CM SECURITY OVERLAY)
-========================= */
+/* ==========================================================================
+   6. BRUTAL CORE SECURITY OVERLAY (ANTI-TAMPERING)
+   ========================================================================== */
 #lock-screen {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: #0f172a;
-  z-index: 99999;
+  background: #090d16;
+  z-index: 999999;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
 .lock-box {
-  background: #1e293b;
-  padding: 35px;
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+  background: #111827;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
   text-align: center;
-  max-width: 380px;
+  max-width: 400px;
   width: 90%;
-  border: 1px solid #334155;
+  border: 2px solid #1f2937;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.lock-box h2 { font-size: 20px; margin-bottom: 8px; color: #f8fafc; font-weight: 700; }
-.lock-box p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
+.lock-box.brutal-danger {
+  border-color: #dc2626;
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+  animation: brutalShake 0.4s ease-in-out;
+}
+.lock-box h2 { font-size: 22px; margin-bottom: 10px; color: #f9fafb; font-weight: 800; letter-spacing: -0.5px; }
+.lock-box p { font-size: 13px; color: #9ca3af; margin-bottom: 26px; line-height: 1.5; }
 .lock-box input {
-  width: 100%; padding: 12px; border: 1px solid #475569; border-radius: 8px;
-  font-size: 16px; text-align: center; outline: none; margin-bottom: 14px;
-  background: #0f172a; color: #fff; box-sizing: border-box;
+  width: 100%; padding: 14px; border: 2px solid #374151; border-radius: 10px;
+  font-size: 16px; text-align: center; outline: none; margin-bottom: 16px;
+  background: #030712; color: #fff; box-sizing: border-box; letter-spacing: 2px;
+  transition: border-color 0.2s;
 }
-.lock-box input:focus { border-color: #38bdf8; }
+.lock-box input:focus { border-color: #3b82f6; }
 .lock-box button {
-  width: 100%; padding: 12px; background: #0284c7; color: #fff; border: none;
-  border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+  width: 100%; padding: 14px; background: #2563eb; color: #fff; border: none;
+  border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; transition: background 0.2s;
 }
-.lock-box button:hover { background: #0369a1; }
+.lock-box button:hover { background: #1d4ed8; }
+.lock-box button:disabled { background: #4b5563; cursor: not-allowed; color: #9ca3af; }
 
 #toTop {
   position: fixed;
@@ -366,9 +368,15 @@ tbody tr:active { background: #e2e8f0; }
   z-index: 99;
 }
 
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
+@keyframes brutalShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* ==========================================================================
+   7. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
 @media(max-width:768px){
   body { padding-top: 54px; }
   .container { padding: 8px 10px; }
@@ -404,17 +412,11 @@ tbody tr:active { background: #e2e8f0; }
 <body>
 
 <div id="lock-screen">
-  <form class="lock-box" onsubmit="event.preventDefault(); verifyPassword();">
-    <h2>🔒 ระบบรักษาความปลอดภัย CM</h2>
-    <p>หน้านี้เฉพาะเจ้าหน้าที่ CM เท่านั้น ห้ามเซลล์เข้าใช้งานโดยเด็ดขาด</p>
-    <input 
-      type="password" 
-      id="passInput" 
-      name="cm_secure_password" 
-      autocomplete="current-password" 
-      placeholder="กรอกรหัสผ่านลับทีม CM..." 
-    />
-    <button type="submit" id="verifyBtn">ยืนยันความปลอดภัย</button>
+  <form class="lock-box" id="brutalForm" onsubmit="event.preventDefault(); verifyPasswordBrutal();">
+    <h2>🔒 SECURITY FIREWALL DETECTED</h2>
+    <p id="lock-msg">พื้นที่ภายในเฉพาะทีมพัฒนา CM เท่านั้น บุคคลภายนอกหรือระบบเซลล์ห้ามเข้าฝ่าฝืนโดยเด็ดขาด</p>
+    <input type="password" id="passInput" placeholder="ENTER SECRET KEY..." autocomplete="current-password" />
+    <button type="submit" id="submitBtn">EXECUTE AUTHORIZATION</button>
   </form>
 </div>
 
@@ -489,6 +491,7 @@ tbody tr:active { background: #e2e8f0; }
 
   <div class="info-status-row">
     <div class="status-left">
+      <span class="lock-badge">⚠️ CM INTERNAL ONLY</span>
       <button class="sync-badge-btn" id="syncBtn" onclick="forceSyncFromServer()">🔄 Sync ข้อมูล</button>
       <span class="sync-progress-text" id="syncProgress">⏳ Loading: 0 rows...</span>
       <span class="inventory-summary" id="inventory-cost-sum">Value: 0.00</span>
@@ -506,7 +509,7 @@ tbody tr:active { background: #e2e8f0; }
         </tr>
       </thead>
       <tbody id="table-body">
-        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังเตรียมข้อมูลสิทธิ์การเข้าถึง...</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังเตรียมระบบความปลอดภัยขั้นสูง...</td></tr>
       </tbody>
     </table>
   </div>
@@ -516,6 +519,9 @@ tbody tr:active { background: #e2e8f0; }
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลเรียบร้อย!</div>
 
 <script>
+// ==========================================================================
+// 8. GLOBAL CONFIGURATION & CRYPTO ROUTING
+// ==========================================================================
 const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/get_cm_data_secure";
 const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
@@ -543,22 +549,148 @@ let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
 let currentDynamicColumn = "onhand_all";
 
-let SECRET_PASSWORD = "1985"; 
 let globalVerifiedPassword = "";
+let countdownInterval = null;
+let securityBreached = false;
 
-function verifyPassword() {
-  const userPass = document.getElementById("passInput").value.trim();
-  if (userPass === SECRET_PASSWORD) {
+// ==========================================================================
+// 9. BRUTAL PROTECTION ENGINE (CORE LOGIC)
+// ==========================================================================
+async function verifyPasswordBrutal() {
+  if (securityBreached) {
+    executeBrutalLockout("CRITICAL: IP Address strictly locked out by backend policy.");
+    return;
+  }
+
+  const inputEl = document.getElementById("passInput");
+  const msgEl = document.getElementById("lock-msg");
+  const btnEl = document.getElementById("submitBtn");
+  const boxEl = document.querySelector(".lock-box");
+  const userPass = inputEl.value.trim();
+  
+  if (!userPass) return;
+
+  msgEl.style.color = "#3b82f6";
+  msgEl.textContent = "⏳ REQUESTING SECURE PROTOCOL AT SERVER SIDE...";
+  btnEl.disabled = true;
+  boxEl.classList.remove("brutal-danger");
+
+  try {
+    // ไม่มีซ่อนรหัสผ่านไว้ตรวจที่นี่! ยิงลูกเดียวไปพึ่งใบบุญ Database หลังบ้าน
+    const response = await fetch(SUPABASE_BASE_URL, {
+      method: "POST",
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": "Bearer " + ANON_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_input_password: userPass,
+        limit: 1,
+        offset: 0
+      })
+    });
+
+    // 🛑 ตรวจจับกรณีติดล็อกเอาต์เด็ดขาด (HTTP 400 เด้งกลับคำสั่ง Locked)
+    if (response.status === 400) {
+      const errorData = await response.json().catch(() => ({}));
+      if (errorData.message && errorData.message.includes("locked")) {
+        securityBreached = true;
+        executeBrutalLockout(errorData.message);
+        return;
+      }
+    }
+
+    if (!response.ok) throw new Error("Server firewall authentication dropped");
+
+    const data = await response.json();
+
+    // 🛑 หลังบ้านส่ง Array ว่างเปล่ากลับมา แปลว่า "รหัสผิดสะสมแต้มความผิดสำเร็จ"
+    if (data.length === 0) {
+      boxEl.classList.add("brutal-danger");
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "🛑 ACCESS DENIED: INVALID PRIVILEGE IDENTIFIER KEY!";
+      inputEl.value = "";
+      btnEl.disabled = false;
+      inputEl.focus();
+      
+      // ดึงสถานะประวัติการบล็อกหลังบ้านมาตรวจแบบเรียลไทม์
+      const checkResp = await fetch(SUPABASE_BASE_URL, {
+        method: "POST", 
+        headers: { "apikey": ANON_KEY, "Authorization": "Bearer " + ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ user_input_password: "CHECK_REMAINING_ATTEMPTS_ONLY", limit: 1, offset: 0 })
+      });
+      
+      if (checkResp.status === 400) {
+        const checkData = await checkResp.json().catch(() => ({}));
+        if (checkData.message && checkData.message.includes("locked")) {
+          securityBreached = true;
+          executeBrutalLockout(checkData.message);
+        } else if (checkData.message) {
+          msgEl.textContent = `🛑 ACCESS DENIED: (${checkData.message})`;
+        }
+      }
+      return;
+    }
+
+    // 🎉 รหัสผ่านบริสุทธิ์ถูกต้อง 100% ปลดหน้าจอเข้าสู่แดนข้อมูลทันที
     globalVerifiedPassword = userPass;
-    document.getElementById("lock-screen").style.display = "none";
+    document.getElementById("lock-screen").style.removeProperty("display");
+    document.getElementById("lock-screen").style.setProperty("display", "none", "important");
     document.getElementById("main-content-area").style.display = "block";
     loadTable();
-  } else {
-    alert("❌ รหัสผ่านไม่ถูกต้อง! หน้านี้จำกัดสิทธิ์เฉพาะแผนก CM เท่านั้น");
-    document.getElementById("passInput").value = "";
+
+  } catch (err) {
+    console.error(err);
+    msgEl.style.color = "#dc2626";
+    msgEl.textContent = "🚨 CRITICAL ERROR: SECURE TUNNEL DISCONNECTED";
+    btnEl.disabled = false;
   }
 }
 
+// 🛑 ฟังก์ชันลงทัณฑ์ผู้บุกรุก ทำลายหน้าจอทิ้ง บล็อกครั้งที่ 11 ไร้ความหมาย
+function executeBrutalLockout(message) {
+  securityBreached = true;
+  
+  // Brutal Step: กวาดล้างลบแท็กดึงข้อมูลจริงทิ้งทันที เพื่อความปลอดภัยขั้นสูงสุด ป้องกัน Inspect แอบดูซอร์สโค้ด
+  const mainArea = document.getElementById("main-content-area");
+  if (mainArea) { mainArea.remove(); }
+
+  const inputEl = document.getElementById("passInput");
+  const msgEl = document.getElementById("lock-msg");
+  const btnEl = document.getElementById("submitBtn");
+  const boxEl = document.querySelector(".lock-box");
+
+  if(inputEl) { inputEl.disabled = true; inputEl.value = ""; }
+  if(btnEl) btnEl.disabled = true;
+  if(boxEl) boxEl.classList.add("brutal-danger");
+  
+  if(msgEl) msgEl.style.color = "#ef4444";
+
+  let secondsLeft = 300; 
+  const match = message.match(/\d+/);
+  if (match) { secondsLeft = parseInt(match[0], 10); }
+
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  countdownInterval = setInterval(() => {
+    if (secondsLeft <= 0) {
+      clearInterval(countdownInterval);
+      location.reload(); // รีเฟรชเพื่อเกิดใหม่เมื่อพ้นโทษ
+    } else {
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      if(msgEl) {
+        msgEl.innerHTML = `🚨 <span style="font-weight:900;font-size:14px;letter-spacing:0.5px;">IP TEMPORARILY BLACKLISTED</span><br>ระบบเซิร์ฟเวอร์ตรวจพบการสุ่มรหัสผ่าน พอร์ตไอพีถูกระงับ <br><span style="font-size:18px;font-weight:bold;color:#fff;margin-top:10px;display:inline-block;">💥 LOCKDOWN TIMER: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}</span>`;
+      }
+      secondsLeft--;
+    }
+  }, 1000);
+}
+
+// ==========================================================================
+// 10. INDEXED LOCAL DB STORAGE MANAGEMENT
+// ==========================================================================
 function initIndexedDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -582,7 +714,6 @@ async function loadTable(){
   
   try {
     const db = await initIndexedDB();
-    
     const tx = db.transaction([STORE_DATA, STORE_META], "readonly");
     const dataStore = tx.objectStore(STORE_DATA);
     const metaStore = tx.objectStore(STORE_META);
@@ -607,6 +738,9 @@ async function loadTable(){
   }
 }
 
+// ==========================================================================
+// 11. BULK DATA STREAMING & CHUNK PROCESSING
+// ==========================================================================
 async function fetchAllDataFromServer(db) {
   const tbody = document.getElementById("table-body");
   const syncBtn = document.getElementById("syncBtn");
@@ -623,9 +757,9 @@ async function fetchAllDataFromServer(db) {
     let hasMore = true;
     
     while (hasMore) {
+      if (securityBreached) return;
       progressText.textContent = `⏳ Loading: ${rawData.length.toLocaleString()} rows...`;
       
-      // 🔹 แก้ไขจุดที่ 1: ตัด ?limit= และ &offset= ออกจาก URL เพราะหลังบ้านไม่รับทางนี้
       const response = await fetch(SUPABASE_BASE_URL, {
         method: "POST",
         headers: {
@@ -633,7 +767,6 @@ async function fetchAllDataFromServer(db) {
           "Authorization": "Bearer " + ANON_KEY,
           "Content-Type": "application/json"
         },
-        // 🔹 แก้ไขจุดที่ 2: ย้าย limit และ offset มาใส่รวมใน JSON Body ตรงนี้เพื่อให้หลังบ้านอ่านเจอ
         body: JSON.stringify({
           user_input_password: globalVerifiedPassword,
           limit: limit,
@@ -641,7 +774,15 @@ async function fetchAllDataFromServer(db) {
         })
       });
       
-      if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
+      if (response.status === 400) {
+        const errJson = await response.json().catch(() => ({}));
+        if (errJson.message && errJson.message.includes("locked")) {
+          executeBrutalLockout(errJson.message);
+          throw new Error("SERVER BLACKLIST BLOCK DETECTED");
+        }
+      }
+
+      if (!response.ok) throw new Error(`HTTP Fail Status Code: ${response.status}`);
       
       const chunk = await response.json();
       
@@ -697,7 +838,11 @@ async function forceSyncFromServer() {
   }
 }
 
+// ==========================================================================
+// 12. MULTI-LAYER FILTER ENGINE
+// ==========================================================================
 function applyAll(){
+  if(securityBreached) return;
   const q        = document.getElementById("searchBox").value.toLowerCase().trim();
   const hideZero = document.getElementById("hideZero").checked;
   const selectedBrand = document.getElementById("brandSelector").value;
@@ -767,6 +912,9 @@ function applyAll(){
   updateResultCount(viewData.length);
 }
 
+// ==========================================================================
+// 13. DATA AGGREGATION & ALGEBRA
+// ==========================================================================
 function calculateInventorySum(data) {
   let totalCost = 0;
   data.forEach(item => {
@@ -787,6 +935,9 @@ function calculateInventorySum(data) {
   document.getElementById("inventory-cost-sum").textContent = `Value: ${formattedCost}`;
 }
 
+// ==========================================================================
+// 14. SORTING SYSTEM (ALPHANUMERIC)
+// ==========================================================================
 function sortTable(key){
   if(sortState.key === key){
     sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
@@ -825,6 +976,9 @@ function applySortOnFiltered(){
   updateResultCount(viewData.length);
 }
 
+// ==========================================================================
+// 15. UI RENDERERS & CLIPBOARD ASSISTANTS
+// ==========================================================================
 function copyRowToClipboard(index) {
   const item = viewData[index];
   if (!item) return;
@@ -842,11 +996,12 @@ function copyRowToClipboard(index) {
     const toast = document.getElementById("copyToast");
     toast.style.display = "block";
     setTimeout(() => { toast.style.display = "none"; }, 1800);
-  }).catch(err => { console.error("Could not copy text: ", err); });
+  }).catch(err => { console.error("Clipboard copy exception: ", err); });
 }
 
 function renderTable(data){
   const tbody = document.getElementById("table-body");
+  if(!tbody) return;
   if(!data || data.length === 0){
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">ไม่พบรายการข้อมูลที่ค้นหา...</td></tr>';
     return;
@@ -872,8 +1027,8 @@ function renderTable(data){
 }
 
 function updateResultCount(n){
-  document.getElementById("result-count").textContent =
-    n > 0 ? n.toLocaleString() + " items" : "0 items";
+  const el = document.getElementById("result-count");
+  if(el) el.textContent = n > 0 ? n.toLocaleString() + " items" : "0 items";
 }
 
 function updateArrows(active, dir){
@@ -903,6 +1058,9 @@ function updateChipStyles(){
   });
 }
 
+// ==========================================================================
+// 16. APPLICATION INITIALIZATION LIFECYCLE
+// ==========================================================================
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
@@ -926,7 +1084,6 @@ window.addEventListener("DOMContentLoaded", () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
   
-  // โฟกัสไปที่ช่องรหัสผ่านทันทีที่เปิดหน้าจอ
   const passInput = document.getElementById("passInput");
   if (passInput) passInput.focus();
 });
