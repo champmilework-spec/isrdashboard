@@ -511,7 +511,7 @@
 <div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลเรียบร้อย!</div>
 
 <script>
-const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cm";
+const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/get_cm_data_secure"; // สลับเป้าหมายไปหาฟังก์ชัน RPC ปลอดภัย
 const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
 const DB_NAME = "CM_Cache_DB";
@@ -538,6 +538,9 @@ let viewData     = [];
 let sortState    = { key: null, dir: "asc" };
 let currentDynamicColumn = "onhand_all";
 
+// สร้างตัวแปรเก็บรหัสผ่านไว้ส่งตอนที่สั่ง Sync ข้อมูลรอบถัด ๆ ไป
+let globalVerifiedPassword = "";
+
 function handleKeyPress(e) {
   if (e.key === 'Enter') verifyPassword();
 }
@@ -555,18 +558,17 @@ async function verifyPassword() {
     verifyBtn.disabled = true;
     verifyBtn.innerText = "⏳ กำลังตรวจสอบ...";
 
-    // ดึงไคลเอนต์ผ่าน window.supabase เพื่อความปลอดภัยสูงสุด
     const supabaseClient = window.supabase.createClient("https://lhnhmjbdowlmurpvxzew.supabase.co", ANON_KEY);
 
-    // เรียก RPC ไปที่หลังบ้าน
+    // เรียก RPC ไปที่หลังบ้านเพื่อตรวจสอบสิทธิ์รอบแรกก่อนเปิดหน้า
     const { data: isCorrect, error } = await supabaseClient.rpc('verify_cm_password', {
       user_input_password: userPass
     });
 
     if (error) throw error;
 
-    // ตรวจสอบเงื่อนไข Boolean
     if (isCorrect === true || (isCorrect && isCorrect.success === true)) {
+      globalVerifiedPassword = userPass; // เก็บพาสเวิร์ดที่ถูกต้องไว้ใช้ตอนดึงข้อมูล
       document.getElementById("lock-screen").style.display = "none";
       document.getElementById("main-content-area").style.display = "block";
       loadTable();
@@ -651,12 +653,17 @@ async function fetchAllDataFromServer(db) {
     while (hasMore) {
       progressText.textContent = `⏳ Loading: ${rawData.length.toLocaleString()} rows...`;
       
-      const response = await fetch(`${SUPABASE_BASE_URL}?select=*&limit=${limit}&offset=${offset}`, {
-        method: "GET",
+      // เปลี่ยนแปลงวิธียิงแบบ POST ไปหา RPC ฟังก์ชันลับ พร้อมส่งรหัสผ่านแนบเข้าไปใน Body เสมอ
+      const response = await fetch(`${SUPABASE_BASE_URL}?limit=${limit}&offset=${offset}`, {
+        method: "POST",
         headers: {
           "apikey": ANON_KEY,
-          "Authorization": "Bearer " + ANON_KEY
-        }
+          "Authorization": "Bearer " + ANON_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_input_password: globalVerifiedPassword
+        })
       });
       
       if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
@@ -945,7 +952,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ทำงานอัตโนมัติเมื่อเปิดหน้าจอ: Focus ไปที่ช่องรหัสผ่านทันทีเพื่อให้พร้อมกด Enter ได้เลย
 window.onload = function() {
   const passInput = document.getElementById("passInput");
   if (passInput) {
