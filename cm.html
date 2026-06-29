@@ -625,15 +625,19 @@ async function fetchAllDataFromServer(db) {
     while (hasMore) {
       progressText.textContent = `⏳ Loading: ${rawData.length.toLocaleString()} rows...`;
       
-      const response = await fetch(`${SUPABASE_BASE_URL}?limit=${limit}&offset=${offset}`, {
+      // 🔹 แก้ไขจุดที่ 1: ตัด ?limit= และ &offset= ออกจาก URL เพราะหลังบ้านไม่รับทางนี้
+      const response = await fetch(SUPABASE_BASE_URL, {
         method: "POST",
         headers: {
           "apikey": ANON_KEY,
           "Authorization": "Bearer " + ANON_KEY,
           "Content-Type": "application/json"
         },
+        // 🔹 แก้ไขจุดที่ 2: ย้าย limit และ offset มาใส่รวมใน JSON Body ตรงนี้เพื่อให้หลังบ้านอ่านเจอ
         body: JSON.stringify({
-          user_input_password: globalVerifiedPassword
+          user_input_password: globalVerifiedPassword,
+          limit: limit,
+          offset: offset
         })
       });
       
