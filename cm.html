@@ -375,20 +375,42 @@ tbody tr:active { background: #e2e8f0; }
 }
 
 /* ==========================================================================
-   7. RESPONSIVE MEDIA QUERIES
+   7. RESPONSIVE MEDIA QUERIES (OPTIMIZED FOR MOBILE DROPDOWNS)
    ========================================================================== */
 @media(max-width:768px){
   body { padding-top: 54px; }
   .container { padding: 8px 10px; }
   .cat-chip { font-size: 11px; padding: 5px 12px; }
   tbody td { padding: 10px 6px; font-size: 12px; }
+  
   .info-status-row { flex-direction: row !important; align-items: center !important; justify-content: space-between; }
   .status-left { flex-direction: row !important; align-items: center !important; gap: 4px; }
   .lock-badge, .result-count { font-size: 10px; padding: 2px 4px; }
   .inventory-summary { font-size: 13px; padding: 2px 6px; margin-left: auto; }
-  .dropdown-container-row { width: 100%; justify-content: space-between; gap: 4px; }
-  .dropdown-wrapper { flex: 1; }
-  .dropdown-wrapper select { width: 100%; }
+  
+  /* แก้ไข: ป้องกัน Dropdown หดตัว และจัดโครงสร้างให้อ่านง่ายขึ้นบนมือถือ */
+  .control-bar {
+    gap: 8px;
+  }
+  .dropdown-container-row { 
+    width: 100%; 
+    flex-wrap: wrap; 
+    gap: 8px; 
+  }
+  .dropdown-wrapper { 
+    flex: 1; 
+    min-width: 135px; 
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .dropdown-wrapper select { 
+    width: 100%; 
+    box-sizing: border-box;
+    padding: 8px 24px 8px 10px; 
+    font-size: 13px;
+  }
 }
 
 .sync-badge-btn {
@@ -438,7 +460,6 @@ tbody tr:active { background: #e2e8f0; }
     </div>
     <div class="dropdown-container-row">
       <div class="dropdown-wrapper">
-              <div class="dropdown-wrapper">
         <label for="brandSelector">แบรนด์:</label>
         <select id="brandSelector">
           <option value="ALL" selected>ทั้งหมด</option>
@@ -455,12 +476,13 @@ tbody tr:active { background: #e2e8f0; }
         </select>
       </div>
 
+      <div class="dropdown-wrapper">
         <label for="columnSelector">แสดงข้อมูล:</label>
         <select id="columnSelector">
           <option value="avgsalecost">AvgSalecost</option>
           <option value="salecost">Salecost</option> 
           <option value="onhand_cost">Onhand_Cost</option>
-          <option value="avgcost">avgcost</option>
+          <option value="PrefSupplierCode">PrefSupplierCode</option>
           <option value="onhand_all" selected>Onhand_All</option> 
           <option value="stockstatus">StockStatus</option>
           <option value="gpricef">gpriceF</option>
@@ -488,6 +510,7 @@ tbody tr:active { background: #e2e8f0; }
     <label class="cat-chip" id="chip-primer"><input type="checkbox" id="cat-primer" /> สีพื้น</label>
     <label class="cat-chip" id="chip-spray"><input type="checkbox" id="cat-spray" /> สีพ่น</label>
     <label class="cat-chip" id="chip-putty"><input type="checkbox" id="cat-putty" /> สีโป๊ว</label>
+    <label class="cat-chip" id="chip-sandpaper"><input type="checkbox" id="cat-sandpaper" /> กระดาษทรายน้ำ</label>
   </div>
 
   <div class="info-status-row">
@@ -530,12 +553,14 @@ const DB_VERSION = 1;
 const STORE_DATA = "cm_data";
 const STORE_META = "cm_meta";
 
+// เพิ่มตัวกรอง keyword สำหรับกระดาษทรายน้ำในระบบแมตช์ข้อมูล
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
   { id: "cat-tape",    keyword: "กระดาษกาว", chipId: "chip-tape"    },
   { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
   { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"   }, 
   { id: "cat-putty",   keyword: "สีโป๊ว",      chipId: "chip-putty"   },
+  { id: "cat-sandpaper", keyword: "กระดาษทราย", chipId: "chip-sandpaper" }
 ];
 
 const DIV_FILTERS = [
@@ -576,7 +601,6 @@ async function verifyPasswordBrutal() {
   boxEl.classList.remove("brutal-danger");
 
   try {
-    // ไม่มีซ่อนรหัสผ่านไว้ตรวจที่นี่! ยิงลูกเดียวไปพึ่งใบบุญ Database หลังบ้าน
     const response = await fetch(SUPABASE_BASE_URL, {
       method: "POST",
       headers: {
@@ -591,7 +615,6 @@ async function verifyPasswordBrutal() {
       })
     });
 
-    // 🛑 ตรวจจับกรณีติดล็อกเอาต์เด็ดขาด (HTTP 400 เด้งกลับคำสั่ง Locked)
     if (response.status === 400) {
       const errorData = await response.json().catch(() => ({}));
       if (errorData.message && errorData.message.includes("locked")) {
@@ -605,7 +628,6 @@ async function verifyPasswordBrutal() {
 
     const data = await response.json();
 
-    // 🛑 หลังบ้านส่ง Array ว่างเปล่ากลับมา แปลว่า "รหัสผิดสะสมแต้มความผิดสำเร็จ"
     if (data.length === 0) {
       boxEl.classList.add("brutal-danger");
       msgEl.style.color = "#dc2626";
@@ -614,7 +636,6 @@ async function verifyPasswordBrutal() {
       btnEl.disabled = false;
       inputEl.focus();
       
-      // ดึงสถานะประวัติการบล็อกหลังบ้านมาตรวจแบบเรียลไทม์
       const checkResp = await fetch(SUPABASE_BASE_URL, {
         method: "POST", 
         headers: { "apikey": ANON_KEY, "Authorization": "Bearer " + ANON_KEY, "Content-Type": "application/json" },
@@ -633,7 +654,6 @@ async function verifyPasswordBrutal() {
       return;
     }
 
-    // 🎉 รหัสผ่านบริสุทธิ์ถูกต้อง 100% ปลดหน้าจอเข้าสู่แดนข้อมูลทันที
     globalVerifiedPassword = userPass;
     document.getElementById("lock-screen").style.removeProperty("display");
     document.getElementById("lock-screen").style.setProperty("display", "none", "important");
@@ -648,11 +668,9 @@ async function verifyPasswordBrutal() {
   }
 }
 
-// 🛑 ฟังก์ชันลงทัณฑ์ผู้บุกรุก ทำลายหน้าจอทิ้ง บล็อกครั้งที่ 11 ไร้ความหมาย
 function executeBrutalLockout(message) {
   securityBreached = true;
   
-  // Brutal Step: กวาดล้างลบแท็กดึงข้อมูลจริงทิ้งทันที เพื่อความปลอดภัยขั้นสูงสุด ป้องกัน Inspect แอบดูซอร์สโค้ด
   const mainArea = document.getElementById("main-content-area");
   if (mainArea) { mainArea.remove(); }
 
@@ -676,7 +694,7 @@ function executeBrutalLockout(message) {
   countdownInterval = setInterval(() => {
     if (secondsLeft <= 0) {
       clearInterval(countdownInterval);
-      location.reload(); // รีเฟรชเพื่อเกิดใหม่เมื่อพ้นโทษ
+      location.reload();
     } else {
       const minutes = Math.floor(secondsLeft / 60);
       const seconds = secondsLeft % 60;
