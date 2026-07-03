@@ -323,7 +323,7 @@ tbody tr:hover { background: #f5f5f7; }
 .result-count { font-size: 11px; color: #86868b; font-weight: 500; }
 
 /* ===================================================
-   APPLE GLASS DIALOG WINDOW SYSTEM
+   APPLE GLASS DIALOG WINDOW SYSTEM & GRID POPUP
    =================================================== */
 .custom-modal {
   position: fixed;
@@ -337,22 +337,103 @@ tbody tr:hover { background: #f5f5f7; }
 }
 .custom-modal.active { opacity: 1; pointer-events: auto; }
 .modal-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   padding: 20px; border-radius: 20px;
-  width: 90%; max-width: 325px; 
+  width: 92%; max-width: 440px; 
   box-shadow: 0 20px 40px rgba(0,0,0,0.15);
   position: relative;
   transform: scale(0.9);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 .custom-modal.active .modal-content { transform: scale(1); }
 
 .modal-close-btn {
-  position: absolute; top: 12px; right: 14px;
+  position: absolute; top: 14px; right: 14px;
   font-size: 16px; font-weight: bold; color: #86868b; 
   cursor: pointer; border: none; background: none;
+  z-index: 10;
 }
 .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #1d1d1f; }
+
+/* Enhanced Image Preview Frame */
+.info-modal-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  background: #f5f5f7;
+  border-radius: 14px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+}
+.info-modal-image-container img {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* 2-Column User-Friendly Grid Alignment */
+.info-grid-row {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f2f2f7;
+  font-size: 13px;
+}
+.info-grid-label {
+  font-weight: 600;
+  color: #6e6e73;
+  text-align: right;
+  padding-right: 14px;
+}
+.info-grid-value {
+  color: #1d1d1f;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.code-wrapper-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  overflow: hidden;
+}
+.code-text-span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.btn-small-copy {
+  background: #0071e3;
+  color: #fff;
+  border: none;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.btn-small-copy:hover {
+  background: #005bbd;
+}
 
 .sticker-preview-box {
   width: 270px; height: 180px;
@@ -469,8 +550,8 @@ tbody tr:hover { background: #f5f5f7; }
   <div class="modal-content">
     <button class="modal-close-btn" onclick="closeModal('infoModal')">✕</button>
     <div class="modal-title" style="border-bottom:1px solid #e2e8f0; padding-bottom:8px;">📋 ข้อมูลสินค้าฉบับเต็ม</div>
-    <div id="infoModalBody" style="font-size:13px; line-height:1.6; padding:12px 0; color:#1d1d1f;"></div>
-    <button class="btn-download-trigger" style="background:#424245; margin-top:4px;" onclick="copyCurrentModalText()">📋 คัดลอกข้อความแถวนี้</button>
+    <div id="infoModalBody" style="padding:4px 0;"></div>
+    <button class="btn-download-trigger" style="background:#424245; margin-top:10px;" onclick="copyCurrentModalText()">📋 คัดลอกข้อความแถวนี้</button>
   </div>
 </div>
 
@@ -872,17 +953,70 @@ function openInfoModal(index) {
 
   activeSelectedModalText = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
 
-  const bodyEl = document.getElementById("infoModalBody");
-  bodyEl.innerHTML = `
-    <strong>Barcode:</strong> ${item.gbarcode || "-"}<br>
-    <strong>SPCODES:</strong> ${item.spcodes || item.SPCODES || "-"}<br>
-    <strong>Description:</strong> ${item.name || "-"}<br>
-    <strong>Division:</strong> ${item.ProductDivision || "-"}<br>
-    <strong>Brand (TYPE):</strong> ${item.TYPE || "-"}<br>
-    <strong>${currentDynamicColumn}:</strong> <span style="color:#0071e3; font-weight:bold;">${formattedVal}</span>
-  `;
+  let htmlContent = "";
 
+  // 1. picture (if available) - ดึงมาแสดงผลด้านบนสุด
+  const imgUrl = (item.picture || "").trim();
+  if (imgUrl && imgUrl !== "-" && (imgUrl.startsWith("http") || imgUrl.includes("/"))) {
+    htmlContent += `
+      <div class="info-modal-image-container">
+        <img src="${imgUrl}" alt="Product Image" onerror="this.parentElement.style.display='none';">
+      </div>
+    `;
+  }
+
+  // Helper function to render perfect 2-Column row with text-overflow ellipsis
+  const addGridRow = (label, value, isCode = false) => {
+    const displayVal = value ?? "-";
+    if (isCode) {
+      return `
+        <div class="info-grid-row">
+          <div class="info-grid-label">${label}</div>
+          <div class="info-grid-value">
+            <div class="code-wrapper-inline">
+              <span class="code-text-span" title="${displayVal}">${displayVal}</span>
+              ${displayVal !== "-" ? `<button class="btn-small-copy" onclick="copySpecificCode('${displayVal}', event)">Copy Code</button>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="info-grid-row">
+        <div class="info-grid-label">${label}</div>
+        <div class="info-grid-value" title="${displayVal}">${displayVal}</div>
+      </div>
+    `;
+  };
+
+  // 2. code + Copy Code button (บังคับแสดงผลแถวเดียวเสมอกล่องครอบ)
+  htmlContent += addGridRow("code", item.code, true);
+
+  // 3. Remaining fields in explicit ordered UI/UX Grid format
+  htmlContent += addGridRow("SPCODES", item.spcodes || item.SPCODES);
+  htmlContent += addGridRow("gbarcode", item.gbarcode);
+  htmlContent += addGridRow("name", item.name);
+  htmlContent += addGridRow("Onhand_All", item.Onhand_All);
+  htmlContent += addGridRow("gpriceF", item.gpriceF);
+  htmlContent += addGridRow("StockStatus", item.StockStatus);
+  htmlContent += addGridRow("GRdateMax", item.GRdateMax);
+  htmlContent += addGridRow("ProductDivision", item.ProductDivision);
+  htmlContent += addGridRow("TYPE", item.TYPE);
+  htmlContent += addGridRow("PackCodeRounding", item.PackCodeRounding);
+  htmlContent += addGridRow("gnamechr", item.gnamechr);
+  htmlContent += addGridRow("glocat", item.glocat); // glocat appears neatly at the bottom
+
+  document.getElementById("infoModalBody").innerHTML = htmlContent;
   openModal('infoModal');
+}
+
+function copySpecificCode(text, event) {
+  if (event) event.stopPropagation();
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById("copyToast");
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 1500);
+  });
 }
 
 function copyCurrentModalText() {
