@@ -18,7 +18,7 @@ body{
 }
 
 /* =========================
-   HEADER & STATUS TOGGLE
+   HEADER & CONTROL BAR
 ========================= */
 .header-wrapper {
   max-width: 1100px;
@@ -49,20 +49,62 @@ body{
   margin: 0;
 }
 
+.control-right-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 🔍 SEARCH BAR UI (12px TEXT) */
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  font-size: 16px; /* 🎯 ตามบรีฟพี่เป๊ะๆ ครับ */
+  padding: 8px 14px 8px 32px;
+  width: 240px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  outline: none;
+  background: #fff;
+  color: #333;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.search-input:focus {
+  border-color: #2f5ea8;
+  box-shadow: 0 2px 8px rgba(47, 94, 168, 0.15);
+  width: 280px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  width: 13px;
+  height: 13px;
+  fill: #718096;
+  pointer-events: none;
+}
+
 .status-toggle-box {
   display: flex;
   align-items: center;
   gap: 8px;
   background: #fff;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 20px;
   border: 1px solid #e2e8f0;
   cursor: pointer;
   user-select: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #4a5568;
   transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
 }
 .status-toggle-box:hover {
   border-color: #cbd5e1;
@@ -70,8 +112,8 @@ body{
 }
 .status-toggle-box input {
   cursor: pointer;
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   margin: 0;
 }
 
@@ -376,51 +418,6 @@ body{
 }
 
 /* =========================
-   PAGINATION BAR
-========================= */
-.pagination-bar {
-  max-width: 1100px;
-  margin: 20px auto 10px auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.page-btn {
-  background: #fff;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
-}
-
-.page-btn:hover {
-  background: #f0f0f0;
-  border-color: #bbb;
-}
-
-.page-btn.active {
-  background: #2f5ea8;
-  color: #fff;
-  border-color: #2f5ea8;
-}
-
-.page-btn:disabled {
-  background: #f5f5f5;
-  color: #ccc;
-  border-color: #eaeaea;
-  cursor: not-allowed;
-}
-
-/* =========================
    LOADING & ERROR
 ========================= */
 .loading{
@@ -440,18 +437,39 @@ body{
   }
 
   .header-wrapper {
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     padding: 8px 16px;
+    gap: 12px;
   }
 
   .title{
     font-size:20px;
   }
 
+  .control-right-box {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .search-wrapper {
+    flex: 1;
+  }
+
+  .search-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .search-input:focus {
+    width: 100%;
+  }
+
   .status-toggle-box {
-    padding: 5px 10px;
+    padding: 8px 10px;
     font-size: 11px;
+    flex-shrink: 0;
   }
 
   .category-filter-bar {
@@ -527,27 +545,36 @@ body{
     <div class="title">Campaigns</div>
   </div>
   
-  <label class="status-toggle-box">
-    <input type="checkbox" id="active-only-checkbox" checked />
-    <span>Show Active Only</span>
-  </label>
+  <div class="control-right-box">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24">
+        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+      <input type="text" id="global-search-input" class="search-input" placeholder="ค้นหาโปรโมชั่น รหัส แบรนด์ เงื่อนไข..." oninput="processAndRender()">
+    </div>
+
+    <label class="status-toggle-box">
+      <input type="checkbox" id="active-only-checkbox" checked onchange="processAndRender()" />
+      <span>Show Active Only</span>
+    </label>
+  </div>
 </div>
 
 <div class="category-filter-bar" id="brand-filter-bar">
   <label class="category-label">
-    <input type="checkbox" class="brand-checkbox" value="Nippon P" />
+    <input type="checkbox" class="brand-checkbox" value="Nippon P" onchange="processAndRender()" />
     <span class="checkmark"></span> นิปปอน
   </label>
   <label class="category-label">
-    <input type="checkbox" class="brand-checkbox" value="3M" />
+    <input type="checkbox" class="brand-checkbox" value="3M" onchange="processAndRender()" />
     <span class="checkmark"></span> 3M
   </label>
   <label class="category-label">
-    <input type="checkbox" class="brand-checkbox" value="CROMAX" />
+    <input type="checkbox" class="brand-checkbox" value="CROMAX" onchange="processAndRender()" />
     <span class="checkmark"></span> CROMAX
   </label>
   <label class="category-label">
-    <input type="checkbox" class="brand-checkbox" value="DOMAC" />
+    <input type="checkbox" class="brand-checkbox" value="DOMAC" onchange="processAndRender()" />
     <span class="checkmark"></span> DOMAC
   </label>
 </div>
@@ -558,14 +585,12 @@ body{
   </div>
 </div>
 
-<div id="pagination-controls" class="pagination-bar"></div>
-
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbzlKGpeKTOOuzGNOPCURsGqXy4ilpfMi7Ef6qoz3_SuK-z4H-8IK5Kgrz9HyzTgfjd6/exec?sheet=promo";
+// ☁️ SUPABASE PRODUCTION API GATEWAY CONNECTION
+const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/promo";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
 let allPromotions = [];
-let currentPage = 1;
-const itemsPerPage = 11; 
 
 fetch("header.html").then(res => res.text()).then(data => {
   document.getElementById("header-placeholder").innerHTML = data;
@@ -587,7 +612,6 @@ function initMenuFix() {
 
     if (menuBtn && menuDropdown) {
       clearInterval(bindInterval);
-      
       menuBtn.replaceWith(menuBtn.cloneNode(true));
       const newMenuBtn = document.getElementById("menuBtn");
 
@@ -601,7 +625,6 @@ function initMenuFix() {
           menuDropdown.classList.remove("active");
         }
       });
-      console.log("Hamburger Menu Bound Successfully!");
     }
 
     if (attempts >= maxAttempts) {
@@ -610,11 +633,10 @@ function initMenuFix() {
   }, 1000);
 }
 
-// 🛠️ ฟังก์ชันแปลง ISO Date ให้แสดงผลสวยงาม (DD/MM/YYYY)
 function formatDate(dateStr) {
   if (!dateStr) return "-";
   const dateObj = new Date(dateStr);
-  if (isNaN(dateObj.getTime())) return dateStr; // ถ้าไม่ใช่รูปแบบวันที่มาตรฐาน ให้คืนค่าเดิมกลับไป
+  if (isNaN(dateObj.getTime())) return dateStr; 
   
   const day = String(dateObj.getDate()).padStart(2, '0');
   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -625,16 +647,40 @@ function formatDate(dateStr) {
 
 async function fetchPromotions() {
   try {
-    const res = await fetch(SHEET_API);
-    if (!res.ok) throw new Error("Network error response");
+    const res = await fetch(`${SUPABASE_URL}?select=*`, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+        "Content-Type": "application/json"
+      }
+    });
+    
+    if (!res.ok) throw new Error("Supabase Network error response");
     const rawData = await res.json();
     
+    // 🧠 เคลียร์ข้อมูลเบิ้ล: สั่งสร้างโครงสร้างใหม่แบบ Row-by-Row 
     allPromotions = rawData.map(item => {
       let cleanItem = {};
       for (let key in item) {
-        cleanItem[key] = item[key]; 
-        const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '');
-        cleanItem[cleanKey] = item[key]; 
+        cleanItem[key] = item[key]; // คีย์ดั้งเดิมตัวเล็กจาก Postgres
+        
+        // ผูกคีย์เสมือนเพื่อซัพพอร์ตระบบเรนเดอร์เดิมโดยไม่ให้แถวซ้ำเบิ้ล
+        if (key === "promocode") cleanItem["PromoCode"] = item[key];
+        if (key === "promotype") cleanItem["PromoType"] = item[key];
+        if (key === "promo_condition") cleanItem["Promo_Condition"] = item[key];
+        if (key === "photolink") cleanItem["PhotoLink"] = item[key];
+        if (key === "promostatus") cleanItem["PromoStatus"] = item[key];
+        if (key === "brand") cleanItem["Brand"] = item[key];
+        if (key === "promo1") cleanItem["Promo1"] = item[key];
+        if (key === "promo2") cleanItem["Promo2"] = item[key];
+        if (key === "promo3") cleanItem["Promo3"] = item[key];
+        if (key === "startdate") cleanItem["StartDate"] = item[key];
+        if (key === "enddate") cleanItem["EndDate"] = item[key];
+        if (key === "createddate") cleanItem["CreatedDate"] = item[key];
+        if (key === "remark") cleanItem["Remark"] = item[key];
+        if (key === "salegroup") cleanItem["SaleGroup"] = item[key];
+        if (key === "sale_price") cleanItem["ราคาขาย"] = item[key];
       }
       return cleanItem;
     });
@@ -643,7 +689,7 @@ async function fetchPromotions() {
   } catch (error) {
     console.error("Fetch Error:", error);
     document.getElementById("promo-grid").innerHTML = `
-      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบสถานะ API หรือสิทธิ์การแชร์ไฟล์ชีต</div>
+      <div class="loading" style="color:red;">ไม่สามารถเข้าถึงฐานข้อมูลโปรโมชั่นได้ กรุณาตรวจสอบสถานะ API หรือสิทธิ์ RLS</div>
     `;
   }
 }
@@ -652,9 +698,11 @@ function processAndRender() {
   const grid = document.getElementById("promo-grid");
   const showActiveOnly = document.getElementById("active-only-checkbox").checked;
   const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
+  const searchKeyword = document.getElementById("global-search-input").value.trim().toLowerCase();
   
   let targetData = allPromotions;
 
+  // 1. ตัวกรองสถานะ Active
   if (showActiveOnly) {
     targetData = targetData.filter(item => {
       const status = String(item.promostatus || item.PromoStatus || "").trim().toLowerCase();
@@ -664,6 +712,7 @@ function processAndRender() {
     targetData = targetData.filter(item => item.promocode || item.PromoCode);
   }
 
+  // 2. ตัวกรองแบรนด์สินค้า
   if (checkedBrands.length > 0) {
     targetData = targetData.filter(p => {
       const bName = String(p.brand || p.Brand || "").trim();
@@ -671,15 +720,32 @@ function processAndRender() {
     });
   }
 
-  const totalItems = targetData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
+  // 3. 🔍 GLOBAL SEARCH FILTER (ค้นหาคลุมทุกฟิลด์ตามที่ขอเป๊ะๆ)
+  if (searchKeyword) {
+    targetData = targetData.filter(p => {
+      return (
+        String(p.createddate || p.CreatedDate || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promocode || p.PromoCode || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promotype || p.PromoType || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promo_condition || p.Promo_Condition || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promo1 || p.Promo1 || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promo2 || p.Promo2 || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promo3 || p.Promo3 || "").toLowerCase().includes(searchKeyword) ||
+        String(p.startdate || p.StartDate || "").toLowerCase().includes(searchKeyword) ||
+        String(p.enddate || p.EndDate || "").toLowerCase().includes(searchKeyword) ||
+        String(p.promostatus || p.PromoStatus || "").toLowerCase().includes(searchKeyword) ||
+        String(p.brand || p.Brand || "").toLowerCase().includes(searchKeyword) ||
+        String(p.photolink || p.PhotoLink || "").toLowerCase().includes(searchKeyword) ||
+        String(p.remark || p.Remark || "").toLowerCase().includes(searchKeyword) ||
+        String(p.salegroup || p.SaleGroup || "").toLowerCase().includes(searchKeyword)
+      );
+    });
+  }
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedData = targetData.slice(startIndex, endIndex);
+  if (targetData.length === 0) {
+    grid.innerHTML = `<div class="loading" style="grid-column: 1/-1;">ไม่พบข้อมูลโปรโมชั่นที่ตรงกับเงื่อนไขการค้นหา</div>`;
+    return;
+  }
 
   const staticIntroCard = `
     <div class="promo-card">
@@ -689,7 +755,8 @@ function processAndRender() {
     </div>
   `;
 
-  const promoCards = paginatedData.map(p => {
+  // 🚀 ปล่อยข้อมูลไหลยาวลงมาแบบธรรมชาติ ไม่มีการหั่นแบ่งหน้า pagination อีกต่อไป
+  const promoCards = targetData.map(p => {
     const code = p.promocode || p.PromoCode || 'PROMO';
     const type = p.promotype || 'SPECIAL';
     const condition = p.promo_condition || p.Promo_Condition || 'เงื่อนไขพิเศษแคมเปญ';
@@ -697,7 +764,7 @@ function processAndRender() {
     const status = p.promostatus || p.PromoStatus || 'Active';
     const brand = p.brand || p.Brand || 'SUPERPART';
     
-    const rawPrice = p["ราคาขาย"] || p["ราคาขาย"] || "";
+    const rawPrice = p["ราคาขาย"] || p.sale_price || "";
     let displayPrice = 'ราคาพิเศษ';
 
     if(rawPrice) {
@@ -719,7 +786,6 @@ function processAndRender() {
     if (cleanPromo2 !== "") extraBulletsHtml += `<li>${cleanPromo2}</li>`;
     if (cleanPromo3 !== "") extraBulletsHtml += `<li>${cleanPromo3}</li>`;
 
-    // 🕒 นำวันที่มาฟอร์แมตผ่านฟังก์ชัน formatDate
     const rawStartDate = p.startdate || p.StartDate || '';
     const rawEndDate = p.enddate || p.EndDate || '';
     
@@ -766,45 +832,7 @@ function processAndRender() {
   }).join('');
 
   grid.innerHTML = staticIntroCard + promoCards;
-  renderPaginationControls(totalPages);
 }
-
-function renderPaginationControls(totalPages) {
-  const container = document.getElementById("pagination-controls");
-  if (!container || totalPages <= 1) {
-    if(container) container.innerHTML = "";
-    return;
-  }
-
-  let html = ``;
-  html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">ก่อนหน้า</button>`;
-
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-  }
-
-  html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">ถัดไป</button>`;
-
-  container.innerHTML = html;
-}
-
-window.changePage = function(page) {
-  currentPage = page;
-  processAndRender();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
-document.getElementById("active-only-checkbox").addEventListener("change", () => {
-  currentPage = 1;
-  processAndRender();
-});
-
-document.querySelectorAll('.brand-checkbox').forEach(cb => {
-  cb.addEventListener('change', () => {
-    currentPage = 1; 
-    processAndRender();
-  });
-});
 
 fetchPromotions();
 </script>
