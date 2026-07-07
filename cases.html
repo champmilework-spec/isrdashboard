@@ -25,11 +25,35 @@ body{
   overflow-x:hidden;
 }
 
-/* คุมพื้นที่หน้าจอ Desktop และลด Padding บน Mobile ให้เห็นตารางทันที */
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 60px 12px 20px; /* ลด Padding รอบข้าง */
+  padding: 10px 12px 20px; 
+  position: relative;
+  z-index: 1; 
+}
+
+.breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 65px; 
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+.breadcrumb-nav a {
+  color: #3c50e0;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.breadcrumb-nav a:hover {
+  text-decoration: underline;
+}
+.breadcrumb-separator {
+  color: #94a3b8;
 }
 
 /* =========================
@@ -46,13 +70,12 @@ body{
 }
 
 .dashboard-title h1 {
-  font-size: 18px; /* ปรับขนาดให้พอดี ไม่ใหญ่เกินไป */
+  font-size: 18px; 
   font-weight: 700;
   color: #1c2434;
   letter-spacing: -0.5px;
 }
 
-/* ย้าย Live Monitoring มาไว้มุมขวาบนคู่กับ Title */
 .live-monitor-bar {
   display: flex;
   align-items: center;
@@ -84,7 +107,7 @@ body{
   font-size: 11px;
   font-weight: 700;
   color: #991b1b;
-  display: none; /* ซ่อนคำนี้บน Mobile เพื่อประหยัดพื้นที่ */
+  display: none; 
 }
 @media(min-width: 576px) {
   .live-title { display: inline; }
@@ -109,7 +132,7 @@ body{
 .chart-card {
   background: #ffffff;
   border-radius: 8px;
-  padding: 10px; /* ลด Padding เพื่อดันตารางขึ้นมา */
+  padding: 10px; 
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
@@ -133,7 +156,6 @@ body{
 .search-wrapper-block {
   flex: 1;
 }
-/* บังคับ Search Input ขนาด 16px ตามเงื่อนไข */
 .search-wrapper-block input {
   width: 100%;
   padding: 8px 12px;
@@ -189,7 +211,7 @@ body{
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px; /* ขนาดใหญ่พอให้กดง่ายบน Mobile */
+  padding: 6px 10px; 
   border-radius: 999px;
   border: 1px solid #e2e8f0;
   background: #fff;
@@ -220,7 +242,7 @@ body{
 }
 
 /* =========================
-   🎯 TABLE CONFIGURATION (FIXED คอลัมน์สำหรับ MOBILE)
+   🎯 TABLE CONFIGURATION
 ========================= */
 .table-wrap {
   width: 100%;
@@ -259,14 +281,13 @@ tbody td {
   vertical-align: top;
 }
 
-/* แบ่งสัดส่วนคอลัมน์: CASE_id (8 หลักพอดีเป๊ะ) | CaseType (กระชับ) | CustomerName (กว้างที่สุดที่เหลือ) */
 .col-code { width: 26%; font-weight: 600; letter-spacing: -0.2px; }
 .col-type { width: 24%; }
 .col-name { width: 50%; }
 
 .customer-cell-flex {
   display: flex;
-  align-items: flex-start;
+  align-items: center; 
   justify-content: space-between;
   gap: 4px;
 }
@@ -274,16 +295,33 @@ tbody td {
   flex: 1;
   word-break: break-word;
 }
-.modern-arrow-right {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #3c50e0;
-  font-weight: 700;
-  font-size: 11px;
-  transition: transform 0.2s;
+
+/* 🎯 วงกลมแสดงสถานะ (ขยายเพิ่มสีแดงและดำสำหรับ CANCEL, FAIL) */
+.status-dot-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+  margin-right: 4px;
 }
-tbody tr:hover .modern-arrow-right { transform: translateX(2px); }
+.status-dot-indicator.dot-success {
+  background-color: #4ade80; 
+  box-shadow: 0 0 6px #4ade80;
+}
+.status-dot-indicator.dot-progress {
+  background-color: #eab308; 
+  box-shadow: 0 0 6px #eab308;
+}
+.status-dot-indicator.dot-cancel {
+  background-color: #f87171; /* แดง */
+  box-shadow: 0 0 6px #f87171;
+}
+.status-dot-indicator.dot-fail {
+  background-color: #334155; /* ดำ / เทาเข้ม */
+  box-shadow: 0 0 6px #334155;
+}
+
 tbody tr { cursor: pointer; transition: background-color 0.15s; }
 tbody tr:hover { background: #f8fafc; }
 
@@ -404,6 +442,14 @@ tbody tr:hover { background: #f8fafc; }
 
 <div id="header-placeholder"></div>
 
+<div class="breadcrumb-nav container">
+  <a href="dashboard.html">Home</a>
+  <span class="breadcrumb-separator">/</span>
+  <a href="pipeline.html">Operation</a>
+  <span class="breadcrumb-separator">/</span>
+  <span style="color: #1c2434; font-weight: 600;">Casestest Pipeline</span>
+</div>
+
 <div class="container">
   
   <div class="dashboard-header">
@@ -430,7 +476,7 @@ tbody tr:hover { background: #f8fafc; }
       
       <div class="control-strip">
         <div class="search-wrapper-block">
-          <input id="searchBox" type="text" placeholder="ค้นหา CASE_id / ประเภท / ชื่อลูกค้า / เซลล์..." />
+          <input id="searchBox" type="text" placeholder="ค้นหา case_no / ประเภท / ชื่อลูกค้า / เซลล์..." />
         </div>
         <div class="status-filter-group">
           <label class="status-chk-label" id="lbl-status-success">
@@ -466,7 +512,7 @@ tbody tr:hover { background: #f8fafc; }
         <table>
           <thead>
             <tr>
-              <th onclick="sortOpTable('caseId')" class="col-code">CASE_id <span class="sort-arrow" id="arrow-caseId">↕</span></th>
+              <th onclick="sortOpTable('caseNo')" class="col-code">case_no <span class="sort-arrow" id="arrow-caseNo">↕</span></th>
               <th onclick="sortOpTable('caseType')" class="col-type">CaseType <span class="sort-arrow" id="arrow-caseType">↕</span></th>
               <th onclick="sortOpTable('nameDetails')" class="col-name">CustomerName <span class="sort-arrow" id="arrow-nameDetails">↕</span></th>
             </tr>
@@ -488,6 +534,7 @@ tbody tr:hover { background: #f8fafc; }
       <div>
         <h3 id="modalCustomerName" style="font-size:14px; font-weight:700; padding-right:110px;">-</h3>
         <p id="modalCaseName" style="font-size:11px; color:#64748b; margin-top:2px;">-</p>
+        <p id="modalGoal" style="font-size:11px; color:#3c50e0; font-weight:700; margin-top:2px;">-</p>
       </div>
       <div class="case-age-badge" id="modalCaseAge">Age: 0d</div>
       <button class="modal-close" onclick="closeModal()">×</button>
@@ -507,7 +554,8 @@ tbody tr:hover { background: #f8fafc; }
 <div id="footer-placeholder"></div>
 
 <script>
-const opApiUrl = "https://script.google.com/macros/s/AKfycbzsRLz4-8Lenv2BbC4Lio_CeaymK3HSJhPHyerIVJ-rKv8T-_a6NJ0QA8skmlF2OXBe/exec?sheet=log";
+const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/cases";
+const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
 const OP_FILTERS = [
   { id: "cat-bar", keyword: "เปิดบาร์", chipId: "chip-bar" },
@@ -523,7 +571,7 @@ let viewOpData = [];
 let opSortState = { key: null, dir: "asc" };
 
 function cleanString(str) { 
-  if (!str) return "";
+  if (str === null || str === undefined) return "";
   if (typeof str === 'object') return ""; 
   return String(str).trim(); 
 }
@@ -540,79 +588,71 @@ function loadLayoutTemplates() {
 
 loadLayoutTemplates();
 
-fetch(opApiUrl).then(res => res.json()).then(jsonData => {
+// 🚀 FETCH DATA DIRECTLY FROM SUPABASE
+fetch(`${SUPABASE_BASE_URL}?select=*`, {
+  method: "GET",
+  headers: {
+    "apikey": ANON_KEY,
+    "Authorization": "Bearer " + ANON_KEY
+  }
+}).then(res => {
+  if (!res.ok) throw new Error(`Supabase HTTP Error: ${res.status}`);
+  return res.json();
+}).then(jsonData => {
   
   if (!jsonData || jsonData.length === 0 || jsonData.status === "error") {
     throw new Error("API response mismatch");
   }
 
-  let structureRow = jsonData[0];
-  let keys = Object.keys(structureRow);
-
-  // 🎯 แก้ไขคีย์แมปปิ้งให้ตรงตามหัวตารางจริงของคุณ
-  const keyCaseId = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASE_ID");
-  const keyCaseType = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASETYPE");
-  const keyNameDetails = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CUSTOMERNAME"); // เปลี่ยนเป็นจับคอลัมน์ CustomerName
-  const keyStatus = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "STATUS");
-  const keyOwner = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "ชื่อเซลล์");
-  const keyCaseAge = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASEAGE" || String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "CASEAGE");
-  const keyCustomerCode = keys.find(k => String(structureRow[k]).replace(/\s/g, "").toUpperCase() === "P_KEY");
-
   globalOpData = [];
   let liveProgressCounter = 0;
 
-  for (let i = 1; i < jsonData.length; i++) {
+  for (let i = 0; i < jsonData.length; i++) {
     const row = jsonData[i];
     if (!row) continue;
 
-    const caseId = cleanString(row[keyCaseId]);
-    const caseType = cleanString(row[keyCaseType]);
-    const nameDetails = cleanString(row[keyNameDetails]); // ดึงจาก CustomerName จริง
-    const status = cleanString(row[keyStatus]).toUpperCase() || "IN PROGRESS";
-    const owner = cleanString(row[keyOwner]);
+    const caseNo = cleanString(row["case_no"]);
+    const caseType = cleanString(row["CaseType"]);
+    const nameDetails = cleanString(row["CustomerName"]); 
+    const status = cleanString(row["STATUS"]).toUpperCase() || "IN PROGRESS";
+    const owner = cleanString(row["SalesRep"] || row["CaseOwner"]); 
+    const goal = cleanString(row["GOAL"]); 
     
-    // 🎯 แก้ไข Case Age ให้ดึงจากคีย์ "Case Age" (ตามตารางที่มีช่องว่าง)
-    let rawAge = row["Case Age"] || row["CASE AGE"] || row[keyCaseAge];
+    let rawAge = row["CaseAge"];
     const ageDays = parseInt(cleanString(rawAge)) || 0;
     
-    const customerCode = cleanString(row[keyCustomerCode]);
+    const customerCode = cleanString(row["P_KEY"]);
 
-    if (!caseId || caseId === "" || caseId === "-") continue;
+    if (!caseNo || caseNo === "" || caseNo === "-") continue;
 
     if (status === "IN PROGRESS") {
       liveProgressCounter++;
     }
 
-    // 🎯 แก้ไขปัญหาข้อมูล FU ไม่ขึ้น: วนดึงคีย์ของ Object แบบ Case-Insensitive
     let followUpHistory = [];
-    
-    let commentText = cleanString(row["Comment"] || row["COMMENT"]);
+    let commentText = cleanString(row["Comment"]);
     if (commentText && commentText !== "" && commentText !== "-") {
       followUpHistory.push({ stage: "รายละเอียดงาน (Comment เริ่มต้น)", text: commentText });
     }
     
-    // วนหา FU1 - FU10 จาก Object keys จริง ป้องกันปัญหาคีย์ตัวเล็ก/ตัวใหญ่ หรือช่องว่างหลุดมา
     for (let f = 1; f <= 10; f++) {
-      let targetKey = keys.find(k => String(k).toUpperCase() === `FU${f}`);
-      if (targetKey) {
-        let fuText = cleanString(row[targetKey]);
-        if (fuText && fuText !== "" && fuText !== "-") {
-          followUpHistory.push({ stage: `Follow up ${f}`, text: fuText });
-        }
+      let fuText = cleanString(row[`FU${f}`]); 
+      if (fuText && fuText !== "" && fuText !== "-") {
+        followUpHistory.push({ stage: `Follow up ${f}`, text: fuText });
       }
     }
 
-    // สลับรายการล่าสุดขึ้นด้านบนสุดในประวัติ
     followUpHistory.reverse();
 
     globalOpData.push({
-      caseId: caseId,
+      caseNo: caseNo,
       caseType: caseType || "-",
       nameDetails: nameDetails || "ไม่ระบุชื่อลูกค้า",
       status: status,
       owner: owner || "ไม่ระบุชื่อ",
       ageDays: ageDays,
       customerCode: customerCode || "-",
+      goal: goal || "-", 
       history: followUpHistory
     });
   }
@@ -620,19 +660,16 @@ fetch(opApiUrl).then(res => res.json()).then(jsonData => {
   document.getElementById("live-progress-counter").textContent = liveProgressCounter.toLocaleString();
 
   initInventoryFilterEvents();
-  applyOpFilters();
+  applyOpFilters(); 
 
   document.getElementById("loader").style.display = "none";
   document.getElementById("dashboardContent").style.display = "block";
 
 }).catch(err => {
-  document.getElementById("loader").innerHTML = `<div style="color:#ef4444; font-weight:600; padding:20px;">สแกนพิกัดข้อมูลใน LOG ขัดข้อง กรุณาตรวจสอบหัวคอลัมน์</div>`;
+  document.getElementById("loader").innerHTML = `<div style="color:#ef4444; font-weight:600; padding:20px;">สแกนพิกัดข้อมูลใน Supabase ขัดข้อง กรุณาตรวจสอบการเชื่อมต่อ</div>`;
   console.error(err);
 });
 
-/* ===================================================
-   INVENTORY PIPELINE FILTER EVENTS
-   =================================================== */
 function initInventoryFilterEvents() {
   document.getElementById("searchBox").addEventListener("input", applyOpFilters);
   
@@ -670,6 +707,7 @@ function updateChipStyles(){
   });
 }
 
+// 🎯 ปรับปรุง LOGIC การฟิลเตอร์ตามข้อ 1 และข้อ 2 ของคุณ
 function applyOpFilters() {
   const q = document.getElementById("searchBox").value.toLowerCase().trim();
   const activeTypes = OP_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
@@ -679,24 +717,25 @@ function applyOpFilters() {
 
   let result = globalOpData;
 
-  if(chkSuccess || chkProgress) {
+  // 🎯 เงื่อนไขข้อ 1 & 2: ถ้าติ๊กเลือกอันใดอันหนึ่งให้กรองตามนั้น แต่ถ้าไม่ติ๊กเลยทั้งคู่ ให้ปล่อยผ่านแสดงทั้งหมด (ไม่กรองออก)
+  if (chkSuccess || chkProgress) {
     result = result.filter(item => {
-      if(chkSuccess && item.status === "SUCCESS") return true;
-      if(chkProgress && item.status === "IN PROGRESS") return true;
+      if (chkSuccess && item.status === "SUCCESS") return true;
+      if (chkProgress && item.status === "IN PROGRESS") return true;
       return false;
     });
   }
 
-  if(activeTypes.length > 0) {
+  if(activeTypes.length > 0 && result.length > 0) {
     result = result.filter(item => {
       const typeStr = String(item.caseType).toLowerCase();
       return activeTypes.some(f => typeStr.includes(f.keyword.toLowerCase()));
     });
   }
 
-  if(q) {
+  if(q && result.length > 0) {
     result = result.filter(item => 
-      String(item.caseId).toLowerCase().includes(q) ||
+      String(item.caseNo).toLowerCase().includes(q) ||
       String(item.caseType).toLowerCase().includes(q) ||
       String(item.nameDetails).toLowerCase().includes(q) ||
       String(item.owner).toLowerCase().includes(q) ||
@@ -736,7 +775,7 @@ function applySortOnOpFiltered() {
     return 0;
   });
   
-  ["caseId", "caseType", "nameDetails"].forEach(k => {
+  ["caseNo", "caseType", "nameDetails"].forEach(k => {
     const el = document.getElementById("arrow-" + k);
     if(el) el.textContent = k === key ? (dir === "asc" ? "↑" : "↓") : "↕";
   });
@@ -744,6 +783,7 @@ function applySortOnOpFiltered() {
   renderOpTable(viewOpData);
 }
 
+// 🎯 ปรับปรุงการแสดงสีกรอบสถานะตามข้อ 3: รองรับ CANCEL, FAIL และอื่นๆ ทั่วระบบ
 function renderOpTable(data) {
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0) {
@@ -751,18 +791,32 @@ function renderOpTable(data) {
     return;
   }
 
-  tbody.innerHTML = data.map((item, index) => `
-    <tr onclick="getOpRowClickData(${index})">
-      <td class="col-code">${item.caseId}</td>
-      <td class="col-type">${item.caseType}</td>
-      <td class="col-name">
-        <div class="customer-cell-flex">
-          <div class="customer-text-wrap">${item.nameDetails}</div>
-          <div class="modern-arrow-right">➔</div>
-        </div>
-      </td>
-    </tr>
-  `).join("");
+  tbody.innerHTML = data.map((item, index) => {
+    // แยกแยะสีกรณีครอบคลุมความปลอดภัยครบทุกมิติ
+    let dotClass = "dot-fail"; 
+    if (item.status === "SUCCESS") {
+      dotClass = "dot-success";
+    } else if (item.status === "IN PROGRESS") {
+      dotClass = "dot-progress";
+    } else if (item.status === "CANCEL") {
+      dotClass = "dot-cancel";
+    } else if (item.status === "FAIL") {
+      dotClass = "dot-fail";
+    }
+
+    return `
+      <tr onclick="getOpRowClickData(${index})">
+        <td class="col-code">${item.caseNo}</td>
+        <td class="col-type">${item.caseType}</td>
+        <td class="col-name">
+          <div class="customer-cell-flex">
+            <div class="customer-text-wrap">${item.nameDetails || "ไม่ระบุชื่อลูกค้า"}</div>
+            <div class="status-dot-indicator ${dotClass}"></div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
 }
 
 function getOpRowClickData(index) {
@@ -780,9 +834,10 @@ function updateResultCount(n) {
 function openTimelineModal(item) {
   const modal = document.getElementById("timelineModal");
   
-  document.getElementById("modalCustomerName").textContent = item.nameDetails;
-  document.getElementById("modalCaseName").textContent = `รหัสเคส: ${item.caseId} | หมวด: ${item.caseType} | Status: ${item.status}`;
-  document.getElementById("modalOwner").textContent = item.owner;
+  document.getElementById("modalCustomerName").textContent = item.nameDetails || "ไม่ระบุชื่อลูกค้า";
+  document.getElementById("modalCaseName").textContent = `รหัสเคส: ${item.caseNo} | หมวด: ${item.caseType} | Status: ${item.status}`;
+  document.getElementById("modalGoal").textContent = `เป้าหมาย (GOAL): ${item.goal}`;
+  document.getElementById("modalOwner").textContent = item.owner || "ไม่ระบุชื่อ";
   document.getElementById("modalCaseAge").textContent = `Age: ${item.ageDays}d`;
 
   const timelineContent = document.getElementById("modalTimelineContent");
