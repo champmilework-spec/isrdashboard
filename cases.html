@@ -26,7 +26,7 @@ body{
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 10px 12px 20px; 
   position: relative;
@@ -242,7 +242,7 @@ body{
 }
 
 /* =========================
-   🎯 TABLE CONFIGURATION
+   TABLE CONFIGURATION
 ========================= */
 .table-wrap {
   width: 100%;
@@ -281,9 +281,23 @@ tbody td {
   vertical-align: top;
 }
 
+/* Mobile default: keep current good mobile layout */
 .col-code { width: 26%; font-weight: 600; letter-spacing: -0.2px; }
 .col-type { width: 24%; }
 .col-name { width: 50%; }
+
+/* Desktop: case_no and CaseType are short, so give CustomerName more room */
+@media(min-width: 768px) {
+  .col-code { width: 14%; }
+  .col-type { width: 18%; }
+  .col-name { width: 68%; }
+
+  thead th,
+  tbody td {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
 
 .customer-cell-flex {
   display: flex;
@@ -296,7 +310,6 @@ tbody td {
   word-break: break-word;
 }
 
-/* 🎯 วงกลมแสดงสถานะ (ขยายเพิ่มสีแดงและดำสำหรับ CANCEL, FAIL) */
 .status-dot-indicator {
   width: 10px;
   height: 10px;
@@ -314,11 +327,11 @@ tbody td {
   box-shadow: 0 0 6px #eab308;
 }
 .status-dot-indicator.dot-cancel {
-  background-color: #f87171; /* แดง */
+  background-color: #f87171;
   box-shadow: 0 0 6px #f87171;
 }
 .status-dot-indicator.dot-fail {
-  background-color: #334155; /* ดำ / เทาเข้ม */
+  background-color: #334155;
   box-shadow: 0 0 6px #334155;
 }
 
@@ -588,7 +601,6 @@ function loadLayoutTemplates() {
 
 loadLayoutTemplates();
 
-// 🚀 FETCH DATA DIRECTLY FROM SUPABASE
 fetch(`${SUPABASE_BASE_URL}?select=*`, {
   method: "GET",
   headers: {
@@ -707,7 +719,6 @@ function updateChipStyles(){
   });
 }
 
-// 🎯 ปรับปรุง LOGIC การฟิลเตอร์ตามข้อ 1 และข้อ 2 ของคุณ
 function applyOpFilters() {
   const q = document.getElementById("searchBox").value.toLowerCase().trim();
   const activeTypes = OP_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
@@ -717,7 +728,6 @@ function applyOpFilters() {
 
   let result = globalOpData;
 
-  // 🎯 เงื่อนไขข้อ 1 & 2: ถ้าติ๊กเลือกอันใดอันหนึ่งให้กรองตามนั้น แต่ถ้าไม่ติ๊กเลยทั้งคู่ ให้ปล่อยผ่านแสดงทั้งหมด (ไม่กรองออก)
   if (chkSuccess || chkProgress) {
     result = result.filter(item => {
       if (chkSuccess && item.status === "SUCCESS") return true;
@@ -783,7 +793,6 @@ function applySortOnOpFiltered() {
   renderOpTable(viewOpData);
 }
 
-// 🎯 ปรับปรุงการแสดงสีกรอบสถานะตามข้อ 3: รองรับ CANCEL, FAIL และอื่นๆ ทั่วระบบ
 function renderOpTable(data) {
   const tbody = document.getElementById("table-body");
   if(!data || data.length === 0) {
@@ -792,7 +801,6 @@ function renderOpTable(data) {
   }
 
   tbody.innerHTML = data.map((item, index) => {
-    // แยกแยะสีกรณีครอบคลุมความปลอดภัยครบทุกมิติ
     let dotClass = "dot-fail"; 
     if (item.status === "SUCCESS") {
       dotClass = "dot-success";
