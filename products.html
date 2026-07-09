@@ -619,7 +619,8 @@ let rawData = [];
 let viewData = [];
 let currentPage = 1;
 let isPrintMode = false;
-let hasFetchedNoPicture = false; // ตัวแปรควบคุมสเตตัส Lazy Loading ตัวไม่มีรูป
+let hasFetchedNoPicture = false; 
+let detectedImageColumn = null; // คอลัมน์ที่ตรวจจับได้จริงใน DB เพื่อป้องกัน Error 400
 
 function escapeHTML(value) {
   return String(value ?? "")
@@ -692,19 +693,55 @@ function saveCacheData(db, data) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE_NAME, "readwrite");
     const store = transaction.objectStore(STORE_NAME);
-    store.clear().onsuccess = () => {
+    
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+    
+    const clearRequest = store.clear();
+    clearRequest.onsuccess = () => {
       data.forEach((item) => {
-        // ล้างฟิลด์อัตโนมัติของ IndexedDB ตัวเก่าทิ้งก่อนบันทึกซ้ำเพื่อไม่ให้ชนกันเอง
-        if (item.hasOwnProperty("id")) delete item.id;
-        store.add(item);
+        const itemCopy = { ...item };
+        if (itemCopy.hasOwnProperty("id")) delete itemCopy.id;
+        store.add(itemCopy);
       });
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
     };
   });
 }
 
-// 🚀 ฟังก์ชันหลักในการดึงข้อมูลจาก Cloud แบ่งโหมดตามคำสั่งเพื่อเร่งความเร็วหน้าเว็บ
+// ฟังก์ชันตรวจจับคอลัมน์ของรูปภาพที่แท้จริงจากโครงสร้างฐานข้อมูล
+async function detectImageColumnName() {
+  if (detectedImageColumn) return detectedImageColumn;
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&limit=1`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const row = data[0];
+        const fields = ["picture", "image", "image_link01", "ImageURL"];
+        for (const f of fields) {
+          if (f in row) {
+            detectedImageColumn = f;
+            return f;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Error detecting image column:", e);
+  }
+  detectedImageColumn = "picture"; // ค่าเริ่มต้นกรณีตรวจไม่เจอ
+  return detectedImageColumn;
+}
+
+// ฟังก์ชันดึงข้อมูลจาก Cloud แบ่งโหมดเพื่อทำ Lazy Loading และลดภาระเซิร์ฟเวอร์ตามสั่ง
 async function fetchProductsFromServer(mode = "with_picture") {
   const statusText = document.getElementById("statusText");
   const syncBtn = document.getElementById("manualSyncBtn");
@@ -713,24 +750,24 @@ async function fetchProductsFromServer(mode = "with_picture") {
     const pageSize = 500;
     
     if (mode === "with_picture") {
-      rawData = []; // ล้างอาเรย์เริ่มต้นใหม่สำหรับการดึงสินค้าที่มีรูปแบบ Clean
+      rawData = []; 
     }
     
     if (syncBtn) syncBtn.style.display = "none";
     if (statusText) {
       statusText.style.color = "#ff9500";
-      statusText.textContent = mode === "with_picture" ? "Downloading items with pictures..." : "Downloading remaining items...";
+      statusText.textContent = mode === "with_picture" ? "กำลังดาวน์โหลดสินค้าที่มีรูปภาพ..." : "กำลังโหลดสินค้าที่ไม่มีรูปเพิ่มเติม...";
     }
 
     const orderParam = encodeURIComponent("code.asc");
+    const imgCol = await detectImageColumnName();
 
     while (true) {
-      // ทำ Filter ระดับ Server-side เพื่อลดภาระและ Bandwidth เครือข่าย
       let filterParam = "";
       if (mode === "with_picture") {
-        filterParam = "&picture=not.is.null&picture=not.eq.-&picture=not.eq.";
+        filterParam = `&${imgCol}=not.is.null&${imgCol}=not.eq.-&${imgCol}=not.eq.`;
       } else {
-        filterParam = "&or=(picture.is.null,picture.eq.-,picture.eq.)";
+        filterParam = `&or=(${imgCol}.is.null,${imgCol}.eq.-,${imgCol}.eq.)`;
       }
 
       const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&limit=${pageSize}&offset=${offset}${filterParam}`;      
@@ -750,7 +787,7 @@ async function fetchProductsFromServer(mode = "with_picture") {
       offset += pageSize;
       
       if (statusText) {
-        statusText.textContent = `Cloud Downloading: ${rawData.length.toLocaleString()} items...`;
+        statusText.textContent = `Cloud Downloading: ${rawData.length.toLocaleString()} รายการ...`;
       }
       
       applyAll();
@@ -768,7 +805,7 @@ async function fetchProductsFromServer(mode = "with_picture") {
     
     if (statusText) {
       statusText.style.color = "#34c759";
-      statusText.textContent = `Sync Complete (${rawData.length.toLocaleString()} items)`;
+      statusText.textContent = `Sync Complete (${rawData.length.toLocaleString()} รายการ)`;
     }
     if (syncBtn) syncBtn.style.display = "inline-block";
   } catch (error) {
@@ -776,14 +813,13 @@ async function fetchProductsFromServer(mode = "with_picture") {
     if (statusText) {
       statusText.style.color = rawData.length ? "#34c759" : "#ff3b30";
       statusText.textContent = rawData.length
-        ? `Partial data loaded (${rawData.length.toLocaleString()} items). Click Sync Latest again.`
+        ? `Partial data loaded (${rawData.length.toLocaleString()} รายการ) กด Sync เพื่อลองใหม่`
         : "Cannot load product data";
     }
     if (syncBtn) syncBtn.style.display = "inline-block";
   }
 }
 
-// เช็คข้อมูลและบริหารจัดการคลังสินค้าฝั่งเครื่อง Client ลำดับแรกสุด
 async function loadInitialData() {
   const statusText = document.getElementById("statusText");
   const syncBtn = document.getElementById("manualSyncBtn");
@@ -792,20 +828,22 @@ async function loadInitialData() {
     rawData = await getCachedData(db);
     
     if (rawData.length > 0) {
-      // ตรวจหาว่าใน Cache เดิมเคยบันทึกกลุ่มสินค้าที่ไม่มีรูปภาพไว้แล้วหรือไม่
-      const containsNoPic = rawData.some(item => !productImageUrl(item));
+      const imgCol = await detectImageColumnName();
+      const containsNoPic = rawData.some(item => {
+        const val = String(item[imgCol] || "").trim();
+        return !val || val === "-";
+      });
       if (containsNoPic) {
         hasFetchedNoPicture = true;
       }
       
       if (statusText) {
         statusText.style.color = "#34c759";
-        statusText.textContent = `Loaded from Cache (${rawData.length.toLocaleString()} items)`;
+        statusText.textContent = `Loaded from Cache (${rawData.length.toLocaleString()} รายการ)`;
       }
       if (syncBtn) syncBtn.style.display = "inline-block";
       applyAll();
     } else {
-      // ถ้าไม่มี Cache ให้ดึงเฉพาะตัวมีรูปก่อนเพื่อความรวดเร็วและประหยัด Resource
       await fetchProductsFromServer("with_picture");
     }
   } catch (error) {
@@ -962,7 +1000,7 @@ window.addEventListener("DOMContentLoaded", () => {
     applyAll();
   });
   
-  // จุดประมวลผลขยับนิ้วกดปิดการซ่อนภาพ -> วิ่งไปเรียกดึงชุดสินค้าที่เหลือมาอัปเดตต่อทันที
+  // จัดการ Event เมื่อ User กดติ๊กออกเพื่อขอดูตัวไม่มีภาพ -> ยิงคิวรี่ไปดึงส่วนที่เหลือทันที
   document.getElementById("hideNoPicture").addEventListener("change", async () => {
     const hideNoPicture = document.getElementById("hideNoPicture").checked;
     currentPage = 1;
