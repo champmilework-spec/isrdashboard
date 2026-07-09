@@ -699,33 +699,48 @@ function saveCacheData(db, data) {
   });
 }
 
-async function loadProducts() {
-  const statusText = document.getElementById("statusText");
-  const syncBtn = document.getElementById("manualSyncBtn");
+// ประกาศคีย์สำหรับดึงข้อมูลตรง (ใส่ URL และ ANON_KEY ของโปรเจกต์นี้)
+const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
+const TABLE_NAME = "products"; // เปลี่ยนเป็นชื่อตารางของเว็บนี้ (ถ้าบนระบบชื่อตารางอื่นให้เปลี่ยนตรงนี้)
 
+async function loadProducts(){
   try {
-    const db = await initDB();
-    const cache = await getCachedData(db);
-    if (cache && cache.length >= MIN_EXPECTED_ITEMS) {
-      rawData = cache;
-      statusText.textContent = `Sync Complete (${rawData.length.toLocaleString()} items)`;
-      syncBtn.style.display = "inline-block";
-      applyAll();
-      return;
+    // เปลี่ยนมาใช้การยิงตรงพร้อมเรียงลำดับด้วย Primary Key (PK) อย่าง 'Item_Code'
+    const orderParam = encodeURIComponent("Item_Code.asc");
+    const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
     }
 
-    if (cache && cache.length > 0) {
-      rawData = cache;
-      statusText.textContent = `Refreshing partial cache (${rawData.length.toLocaleString()} items)...`;
-      applyAll();
-    }
-  } catch (error) {
-    console.error(error);
+    rawProducts = await response.json();
+
+    /* =========================
+       FILTER DISCONTINUED
+    ========================= */
+    filtered = rawProducts.filter(p => {
+      const status = String(p.StockStatus || "").trim().toLowerCase();
+      return status !== "discontinued";
+    });
+
+    processAndRender();
+
+  } catch(e) {
+    console.error("Fetch Error:", e);
+    document.getElementById("product-grid").innerHTML =
+      `<div class="loading">Failed to secure product master data. (${e.message})</div>`;
   }
-
-  await fetchProductsFromServer();
 }
-
 async function fetchProductsFromServer() {
   const statusText = document.getElementById("statusText");
   const syncBtn = document.getElementById("manualSyncBtn");
