@@ -737,7 +737,7 @@ async function fetchProductsFromServer() {
     if (statusText) statusText.style.color = "#ff9500";
 
     while (true) {
-      // แก้ไขจุดนี้: เปลี่ยนจาก .asc.nullslast เป็น .asc เพื่อแก้ปัญหา Error 400 บนเซิร์ฟเวอร์จริง
+      // ✅ แก้ไขปัญหาตรงนี้: ปรับโครงสร้างพารามิเตอร์ order เป็นมาตรฐาน เพื่อรองรับ Production Gateway ป้องกัน Error 400
       const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=id.asc,code.asc&limit=${pageSize}&offset=${offset}`;
       
       const response = await fetch(url, {
@@ -780,6 +780,7 @@ async function fetchProductsFromServer() {
     if (syncBtn) syncBtn.style.display = "inline-block";
   }
 }
+
 async function forceRefreshData() {
   try {
     const db = await initDB();
