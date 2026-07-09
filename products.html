@@ -737,8 +737,9 @@ async function fetchProductsFromServer() {
     if (statusText) statusText.style.color = "#ff9500";
 
     while (true) {
-      // ✅ แก้ไขปัญหาตรงนี้: ปรับโครงสร้างพารามิเตอร์ order เป็นมาตรฐาน เพื่อรองรับ Production Gateway ป้องกัน Error 400
-      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=id.asc,code.asc&limit=${pageSize}&offset=${offset}`;
+      // ✅ ปรับ Syntax และครอบด้วย encodeURIComponent เพื่อแก้ Error 400 บน GitHub Pages เรียบร้อยครับ
+      const orderParam = encodeURIComponent("id.asc");
+      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&limit=${pageSize}&offset=${offset}`;
       
       const response = await fetch(url, {
         method: "GET",
