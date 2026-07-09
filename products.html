@@ -738,9 +738,8 @@ async function fetchProductsFromServer() {
 
     while (true) {
       // ✅ ปรับ Syntax และครอบด้วย encodeURIComponent เพื่อแก้ Error 400 บน GitHub Pages เรียบร้อยครับ
-      const orderParam = encodeURIComponent("id.asc");
-      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&limit=${pageSize}&offset=${offset}`;
-      
+const orderParam = encodeURIComponent("code.asc"); //  แก้ไขเรียงตามคอลัมน์ code แทน
+const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&limit=${pageSize}&offset=${offset}`;      
       const response = await fetch(url, {
         method: "GET",
         headers: {
