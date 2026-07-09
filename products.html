@@ -619,6 +619,7 @@ let rawData = [];
 let viewData = [];
 let currentPage = 1;
 let isPrintMode = false;
+let hasFetchedNoPicture = false; // ตัวแปรควบคุมสเตตัส Lazy Loading ตัวไม่มีรูป
 
 function escapeHTML(value) {
   return String(value ?? "")
@@ -692,69 +693,47 @@ function saveCacheData(db, data) {
     const transaction = db.transaction(STORE_NAME, "readwrite");
     const store = transaction.objectStore(STORE_NAME);
     store.clear().onsuccess = () => {
-      data.forEach((item) => store.add(item));
+      data.forEach((item) => {
+        // ล้างฟิลด์อัตโนมัติของ IndexedDB ตัวเก่าทิ้งก่อนบันทึกซ้ำเพื่อไม่ให้ชนกันเอง
+        if (item.hasOwnProperty("id")) delete item.id;
+        store.add(item);
+      });
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
     };
   });
 }
 
-// ประกาศคีย์สำหรับดึงข้อมูลตรง (ใส่ URL และ ANON_KEY ของโปรเจกต์นี้)
-const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
-const TABLE_NAME = "products"; // เปลี่ยนเป็นชื่อตารางของเว็บนี้ (ถ้าบนระบบชื่อตารางอื่นให้เปลี่ยนตรงนี้)
-
-async function loadProducts(){
-  try {
-    // เปลี่ยนมาใช้การยิงตรงพร้อมเรียงลำดับด้วย Primary Key (PK) อย่าง 'Item_Code'
-    const orderParam = encodeURIComponent("Item_Code.asc");
-    const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}`;
-
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-        "Content-Type": "application/json"
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP Error! Status: ${response.status}`);
-    }
-
-    rawProducts = await response.json();
-
-    /* =========================
-       FILTER DISCONTINUED
-    ========================= */
-    filtered = rawProducts.filter(p => {
-      const status = String(p.StockStatus || "").trim().toLowerCase();
-      return status !== "discontinued";
-    });
-
-    processAndRender();
-
-  } catch(e) {
-    console.error("Fetch Error:", e);
-    document.getElementById("product-grid").innerHTML =
-      `<div class="loading">Failed to secure product master data. (${e.message})</div>`;
-  }
-}
-async function fetchProductsFromServer() {
+// 🚀 ฟังก์ชันหลักในการดึงข้อมูลจาก Cloud แบ่งโหมดตามคำสั่งเพื่อเร่งความเร็วหน้าเว็บ
+async function fetchProductsFromServer(mode = "with_picture") {
   const statusText = document.getElementById("statusText");
   const syncBtn = document.getElementById("manualSyncBtn");
   try {
     let offset = 0;
     const pageSize = 500;
-    rawData = [];
+    
+    if (mode === "with_picture") {
+      rawData = []; // ล้างอาเรย์เริ่มต้นใหม่สำหรับการดึงสินค้าที่มีรูปแบบ Clean
+    }
+    
     if (syncBtn) syncBtn.style.display = "none";
-    if (statusText) statusText.style.color = "#ff9500";
+    if (statusText) {
+      statusText.style.color = "#ff9500";
+      statusText.textContent = mode === "with_picture" ? "Downloading items with pictures..." : "Downloading remaining items...";
+    }
+
+    const orderParam = encodeURIComponent("code.asc");
 
     while (true) {
-      // ✅ ปรับ Syntax และครอบด้วย encodeURIComponent เพื่อแก้ Error 400 บน GitHub Pages เรียบร้อยครับ
-const orderParam = encodeURIComponent("code.asc"); //  แก้ไขเรียงตามคอลัมน์ code แทน
-const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&limit=${pageSize}&offset=${offset}`;      
+      // ทำ Filter ระดับ Server-side เพื่อลดภาระและ Bandwidth เครือข่าย
+      let filterParam = "";
+      if (mode === "with_picture") {
+        filterParam = "&picture=not.is.null&picture=not.eq.-&picture=not.eq.";
+      } else {
+        filterParam = "&or=(picture.is.null,picture.eq.-,picture.eq.)";
+      }
+
+      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&limit=${pageSize}&offset=${offset}${filterParam}`;      
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -769,16 +748,24 @@ const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&
       const chunk = await response.json();
       rawData = rawData.concat(chunk);
       offset += pageSize;
-      if (statusText) statusText.textContent = `Cloud Downloading: ${rawData.length.toLocaleString()}...`;
       
-      if (typeof applyAll === "function") applyAll();
+      if (statusText) {
+        statusText.textContent = `Cloud Downloading: ${rawData.length.toLocaleString()} items...`;
+      }
+      
+      applyAll();
 
       if (chunk.length < pageSize) break;
       await new Promise((resolve) => setTimeout(resolve, 60));
     }
 
+    if (mode === "no_picture" || mode === "full") {
+      hasFetchedNoPicture = true;
+    }
+
     const db = await initDB();
     await saveCacheData(db, rawData);
+    
     if (statusText) {
       statusText.style.color = "#34c759";
       statusText.textContent = `Sync Complete (${rawData.length.toLocaleString()} items)`;
@@ -796,15 +783,52 @@ const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=${orderParam}&
   }
 }
 
+// เช็คข้อมูลและบริหารจัดการคลังสินค้าฝั่งเครื่อง Client ลำดับแรกสุด
+async function loadInitialData() {
+  const statusText = document.getElementById("statusText");
+  const syncBtn = document.getElementById("manualSyncBtn");
+  try {
+    const db = await initDB();
+    rawData = await getCachedData(db);
+    
+    if (rawData.length > 0) {
+      // ตรวจหาว่าใน Cache เดิมเคยบันทึกกลุ่มสินค้าที่ไม่มีรูปภาพไว้แล้วหรือไม่
+      const containsNoPic = rawData.some(item => !productImageUrl(item));
+      if (containsNoPic) {
+        hasFetchedNoPicture = true;
+      }
+      
+      if (statusText) {
+        statusText.style.color = "#34c759";
+        statusText.textContent = `Loaded from Cache (${rawData.length.toLocaleString()} items)`;
+      }
+      if (syncBtn) syncBtn.style.display = "inline-block";
+      applyAll();
+    } else {
+      // ถ้าไม่มี Cache ให้ดึงเฉพาะตัวมีรูปก่อนเพื่อความรวดเร็วและประหยัด Resource
+      await fetchProductsFromServer("with_picture");
+    }
+  } catch (error) {
+    console.error("Cache system failure, falling back to server...", error);
+    await fetchProductsFromServer("with_picture");
+  }
+}
+
 async function forceRefreshData() {
   try {
     const db = await initDB();
     const transaction = db.transaction(STORE_NAME, "readwrite");
     transaction.objectStore(STORE_NAME).clear();
+    hasFetchedNoPicture = false;
   } catch (error) {
     console.error(error);
   }
-  await fetchProductsFromServer();
+  
+  const hideNoPicture = document.getElementById("hideNoPicture").checked;
+  await fetchProductsFromServer("with_picture");
+  if (!hideNoPicture) {
+    await fetchProductsFromServer("no_picture");
+  }
 }
 
 function applyAll() {
@@ -937,10 +961,18 @@ window.addEventListener("DOMContentLoaded", () => {
     currentPage = 1;
     applyAll();
   });
-  document.getElementById("hideNoPicture").addEventListener("change", () => {
+  
+  // จุดประมวลผลขยับนิ้วกดปิดการซ่อนภาพ -> วิ่งไปเรียกดึงชุดสินค้าที่เหลือมาอัปเดตต่อทันที
+  document.getElementById("hideNoPicture").addEventListener("change", async () => {
+    const hideNoPicture = document.getElementById("hideNoPicture").checked;
     currentPage = 1;
-    applyAll();
+    if (!hideNoPicture && !hasFetchedNoPicture) {
+      await fetchProductsFromServer("no_picture");
+    } else {
+      applyAll();
+    }
   });
+
   document.getElementById("manualSyncBtn").addEventListener("click", forceRefreshData);
   document.getElementById("printCatalogBtn").addEventListener("click", () => {
     isPrintMode = true;
@@ -957,7 +989,7 @@ window.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  loadProducts();
+  loadInitialData();
 });
 
 window.addEventListener("beforeprint", () => {
