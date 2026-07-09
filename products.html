@@ -733,11 +733,13 @@ async function fetchProductsFromServer() {
     let offset = 0;
     const pageSize = 500;
     rawData = [];
-    syncBtn.style.display = "none";
-    statusText.style.color = "#ff9500";
+    if (syncBtn) syncBtn.style.display = "none";
+    if (statusText) statusText.style.color = "#ff9500";
 
     while (true) {
-      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=id.asc.nullslast,code.asc.nullslast&limit=${pageSize}&offset=${offset}`;
+      // แก้ไขจุดนี้: เปลี่ยนจาก .asc.nullslast เป็น .asc เพื่อแก้ปัญหา Error 400 บนเซิร์ฟเวอร์จริง
+      const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&order=id.asc,code.asc&limit=${pageSize}&offset=${offset}`;
+      
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -752,8 +754,9 @@ async function fetchProductsFromServer() {
       const chunk = await response.json();
       rawData = rawData.concat(chunk);
       offset += pageSize;
-      statusText.textContent = `Cloud Downloading: ${rawData.length.toLocaleString()}...`;
-      applyAll();
+      if (statusText) statusText.textContent = `Cloud Downloading: ${rawData.length.toLocaleString()}...`;
+      
+      if (typeof applyAll === "function") applyAll();
 
       if (chunk.length < pageSize) break;
       await new Promise((resolve) => setTimeout(resolve, 60));
@@ -761,19 +764,22 @@ async function fetchProductsFromServer() {
 
     const db = await initDB();
     await saveCacheData(db, rawData);
-    statusText.style.color = "#34c759";
-    statusText.textContent = `Sync Complete (${rawData.length.toLocaleString()} items)`;
-    syncBtn.style.display = "inline-block";
+    if (statusText) {
+      statusText.style.color = "#34c759";
+      statusText.textContent = `Sync Complete (${rawData.length.toLocaleString()} items)`;
+    }
+    if (syncBtn) syncBtn.style.display = "inline-block";
   } catch (error) {
     console.error(error);
-    statusText.style.color = rawData.length ? "#34c759" : "#ff3b30";
-    statusText.textContent = rawData.length
-      ? `Partial data loaded (${rawData.length.toLocaleString()} items). Click Sync Latest again.`
-      : "Cannot load product data";
-    syncBtn.style.display = "inline-block";
+    if (statusText) {
+      statusText.style.color = rawData.length ? "#34c759" : "#ff3b30";
+      statusText.textContent = rawData.length
+        ? `Partial data loaded (${rawData.length.toLocaleString()} items). Click Sync Latest again.`
+        : "Cannot load product data";
+    }
+    if (syncBtn) syncBtn.style.display = "inline-block";
   }
 }
-
 async function forceRefreshData() {
   try {
     const db = await initDB();
