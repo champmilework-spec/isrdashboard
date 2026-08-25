@@ -60,6 +60,11 @@ body {
   cursor: pointer;
   user-select: none;
 }
+.options-bar { display: flex; align-items: center; gap: 12px; }
+.btn-help-icon {
+  width: 22px; height: 22px; padding: 0; border: 1px solid #0071e3;
+  border-radius: 50%; background: #fff; color: #0071e3; font-weight: 700; cursor: pointer;
+}
 
 /* Apple Styled Checkbox */
 input[type="checkbox"] {
@@ -257,6 +262,7 @@ tbody td {
   vertical-align: middle;
 }
 tbody tr:hover { background: #f5f5f7; }
+tbody tr.row-selected { background: #e8f0fe; }
 
 .col-code { width: 90px; white-space: nowrap; }
 .col-code-inner {
@@ -459,6 +465,7 @@ tbody tr:hover { background: #f5f5f7; }
   background: rgba(0, 0, 0, 0.85); color: #fff; padding: 8px 16px;
   border-radius: 20px; font-size: 12px; font-weight: 500; z-index: 10000; display: none;
 }
+.help-list { margin: 0; padding-left: 20px; color: #515154; font-size: 13px; line-height: 1.7; }
 </style>
 </head>
 <body>
@@ -468,9 +475,11 @@ tbody tr:hover { background: #f5f5f7; }
 <div class="container">
   <div class="breadcrumb-row">
     <div class="breadcrumb"><a href="index.html">HOME</a> / INVENTORY</div>
-    <label class="hide-zero-wrap">
-      <input type="checkbox" id="hideZero" checked /> Hide 0 / –
-    </label>
+    <div class="options-bar">
+      <label class="hide-zero-wrap"><input type="checkbox" id="hideZero" checked /> Hide 0 / –</label>
+      <label class="hide-zero-wrap"><input type="checkbox" id="showOnlySelected" /> Show PK (<span id="selectedCount">0</span>)</label>
+      <button class="btn-help-icon" type="button" aria-label="Selection help" onclick="openModal('helpModal')">?</button>
+    </div>
   </div>
 
   <div class="control-bar">
@@ -530,7 +539,7 @@ tbody tr:hover { background: #f5f5f7; }
     <div class="result-count" id="result-count"></div>
   </div>
 
-  <div class="table-wrap">
+  <div class="table-wrap" id="tableWrapContainer">
     <table>
       <thead>
         <tr>
@@ -575,7 +584,19 @@ tbody tr:hover { background: #f5f5f7; }
   </div>
 </div>
 
-<div id="copyToast" class="copy-toast">📋 คัดลอกเรียบร้อย!</div>
+<div class="custom-modal" id="helpModal">
+  <div class="modal-content">
+    <button class="modal-close-btn" onclick="closeModal('helpModal')">✕</button>
+    <div class="modal-title">วิธีใช้การเลือกสินค้า</div>
+    <ul class="help-list">
+      <li>คลิกหนึ่งครั้งที่แถวเพื่อเลือก/ยกเลิกเลือก และคัดลอกข้อมูลแถวนั้น</li>
+      <li>เปิด Show PK เพื่อแสดงเฉพาะรายการที่เลือก</li>
+      <li>ดับเบิลคลิกในตารางเพื่อล้างรายการที่เลือกทั้งหมด</li>
+    </ul>
+  </div>
+</div>
+
+<div id="toast" class="copy-toast" role="status" aria-live="polite"></div>
 
 <script>
 const SUPABASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co";
@@ -585,6 +606,9 @@ const TABLE_NAME = "itemmaster";
 const DB_NAME = "SuperpartDB";
 const DB_VERSION = 1;
 const STORE_NAME = "inventory";
+const CACHE_TIMESTAMP_KEY = "inventoryCacheTimestamp";
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+const STRING_COLUMNS = ["glocat", "stockstatus", "grdatemax"];
 
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
@@ -608,6 +632,34 @@ let sortState    = { key: null, dir: "asc" };
 let currentDynamicColumn = "Onhand_All"; 
 let activeSelectedModalText = ""; 
 let currentStickerData = {};
+const selectedItemCodes = new Set();
+let toastTimer;
+
+const $ = id => document.getElementById(id);
+const getItemCode = item => String(item.Item_Code ?? item.gbarcode ?? item.code ?? "");
+const isStringColumn = field => STRING_COLUMNS.includes(String(field).toLowerCase());
+const formatValue = value => {
+  if (isStringColumn(currentDynamicColumn) || isNaN(parseFloat(value))) return value ?? "-";
+  return parseFloat(value).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+};
+const escapeHTML = value => String(value ?? "-").replace(/[&<>\"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;", "'": "&#39;" })[char]);
+const escapeRegExp = value => value.replace(/[|\\{}()[\]^$+*?.-]/g, "\\$&");
+const highlight = value => {
+  const text = escapeHTML(value), query = $("searchBox").value.trim();
+  return query ? text.replace(new RegExp(`(${escapeRegExp(query)})`, "gi"), "<mark>$1</mark>") : text;
+};
+function showToast(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.style.display = "none", 1500);
+}
+async function copyText(text, message = "Copied to clipboard") {
+  try { await navigator.clipboard.writeText(text); showToast(message); }
+  catch (error) { console.error("Clipboard error", error); showToast("Copy failed"); }
+}
+function updateSelectedCount() { $("selectedCount").textContent = selectedItemCodes.size; }
 
 function initDB() {
   return new Promise((resolve, reject) => {
@@ -653,7 +705,8 @@ async function loadTable() {
     const db = await initDB();
     const cache = await getCachedData(db);
 
-    if (cache && cache.length > 0) {
+    const cacheIsFresh = Date.now() - Number(localStorage.getItem(CACHE_TIMESTAMP_KEY) || 0) < CACHE_TTL;
+    if (cacheIsFresh && cache?.length) {
       rawData = cache;
       statusText.textContent = `✅ Sync Complete (${rawData.length.toLocaleString()} items)`;
       statusText.style.color = "#34c759";
@@ -674,7 +727,7 @@ async function streamDataFromServer() {
   const syncBtn = document.getElementById("manualSyncBtn");
   try {
     let offset = 0;
-    const pageSize = 500; 
+    const pageSize = 1000;
     let keepFetching = true;
     rawData = [];
 
@@ -710,6 +763,7 @@ async function streamDataFromServer() {
 
     const db = await initDB();
     await saveCacheData(db, rawData);
+    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
 
     statusText.textContent = `✅ Sync Complete (${rawData.length.toLocaleString()} items)`;
     statusText.style.color = "#34c759";
@@ -728,12 +782,14 @@ async function forceRefreshData() {
     const transaction = db.transaction(STORE_NAME, "readwrite");
     transaction.objectStore(STORE_NAME).clear();
   } catch(e) { console.error(e); }
+  localStorage.removeItem(CACHE_TIMESTAMP_KEY);
   streamDataFromServer();
 }
 
 function applyAll(){
   const q         = document.getElementById("searchBox").value.toLowerCase().trim();
   const hideZero  = document.getElementById("hideZero").checked;
+  const showOnlySelected = document.getElementById("showOnlySelected").checked;
   const selectedBrand = document.getElementById("brandSelector").value.toLowerCase().trim();
 
   const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
@@ -782,6 +838,8 @@ function applyAll(){
     });
   }
 
+  if (showOnlySelected) result = result.filter(i => selectedItemCodes.has(getItemCode(i)));
+
   filteredData = result;
 
   if (sortState.key) {
@@ -808,7 +866,7 @@ function applySortLogic() {
   const { key, dir } = sortState;
   let targetField = key === "dynamic" ? currentDynamicColumn : key;
 
-  let isStringOnly = ["glocat", "stockstatus", "grdatemax"].includes(targetField.toLowerCase());
+  let isStringOnly = isStringColumn(targetField);
 
   viewData = [...filteredData].sort((a, b) => {
     let v1 = a[targetField] ?? "";
@@ -848,29 +906,23 @@ function renderTable(data){
   }
   
   tbody.innerHTML = data.map((p, index) => {
-    let rawVal = p[currentDynamicColumn] ?? "-";
-    let formattedVal = rawVal;
-        
-    let isStringOnly = ["glocat", "stockstatus", "grdatemax"].includes(currentDynamicColumn.toLowerCase());
-        
-    if (!isStringOnly && !isNaN(parseFloat(rawVal))) {
-      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
-    }
+    const code = getItemCode(p);
+    const formattedVal = formatValue(p[currentDynamicColumn]);
 
     return `
-      <tr onclick="openInfoModal(${index})">
+      <tr data-index="${index}" class="${selectedItemCodes.has(code) ? "row-selected" : ""}">
         <td class="col-code">
           <div class="col-code-inner">
-            <span>${p.gbarcode || "-"}</span>
-            <div class="barcode-scan-icon" onclick="triggerBarcodeGenerator(${index}, event)" title="Gen Barcode">
+            <span>${highlight(p.gbarcode)}</span>
+            <div class="barcode-scan-icon btn-barcode-trigger" data-barcode-index="${index}" title="Gen Barcode">
               <svg viewBox="0 0 24 24">
                 <path d="M3 4h2v16H3V4zm4 0h1v16H7V4zm3 0h3v16h-3V4zm5 0h2v16h-2V4zm4 0h2v16h-2V4z"/>
               </svg>
             </div>
           </div>
         </td>
-        <td class="col-desc">${p.name || "-"}</td>
-        <td class="col-dynamic">${formattedVal}</td>
+        <td class="col-desc">${highlight(p.name)}</td>
+        <td class="col-dynamic">${highlight(formattedVal)}</td>
       </tr>
     `;
   }).join("");
@@ -942,14 +994,7 @@ function openInfoModal(index) {
   const item = viewData[index];
   if(!item) return;
 
-  let rawVal = item[currentDynamicColumn] ?? "-";
-  let formattedVal = rawVal;
-  
-  let isStringOnly = ["glocat", "stockstatus", "grdatemax"].includes(currentDynamicColumn.toLowerCase());
-  
-  if (!isStringOnly && !isNaN(parseFloat(rawVal))) {
-    formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
-  }
+  const formattedVal = formatValue(item[currentDynamicColumn]);
 
   activeSelectedModalText = `${item.gbarcode || "-"}  ${item.name || "-"}  ${formattedVal}`;
 
@@ -1012,19 +1057,11 @@ function openInfoModal(index) {
 
 function copySpecificCode(text, event) {
   if (event) event.stopPropagation();
-  navigator.clipboard.writeText(text).then(() => {
-    const toast = document.getElementById("copyToast");
-    toast.style.display = "block";
-    setTimeout(() => { toast.style.display = "none"; }, 1500);
-  });
+  copyText(text);
 }
 
 function copyCurrentModalText() {
-  navigator.clipboard.writeText(activeSelectedModalText).then(() => {
-    const toast = document.getElementById("copyToast");
-    toast.style.display = "block";
-    setTimeout(() => { toast.style.display = "none"; }, 1500);
-  });
+  copyText(activeSelectedModalText);
 }
 
 function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -1054,7 +1091,33 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("searchBox").addEventListener("input", applyAll);
   document.getElementById("hideZero").addEventListener("change", applyAll);
+  document.getElementById("showOnlySelected").addEventListener("change", applyAll);
   document.getElementById("brandSelector").addEventListener("change", applyAll);
+
+  const tableWrap = $("tableWrapContainer");
+  tableWrap.addEventListener("click", event => {
+    if (event.target.closest(".btn-barcode-trigger")) {
+      const index = Number(event.target.closest(".btn-barcode-trigger").dataset.barcodeIndex);
+      triggerBarcodeGenerator(index, event);
+      return;
+    }
+    const row = event.target.closest("tbody tr[data-index]");
+    if (!row) return;
+    const item = viewData[Number(row.dataset.index)];
+    if (!item) return;
+    const code = getItemCode(item);
+    selectedItemCodes.has(code) ? selectedItemCodes.delete(code) : selectedItemCodes.add(code);
+    updateSelectedCount();
+    copyText(`${code}\t${item.name || "-"}\t${formatValue(item[currentDynamicColumn])}`);
+    applyAll();
+  });
+  tableWrap.addEventListener("dblclick", () => {
+    if (!selectedItemCodes.size) return;
+    selectedItemCodes.clear();
+    updateSelectedCount();
+    applyAll();
+    showToast("Cleared All Selections");
+  });
 
   const colSelector = document.getElementById("columnSelector");
   colSelector.addEventListener("change", (e) => {
