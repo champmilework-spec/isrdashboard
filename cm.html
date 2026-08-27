@@ -1,377 +1,998 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจัดการคลังสินค้า</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SUPERPART | CodeMatch Master (CM Only) - Brutal Secured</title>
+<style>
+/* ==========================================================================
+   1. BASE & MOBILE SPACE OPTIMIZATION
+   ========================================================================== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  color: #111;
+  padding-top: 60px;
+}
 
-  <!-- 🟢 Fast Auto-Login Pre-Check Script: ตรวจสอบ Token ล่วงหน้าเพื่อซ่อน Lock Screen ทันที -->
-  <script>
-    (function() {
-      const token = localStorage.getItem("app_auth_token");
-      const expiry = localStorage.getItem("app_auth_token_expiry");
-      if (token && expiry && Date.now() < parseInt(expiry, 10)) {
-        document.documentElement.classList.add("is-authenticated");
-      }
-    })();
-  </script>
+/* ==========================================================================
+   2. LAYOUT & CONTAINER SYSTEM
+   ========================================================================== */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  position: relative;
+  z-index: 1;
+}
 
-  <style>
-    /* Base Styles */
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f9;
-    }
+/* ==========================================================================
+   3. BREADCRUMB ROW & HEADERS
+   ========================================================================== */
+.breadcrumb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.breadcrumb {
+  font-size: 11px;
+  color: #777;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hide-zero-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
 
-    /* Lock Screen & Fast Cache States */
-    #lock-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #1e1e2d;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%; 
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: #fff;
+}
+input[type="checkbox"]:checked {
+  background-color: #2f5ea8;
+  border-color: #2f5ea8;
+}
+input[type="checkbox"]:checked::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background-color: #fff;
+  border-radius: 50%;
+}
 
-    /* เมื่อมี Cache Valid ให้ซ่อน Lock Screen และแสดง Main Area ทันที */
-    html.is-authenticated #lock-screen {
-      display: none !important;
-    }
+/* ==========================================================================
+   4. CONTROL BAR (SEARCH, DROPDOWNS & FILTER CHIPS)
+   ========================================================================== */
+.control-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+@media(min-width: 600px) {
+  .control-bar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.search-wrapper {
+  flex: 1;
+}
+.search-wrapper input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.search-wrapper input:focus {
+  border-color: #2f5ea8;
+}
 
-    html.is-authenticated #main-content-area {
-      display: block !important;
-    }
+.dropdown-container-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    .lock-box {
-      background: #2b2b40;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-      box-sizing: border-box;
-    }
+.dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dropdown-wrapper label {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+.dropdown-wrapper select {
+  padding: 6px 24px 6px 10px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  color: #4a5568;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+  transition: all 0.2s;
+}
 
-    .lock-box.brutal-danger {
-      border: 2px solid #ef4444;
-      animation: shake 0.3s ease-in-out;
-    }
+.cat-filter-bar, .div-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.div-filter-bar {
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #eef0f5;
+  align-items: center;
+}
+.div-filter-title {
+  font-size: 12px;
+  color: #666;
+  font-weight: bold;
+  margin-right: 4px;
+}
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 50px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  font-size: 12px;
+  color: #444;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+.cat-chip input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+}
+.cat-chip:hover {
+  border-color: #2f5ea8;
+  color: #2f5ea8;
+  background: #fafcff;
+}
+.cat-chip.active {
+  border-color: #2f5ea8;
+  background: #2f5ea8;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(47, 94, 168, 0.25);
+}
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
-    }
+/* ==========================================================================
+   5. DYNAMIC DATA TABLE & VISUAL STATUS ROW
+   ========================================================================== */
+.info-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 4px;
+  width: 100%;
+}
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.lock-badge {
+  font-size: 11px;
+  color: #fff;
+  background-color: #dc2626;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+.sync-progress-text {
+  font-size: 12px;
+  color: #b25e00; 
+  font-weight: bold;
+  white-space: nowrap;
+  display: none;
+}
+.inventory-summary {
+  font-size: 13px;
+  color: #2f5ea8;
+  font-weight: bold;
+  background-color: #e8f0fe;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: auto;
+}
+.result-count {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+  text-align: right;
+}
 
-    .lock-title {
-      color: #ffffff;
-      margin-bottom: 20px;
-      font-size: 20px;
-      font-weight: bold;
-    }
+.table-wrap {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid #eef0f5;
+  border-radius: 12px;
+  background: #fff;
+  max-height: 72vh;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  background: #2f5ea8;
+  z-index: 50;
+  text-align: left;
+  font-size: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+thead th:hover { background: #244a86; }
+thead th, thead th span { color: #fff !important; }
+tbody td {
+  font-size: 13px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: top;
+}
+tbody tr:hover { background: #f1f5f9; }
+tbody tr:active { background: #e2e8f0; }
 
-    .lock-input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 1px solid #444;
-      border-radius: 6px;
-      background: #1e1e2d;
-      color: #fff;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
+.col-barcode { width: 22%; word-break: break-all; }
+.col-desc { width: auto; word-break: break-word; white-space: normal; }
+.col-dynamic { width: 22%; text-align: right; word-break: break-all; font-weight: bold; color: #111; }
 
-    .lock-btn {
-      width: 100%;
-      padding: 12px;
-      background: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.sort-arrow { font-size: 10px; margin-left: 4px; }
+.copy-toast {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 24, 39, 0.85);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 10000;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
-    .lock-btn:disabled {
-      background: #64748b;
-      cursor: not-allowed;
-    }
+/* ==========================================================================
+   6. BRUTAL CORE SECURITY OVERLAY (ANTI-TAMPERING)
+   ========================================================================== */
+#lock-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #090d16;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.lock-box {
+  background: #111827;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  border: 2px solid #1f2937;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lock-box.brutal-danger {
+  border-color: #dc2626;
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+  animation: brutalShake 0.4s ease-in-out;
+}
+.lock-box h2 { font-size: 22px; margin-bottom: 10px; color: #f9fafb; font-weight: 800; letter-spacing: -0.5px; }
+.lock-box p { font-size: 13px; color: #9ca3af; margin-bottom: 26px; line-height: 1.5; }
+.lock-box input {
+  width: 100%; padding: 14px; border: 2px solid #374151; border-radius: 10px;
+  font-size: 16px; text-align: center; outline: none; margin-bottom: 16px;
+  background: #030712; color: #fff; box-sizing: border-box; letter-spacing: 2px;
+  transition: border-color 0.2s;
+}
+.lock-box input:focus { border-color: #3b82f6; }
+.lock-box button {
+  width: 100%; padding: 14px; background: #2563eb; color: #fff; border: none;
+  border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; transition: background 0.2s;
+}
+.lock-box button:hover { background: #1d4ed8; }
+.lock-box button:disabled { background: #4b5563; cursor: not-allowed; color: #9ca3af; }
 
-    .lock-msg {
-      margin-top: 15px;
-      font-size: 14px;
-      word-wrap: break-word;
-    }
+#toTop {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99;
+}
 
-    /* Main Layout */
-    #main-content-area {
-      display: none;
-      padding: 15px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+@keyframes brutalShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
 
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
+/* ==========================================================================
+   7. RESPONSIVE MEDIA QUERIES (OPTIMIZED FOR MOBILE DROPDOWNS)
+   ========================================================================== */
+@media(max-width:768px){
+  body { padding-top: 54px; }
+  .container { padding: 8px 10px; }
+  .cat-chip { font-size: 11px; padding: 5px 12px; }
+  tbody td { padding: 10px 6px; font-size: 12px; }
+  
+  .info-status-row { flex-direction: row !important; align-items: center !important; justify-content: space-between; }
+  .status-left { flex-direction: row !important; align-items: center !important; gap: 4px; }
+  .lock-badge, .result-count { font-size: 10px; padding: 2px 4px; }
+  .inventory-summary { font-size: 13px; padding: 2px 6px; margin-left: auto; }
+  
+  /* แก้ไข: ป้องกัน Dropdown หดตัว และจัดโครงสร้างให้อ่านง่ายขึ้นบนมือถือ */
+  .control-bar {
+    gap: 8px;
+  }
+  .dropdown-container-row { 
+    width: 100%; 
+    flex-wrap: wrap; 
+    gap: 8px; 
+  }
+  .dropdown-wrapper { 
+    flex: 1; 
+    min-width: 135px; 
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .dropdown-wrapper select { 
+    width: 100%; 
+    box-sizing: border-box;
+    padding: 8px 24px 8px 10px; 
+    font-size: 13px;
+  }
+}
 
-    .search-group {
-      display: flex;
-      gap: 10px;
-      flex: 1;
-      min-width: 280px;
-    }
-
-    .search-input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .select-control {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: white;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      user-select: none;
-      font-size: 14px;
-    }
-
-    .btn-sync {
-      padding: 10px 15px;
-      background: #10b981;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    /* Chip Filters */
-    .chip-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-
-    .chip {
-      padding: 6px 12px;
-      background: #e5e7eb;
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s;
-    }
-
-    .chip.active {
-      background: #2563eb;
-      color: white;
-    }
-
-    .chip input[type="checkbox"] {
-      display: none;
-    }
-
-    /* Data Table */
-    .meta-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 14px;
-      color: #666;
-      font-weight: bold;
-    }
-
-    .table-container {
-      overflow-x: auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-    }
-
-    th {
-      background: #f8fafc;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    th:hover {
-      background: #f1f5f9;
-    }
-
-    tr:hover {
-      background-color: #f8fafc;
-      cursor: pointer;
-    }
-
-    .col-barcode { width: 20%; }
-    .col-desc { width: 55%; }
-    .col-dynamic { width: 25%; text-align: right; }
-    th.col-dynamic { text-align: right; }
-
-    .sort-arrow {
-      font-size: 12px;
-      margin-left: 4px;
-      color: #888;
-    }
-
-    /* Toast & Navigation */
-    #copyToast {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #10b981;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      z-index: 1000;
-    }
-
-    #toTop {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: #3b82f6;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-
-    .status-loading {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-    }
-  </style>
+.sync-badge-btn {
+  font-size: 11px;
+  color: #2f5ea8;
+  background-color: #fff;
+  border: 1px solid #2f5ea8;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.sync-badge-btn:hover {
+  background-color: #2f5ea8;
+  color: #fff;
+}
+</style>
 </head>
 <body>
 
-  <!-- Lock Screen -->
-  <div id="lock-screen">
-    <div class="lock-box">
-      <div class="lock-title">🔐 กรุณายืนยันตัวตนเข้าสู่ระบบ</div>
-      <input type="password" id="passInput" class="lock-input" placeholder="ใส่รหัสผ่านเข้าใช้งาน...">
-      <button id="submitBtn" class="lock-btn">เข้าสู่ระบบ</button>
-      <div id="lock-msg" class="lock-msg"></div>
-    </div>
+<div id="lock-screen">
+  <form class="lock-box" id="brutalForm" onsubmit="event.preventDefault(); verifyPasswordBrutal();">
+    <h2>🔒 SECURITY FIREWALL DETECTED</h2>
+    <p id="lock-msg">พื้นที่ภายในเฉพาะทีมพัฒนา CM เท่านั้น บุคคลภายนอกหรือระบบเซลล์ห้ามเข้าฝ่าฝืนโดยเด็ดขาด</p>
+    <input type="password" id="passInput" placeholder="ENTER SECRET KEY..." autocomplete="current-password" />
+    <button type="submit" id="submitBtn">EXECUTE AUTHORIZATION</button>
+  </form>
+</div>
+
+<div id="header-placeholder"></div>
+
+<div class="container" id="main-content-area" style="display:none;">
+
+  <div class="breadcrumb-row">
+    <div class="breadcrumb">HOME / CODEMATCH MASTER (CM ONLY)</div>
+    <label class="hide-zero-wrap">
+      <input type="checkbox" id="hideZero" checked />
+      Hide 0 / –
+    </label>
   </div>
 
-  <!-- Main Content Area -->
-  <div id="main-content-area">
-    <div class="top-bar">
-      <div class="search-group">
-        <input type="text" id="searchBox" class="search-input" placeholder="🔍 ค้นหา รหัสสินค้า, ชื่อ, บาร์โค้ด...">
-        <select id="columnSelector" class="select-control">
-          <option value="onhand">จำนวนคงเหลือ (Onhand)</option>
-          <option value="onhand_cost">มูลค่าคงเหลือ (Cost)</option>
-          <option value="stockstatus">สถานะสินค้า (Status)</option>
-          <option value="glocat">โลเคชั่น (Location)</option>
+  <div class="control-bar">
+    <div class="search-wrapper">
+      <input id="searchBox" type="text" placeholder="ค้นหา Code / CodeMatch / Barcode / Name..." />
+    </div>
+    <div class="dropdown-container-row">
+      <div class="dropdown-wrapper">
+        <label for="brandSelector">แบรนด์:</label>
+        <select id="brandSelector">
+          <option value="ALL" selected>ทั้งหมด</option>
+          <option value="NIPPON P">NIPPON P</option>
+          <option value="3M">3M</option>
+          <option value="DOMAC">DOMAC</option>
+          <option value="CROMAX">CROMAX / NASON</option>
+          <option value="KINGTONY">KINGTONY</option>
+          <option value="TOA">TOA</option> 
+          <option value="KURUMA">KURUMA</option>
+          <option value="HHW">HHW</option>
+          <option value="LEZZON">LEZZON</option>
+          <option value="HB BODY">HB BODY</option>
         </select>
       </div>
 
-      <select id="brandSelector" class="select-control">
-        <option value="ALL">แบรนด์ทั้งหมด</option>
-        <option value="CROMAX">CROMAX / NASON</option>
-        <option value="DUXONE">DUXONE</option>
-        <option value="STANDOX">STANDOX</option>
-      </select>
-
-      <label class="checkbox-label">
-        <input type="checkbox" id="hideZero"> ซ่อนยอดเป็น 0 / ว่าง
-      </label>
-
-      <button id="syncBtn" class="btn-sync">🔄 Sync ข้อมูล</button>
-      <span id="syncProgress"></span>
-    </div>
-
-    <!-- Category Filter Chips -->
-    <div id="cat-chips-container" class="chip-group"></div>
-
-    <!-- Division Filter Chips -->
-    <div id="div-chips-container" class="chip-group"></div>
-
-    <!-- Data Table & Meta -->
-    <div class="meta-info">
-      <span id="result-count">0 items</span>
-      <span id="inventory-cost-sum">Value: 0.00</span>
-    </div>
-
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th id="th-gbarcode" class="col-barcode">
-              บาร์โค้ด <span class="sort-arrow" id="arrow-gbarcode">↕</span>
-            </th>
-            <th id="th-name" class="col-desc">
-              ชื่อรายการสินค้า <span class="sort-arrow" id="arrow-name">↕</span>
-            </th>
-            <th id="th-dynamic" class="col-dynamic">
-              <span id="dynamic-th-label">จำนวนคงเหลือ (Onhand) <span class="sort-arrow" id="arrow-dynamic">↕</span></span>
-            </th>
-          </tr>
-        </thead>
-        <tbody id="table-body">
-          <tr>
-            <td colspan="3" class="status-loading">กำลังตรวจสอบฐานข้อมูลแคชความเร็วสูง...</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="dropdown-wrapper">
+        <label for="columnSelector">แสดงข้อมูล:</label>
+        <select id="columnSelector">
+          <option value="avgsalecost">AvgSalecost</option>
+          <option value="salecost">Salecost</option> 
+          <option value="onhand_cost">Onhand_Cost</option>
+          <option value="PrefSupplierCode">PrefSupplierCode</option>
+          <option value="onhand_all" selected>Onhand_All</option> 
+          <option value="stockstatus">StockStatus</option>
+          <option value="gpricef">gpriceF</option>
+          <option value="glocat">glocat</option>
+          <option value="GRdateMax">GRdateMax</option> 
+        </select>
+      </div>
     </div>
   </div>
 
-  <!-- UI Floating Controls -->
-  <div id="copyToast">📋 คัดลอกข้อมูลเรียบร้อยแล้ว</div>
-  <button id="toTop">↑</button>
+  <div class="div-filter-bar">
+    <span class="div-filter-title">Division:</span>
+    <label class="cat-chip" id="chip-div-tool">
+      <input type="checkbox" id="div-tool" /> Tool
+    </label>
+    <label class="cat-chip" id="chip-div-wos">
+      <input type="checkbox" id="div-wos" checked /> WOS
+    </label>
+    <span class="lock-badge" style="margin-left: auto;">⚠️CM ONLY</span>
+  </div>
 
-  <!-- External Script -->
-  <script src="cm.js"></script>
+  <div class="cat-filter-bar">
+    <label class="cat-chip" id="chip-lacquer"><input type="checkbox" id="cat-lacquer" /> แลคเกอร์</label>
+    <label class="cat-chip" id="chip-tape"><input type="checkbox" id="cat-tape" /> กระดาษกาว</label>
+    <label class="cat-chip" id="chip-primer"><input type="checkbox" id="cat-primer" /> สีพื้น</label>
+    <label class="cat-chip" id="chip-spray"><input type="checkbox" id="cat-spray" /> สีพ่น</label>
+    <label class="cat-chip" id="chip-putty"><input type="checkbox" id="cat-putty" /> สีโป๊ว</label>
+    <label class="cat-chip" id="chip-sandpaper"><input type="checkbox" id="cat-sandpaper" /> กระดาษทรายน้ำ</label>
+  </div>
+
+  <div class="info-status-row">
+    <div class="status-left">
+      <button class="sync-badge-btn" id="syncBtn" onclick="forceSyncFromServer()">🔄 Sync ข้อมูล</button>
+      <span class="sync-progress-text" id="syncProgress">⏳ Loading: 0 rows...</span>
+      <span class="inventory-summary" id="inventory-cost-sum">Value: 0.00</span>
+    </div>
+    <div class="result-count" id="result-count"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortTable('gbarcode')" class="col-barcode">gbarcode <span class="sort-arrow" id="arrow-gbarcode">↕</span></th>
+          <th onclick="sortTable('name')" class="col-desc">Description <span class="sort-arrow" id="arrow-name">↕</span></th>
+          <th onclick="sortTable('dynamic')" class="col-dynamic" id="dynamic-th-label">Onhand_All <span class="sort-arrow" id="arrow-dynamic">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังเตรียมระบบความปลอดภัยขั้นสูง...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="toTop">↑</div>
+<div id="copyToast" class="copy-toast">📋 คัดลอกข้อมูลเรียบร้อย!</div>
+
+<script>
+// ==========================================================================
+// 8. GLOBAL CONFIGURATION & CRYPTO ROUTING
+// ==========================================================================
+const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/get_cm_data_secure";
+const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
+
+const DB_NAME = "CM_Cache_DB";
+const DB_VERSION = 1;
+const STORE_DATA = "cm_data";
+const STORE_META = "cm_meta";
+
+// เพิ่มตัวกรอง keyword สำหรับกระดาษทรายน้ำในระบบแมตช์ข้อมูล
+const CAT_FILTERS = [
+  { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
+  { id: "cat-tape",    keyword: "กระดาษกาว", chipId: "chip-tape"    },
+  { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
+  { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"   }, 
+  { id: "cat-putty",   keyword: "สีโป๊ว",      chipId: "chip-putty"   },
+  { id: "cat-sandpaper", keyword: "กระดาษทราย", chipId: "chip-sandpaper" }
+];
+
+const DIV_FILTERS = [
+  { id: "div-tool", value: "Tool and Equipment", chipId: "chip-div-tool" },
+  { id: "div-wos",  value: "Workshop Product Solution", chipId: "chip-div-wos" }
+];
+
+let rawData       = [];
+let filteredData = [];
+let viewData     = [];
+let sortState    = { key: null, dir: "asc" };
+let currentDynamicColumn = "onhand_all";
+
+let globalVerifiedPassword = "";
+let countdownInterval = null;
+let securityBreached = false;
+
+// ==========================================================================
+// 9. BRUTAL PROTECTION ENGINE (CORE LOGIC)
+// ==========================================================================
+async function verifyPasswordBrutal() {
+  if (securityBreached) {
+    executeBrutalLockout("CRITICAL: IP Address strictly locked out by backend policy.");
+    return;
+  }
+
+  const inputEl = document.getElementById("passInput");
+  const msgEl = document.getElementById("lock-msg");
+  const btnEl = document.getElementById("submitBtn");
+  const boxEl = document.querySelector(".lock-box");
+  const userPass = inputEl.value.trim();
+  
+  if (!userPass) return;
+
+  msgEl.style.color = "#3b82f6";
+  msgEl.textContent = "⏳ REQUESTING SECURE PROTOCOL AT SERVER SIDE...";
+  btnEl.disabled = true;
+  boxEl.classList.remove("brutal-danger");
+
+  try {
+    const response = await fetch(SUPABASE_BASE_URL, {
+      method: "POST",
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": "Bearer " + ANON_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_input_password: userPass,
+        limit: 1,
+        offset: 0
+      })
+    });
+
+    if (response.status === 400) {
+      const errorData = await response.json().catch(() => ({}));
+      if (errorData.message && errorData.message.includes("locked")) {
+        securityBreached = true;
+        executeBrutalLockout(errorData.message);
+        return;
+      }
+    }
+
+    if (!response.ok) throw new Error("Server firewall authentication dropped");
+
+    const data = await response.json();
+
+    if (data.length === 0) {
+      boxEl.classList.add("brutal-danger");
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "🛑 ACCESS DENIED: INVALID PRIVILEGE IDENTIFIER KEY!";
+      inputEl.value = "";
+      btnEl.disabled = false;
+      inputEl.focus();
+      
+      const checkResp = await fetch(SUPABASE_BASE_URL, {
+        method: "POST", 
+        headers: { "apikey": ANON_KEY, "Authorization": "Bearer " + ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ user_input_password: "CHECK_REMAINING_ATTEMPTS_ONLY", limit: 1, offset: 0 })
+      });
+      
+      if (checkResp.status === 400) {
+        const checkData = await checkResp.json().catch(() => ({}));
+        if (checkData.message && checkData.message.includes("locked")) {
+          securityBreached = true;
+          executeBrutalLockout(checkData.message);
+        } else if (checkData.message) {
+          msgEl.textContent = `🛑 ACCESS DENIED: (${checkData.message})`;
+        }
+      }
+      return;
+    }
+
+    globalVerifiedPassword = userPass;
+    document.getElementById("lock-screen").style.removeProperty("display");
+    document.getElementById("lock-screen").style.setProperty("display", "none", "important");
+    document.getElementById("main-content-area").style.display = "block";
+    loadTable();
+
+  } catch (err) {
+    console.error(err);
+    msgEl.style.color = "#dc2626";
+    msgEl.textContent = "🚨 CRITICAL ERROR: SECURE TUNNEL DISCONNECTED";
+    btnEl.disabled = false;
+  }
+}
+
+function executeBrutalLockout(message) {
+  securityBreached = true;
+  
+  const mainArea = document.getElementById("main-content-area");
+  if (mainArea) { mainArea.remove(); }
+
+  const inputEl = document.getElementById("passInput");
+  const msgEl = document.getElementById("lock-msg");
+  const btnEl = document.getElementById("submitBtn");
+  const boxEl = document.querySelector(".lock-box");
+
+  if(inputEl) { inputEl.disabled = true; inputEl.value = ""; }
+  if(btnEl) btnEl.disabled = true;
+  if(boxEl) boxEl.classList.add("brutal-danger");
+  
+  if(msgEl) msgEl.style.color = "#ef4444";
+
+  let secondsLeft = 300; 
+  const match = message.match(/\d+/);
+  if (match) { secondsLeft = parseInt(match[0], 10); }
+
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  countdownInterval = setInterval(() => {
+    if (secondsLeft <= 0) {
+      clearInterval(countdownInterval);
+      location.reload();
+    } else {
+      const minutes = Math.floor(secondsLeft / 60);
+      const seconds = secondsLeft % 60;
+      if(msgEl) {
+        msgEl.innerHTML = `🚨 <span style="font-weight:900;font-size:14px;letter-spacing:0.5px;">IP TEMPORARILY BLACKLISTED</span><br>ระบบเซิร์ฟเวอร์ตรวจพบการสุ่มรหัสผ่าน พอร์ตไอพีถูกระงับ <br><span style="font-size:18px;font-weight:bold;color:#fff;margin-top:10px;display:inline-block;">💥 LOCKDOWN TIMER: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}</span>`;
+      }
+      secondsLeft--;
+    }
+  }, 1000);
+}
+
+// ==========================================================================
+// 10. INDEXED LOCAL DB STORAGE MANAGEMENT
+// ==========================================================================
+function initIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_DATA)) {
+        db.createObjectStore(STORE_DATA, { keyPath: "id", autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains(STORE_META)) {
+        db.createObjectStore(STORE_META);
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function loadTable(){
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังตรวจสอบฐานข้อมูลแคชความเร็วสูง...</td></tr>';
+  
+  try {
+    const db = await initIndexedDB();
+    const tx = db.transaction([STORE_DATA, STORE_META], "readonly");
+    const dataStore = tx.objectStore(STORE_DATA);
+    const metaStore = tx.objectStore(STORE_META);
+    
+    const cachedItems = await new Promise(r => { dataStore.getAll().onsuccess = e => r(e.target.result); });
+    const lastUpdate = await new Promise(r => { metaStore.get("last_sync").onsuccess = e => r(e.target.result); });
+    
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    
+    if (cachedItems && cachedItems.length > 0 && lastUpdate && (now - lastUpdate < oneDayMs)) {
+      rawData = cachedItems;
+      updateChipStyles();
+      applyAll();
+      return;
+    }
+    
+    await fetchAllDataFromServer(db);
+  } catch(e) {
+    console.error(e);
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">เกิดข้อผิดพลาดในการโหลดระบบภายในฐานข้อมูลแคช</td></tr>`;
+  }
+}
+
+// ==========================================================================
+// 11. BULK DATA STREAMING & CHUNK PROCESSING
+// ==========================================================================
+async function fetchAllDataFromServer(db) {
+  const tbody = document.getElementById("table-body");
+  const syncBtn = document.getElementById("syncBtn");
+  const progressText = document.getElementById("syncProgress");
+  
+  try {
+    syncBtn.disabled = true;
+    syncBtn.innerText = "⏳ กำลังโหลด...";
+    progressText.style.display = "inline"; 
+    
+    rawData = []; 
+    let offset = 0;
+    const limit = 1000;
+    let hasMore = true;
+    
+    while (hasMore) {
+      if (securityBreached) return;
+      progressText.textContent = `⏳ Loading: ${rawData.length.toLocaleString()} rows...`;
+      
+      const response = await fetch(SUPABASE_BASE_URL, {
+        method: "POST",
+        headers: {
+          "apikey": ANON_KEY,
+          "Authorization": "Bearer " + ANON_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_input_password: globalVerifiedPassword,
+          limit: limit,
+          offset: offset
+        })
+      });
+      
+      if (response.status === 400) {
+        const errJson = await response.json().catch(() => ({}));
+        if (errJson.message && errJson.message.includes("locked")) {
+          executeBrutalLockout(errJson.message);
+          throw new Error("SERVER BLACKLIST BLOCK DETECTED");
+        }
+      }
+
+      if (!response.ok) throw new Error(`HTTP Fail Status Code: ${response.status}`);
+      
+      const chunk = await response.json();
+      
+      const cleanChunk = chunk.map(item => {
+        let newItem = {};
+        for (let k in item) {
+          let cleanKey = String(k).replace(/\s/g, "").toLowerCase();
+          newItem[cleanKey] = item[k];
+        }
+        return newItem;
+      });
+      
+      rawData = rawData.concat(cleanChunk);
+      
+      updateChipStyles();
+      applyAll(); 
+      
+      if (chunk.length < limit) {
+        hasMore = false;
+      } else {
+        offset += limit;
+      }
+    }
+    
+    progressText.textContent = `✅ Loaded: ${rawData.length.toLocaleString()} rows (100%)`;
+    
+    const writeTx = db.transaction([STORE_DATA, STORE_META], "readwrite");
+    const dataStore = writeTx.objectStore(STORE_DATA);
+    const metaStore = writeTx.objectStore(STORE_META);
+    
+    dataStore.clear();
+    rawData.forEach(item => dataStore.add(item));
+    metaStore.put(Date.now(), "last_sync");
+    
+    syncBtn.disabled = false;
+    syncBtn.innerText = "🔄 Sync ข้อมูล";
+  } catch (error) {
+    console.error(error);
+    syncBtn.disabled = false;
+    syncBtn.innerText = "🔄 Sync ข้อมูล";
+    progressText.textContent = `❌ Load Failed`;
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;padding:20px;">การเชื่อมต่อล้มเหลว ดึงข้อมูลไม่สำเร็จ</td></tr>`;
+  }
+}
+
+async function forceSyncFromServer() {
+  try {
+    const db = await initIndexedDB();
+    await fetchAllDataFromServer(db);
+  } catch (e) {
+    console.error(e);
+    alert("❌ ไม่สามารถดึงข้อมูลแบบบังคับรีเฟรชได้ในขณะนี้");
+  }
+}
+
+// ==========================================================================
+// 12. MULTI-LAYER FILTER ENGINE
+// ==========================================================================
+function applyAll(){
+  if(securityBreached) return;
+  const q         = document.getElementById("searchBox").value.toLowerCase().trim();
+  const hideZero = document.getElementById("hideZero").checked;
+  const selectedBrand = document.getElementById("brandSelector").value;
+
+  const activeCats = CAT_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+  const activeDivs = DIV_FILTERS.filter(f => document.getElementById(f.id) && document.getElementById(f.id).checked);
+
+  let result = rawData;
+
+  if(activeDivs.length > 0){
+    result = result.filter(i => {
+      const prodDiv = String(i.productdivision || "").trim().toLowerCase();
+      return activeDivs.some(f => prodDiv === f.value.toLowerCase());
+    });
+  }
+
+  if(activeCats.length > 0){
+    result = result.filter(i => {
+      const gname = String(i.gnamechr || "").toLowerCase();
+      return activeCats.some(f => gname.includes(f.keyword.toLowerCase()));
+    });
+  }
+
+  if(selectedBrand !== "ALL"){
+    result = result.filter(i => {
+      const typeVal = String(i.type || "").trim().toUpperCase();
+      if(selectedBrand === "CROMAX") {
+        return typeVal === "CROMAX" || typeVal === "NASON";
+      }
+      return typeVal === selectedBrand;
+    });
+  }
+
+  if(q){
+    result = result.filter(i =>
+      String(i.code || "").toLowerCase().includes(q) ||
+      String(i.codematch || "").toLowerCase().includes(q) ||
+      String(i.gbarcode || "").toLowerCase().includes(q) ||
+      String(i.name || "").toLowerCase().includes(q) ||
+      String(i.gnamechr || "").toLowerCase().includes(q) ||
+      String(i.spcodes || "").toLowerCase().includes(q) || 
+      String(i[currentDynamicColumn] || "").toLowerCase().includes(q)
+    );
+  }
+
+  if(hideZero){
+    result = result.filter(i => {
+      let v = String(i[currentDynamicColumn] || "-").trim();
+      v = v.replace(/,/g, '');
+      if(v === "" || v === "-") return false;
+      const n = parseFloat(v);
+      if(!isNaN(n) && n === 0) return false;
+      return true;
+    });
+  }
+
+  filteredData = result;
+
+  if(sortState.key){
+    applySortOnFiltered();
+  } else {
+    viewData = filteredData;
+    renderTable(viewData);
+  }
+
+  calculateInventorySum(viewData);
+  updateResultCount(viewData.length);
+}
+
+// ==========================================================================
+// 13. DATA AGGREGATION & ALGEBRA
+// ==========================================================================
+function calculateInventorySum(data) {
+  let totalCost = 0;
+  data.forEach(item => {
+    let rawVal = item.onhand_cost ? String(item.onhand_cost).trim().replace(/,/g, '') : "";
+    const costVal = parseFloat(rawVal);
+    if(!isNaN(costVal)) { totalCost += costVal; }
+  });
+  
+  let formattedCost = "";
+  if (totalCost >= 1000000) {
+    formattedCost = (totalCost / 1000000).toFixed(2) + "M";
+  } else if (totalCost >= 1000) {
+    formattedCost = (totalCost / 1000).toFixed(2) + "K";
+  } else {
+    formattedCost = totalCost.toFixed(2);
+  }
+  
+  document.getElementById("inventory-cost-sum").textContent = `Value: ${formattedCost}`;
+}
+
+// ==========================================================================
+// 14. SORTING SYSTEM (ALPHANUMERIC)
+// ==========================================================================
+function sortTable(key){
+  if(sortState.key === key){
+    sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+  } else {
+    sortState.key = key;
+    sortState.dir = "asc";
+  }
+  applySortOnFiltered();
+}
+
+function applySortOnFiltered(){
+  const { key, dir } = sortState;
+  const targetKey = key === "dynamic" ? currentDynamicColumn : key;
+
+  viewData = [...filteredData].sort((a, b) => {
+    let v1 = a[targetKey] ?? "";
+    let v2 = b[targetKey] ?? "";
+    if(typeof v1 === 'string') v1 = v1.replace(/,/g, '');
+    if(typeof v2 === 'string') v2 = v2.replace(/,/g, '');
+    const n1 = parseFloat(v1);
+    const n2 = parseFloat(v2);
+    
+    if(!isNaN(n1) && !isNaN(n2)){
+      return dir === "asc" ? n1 - n2 : n2 - n1;
+    }
+    v1 = String(v1).toLowerCase();
+    v2 = String(v2).toLowerCase();
+    if(v1 < v2) return dir === "asc" ? -1 : 1;
+    if(v1 > v2) return dir === "asc" ?  1 : -1;
+    return 0;
+  });
+  
+  updateArrows(key, dir);
+  renderTable(viewData);
+  calculateInventorySum(viewData);
+  updateResultCount(viewData.length);
+}
+</script>
 </body>
 </html>
