@@ -9,6 +9,11 @@ const DB_VERSION = 1;
 const STORE_DATA = "cm_data";
 const STORE_META = "cm_meta";
 
+// ตัวแปรสำหรับจัดการ Local Session Token (กำหนดหมดอายุ 1 ชั่วโมง)
+const SESSION_KEY = "CM_AUTH_TOKEN";
+const SESSION_EXPIRY_KEY = "CM_AUTH_EXPIRY";
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
 // เพิ่มตัวกรอง keyword สำหรับกระดาษทรายน้ำในระบบแมตช์ข้อมูล
 const CAT_FILTERS = [
   { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
@@ -37,7 +42,7 @@ let securityBreached = false;
 // ==========================================================================
 // 9. BRUTAL PROTECTION ENGINE (CORE LOGIC)
 // ==========================================================================
-async function verifyPasswordBrutal() {
+async function verifyPasswordBrutal(autoSavedPass = null) {
   if (securityBreached) {
     executeBrutalLockout("CRITICAL: IP Address strictly locked out by backend policy.");
     return;
@@ -47,14 +52,17 @@ async function verifyPasswordBrutal() {
   const msgEl = document.getElementById("lock-msg");
   const btnEl = document.getElementById("submitBtn");
   const boxEl = document.querySelector(".lock-box");
-  const userPass = inputEl.value.trim();
+  
+  const userPass = autoSavedPass || (inputEl ? inputEl.value.trim() : "");
   
   if (!userPass) return;
 
-  msgEl.style.color = "#3b82f6";
-  msgEl.textContent = "⏳ REQUESTING SECURE PROTOCOL AT SERVER SIDE...";
-  btnEl.disabled = true;
-  boxEl.classList.remove("brutal-danger");
+  if (msgEl) {
+    msgEl.style.color = "#3b82f6";
+    msgEl.textContent = "⏳ REQUESTING SECURE PROTOCOL AT SERVER SIDE...";
+  }
+  if (btnEl) btnEl.disabled = true;
+  if (boxEl) boxEl.classList.remove("brutal-danger");
 
   try {
     const response = await fetch(SUPABASE_BASE_URL, {
@@ -74,6 +82,7 @@ async function verifyPasswordBrutal() {
     if (response.status === 400) {
       const errorData = await response.json().catch(() => ({}));
       if (errorData.message && errorData.message.includes("locked")) {
+        clearAuthSession();
         securityBreached = true;
         executeBrutalLockout(errorData.message);
         return;
@@ -85,12 +94,15 @@ async function verifyPasswordBrutal() {
     const data = await response.json();
 
     if (data.length === 0) {
-      boxEl.classList.add("brutal-danger");
-      msgEl.style.color = "#dc2626";
-      msgEl.textContent = "🛑 ACCESS DENIED: INVALID PRIVILEGE IDENTIFIER KEY!";
-      inputEl.value = "";
-      btnEl.disabled = false;
-      inputEl.focus();
+      clearAuthSession();
+      if (boxEl) boxEl.classList.add("brutal-danger");
+      if (msgEl) {
+        msgEl.style.color = "#dc2626";
+        msgEl.textContent = "🛑 ACCESS DENIED: INVALID PRIVILEGE IDENTIFIER KEY!";
+      }
+      if (inputEl) inputEl.value = "";
+      if (btnEl) btnEl.disabled = false;
+      if (inputEl) inputEl.focus();
       
       const checkResp = await fetch(SUPABASE_BASE_URL, {
         method: "POST", 
@@ -103,28 +115,67 @@ async function verifyPasswordBrutal() {
         if (checkData.message && checkData.message.includes("locked")) {
           securityBreached = true;
           executeBrutalLockout(checkData.message);
-        } else if (checkData.message) {
+        } else if (checkData.message && msgEl) {
           msgEl.textContent = `🛑 ACCESS DENIED: (${checkData.message})`;
         }
       }
       return;
     }
 
+    // เมื่อตรวจสอบสำเร็จ บันทึก Token ลง localStorage ไว้ใช้ 1 ชั่วโมง
+    saveAuthSession(userPass);
+
     globalVerifiedPassword = userPass;
-    document.getElementById("lock-screen").style.removeProperty("display");
-    document.getElementById("lock-screen").style.setProperty("display", "none", "important");
+    const lockScreen = document.getElementById("lock-screen");
+    if (lockScreen) {
+      lockScreen.style.removeProperty("display");
+      lockScreen.style.setProperty("display", "none", "important");
+    }
     document.getElementById("main-content-area").style.display = "block";
     loadTable();
 
   } catch (err) {
     console.error(err);
-    msgEl.style.color = "#dc2626";
-    msgEl.textContent = "🚨 CRITICAL ERROR: SECURE TUNNEL DISCONNECTED";
-    btnEl.disabled = false;
+    if (msgEl) {
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "🚨 CRITICAL ERROR: SECURE TUNNEL DISCONNECTED";
+    }
+    if (btnEl) btnEl.disabled = false;
   }
 }
 
+function saveAuthSession(pass) {
+  const expiryTime = Date.now() + ONE_HOUR_MS;
+  localStorage.setItem(SESSION_KEY, pass);
+  localStorage.setItem(SESSION_EXPIRY_KEY, expiryTime.toString());
+}
+
+function clearAuthSession() {
+  localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_EXPIRY_KEY);
+}
+
+function getValidAuthSession() {
+  const savedPass = localStorage.getItem(SESSION_KEY);
+  const expiryTime = localStorage.getItem(SESSION_EXPIRY_KEY);
+
+  if (!savedPass || !expiryTime) return null;
+
+  if (Date.now() > parseInt(expiryTime, 10)) {
+    clearAuthSession();
+    return null;
+  }
+
+  return savedPass;
+}
+
+function logoutCM() {
+  clearAuthSession();
+  location.reload();
+}
+
 function executeBrutalLockout(message) {
+  clearAuthSession();
   securityBreached = true;
   
   const mainArea = document.getElementById("main-content-area");
@@ -558,8 +609,14 @@ window.addEventListener("DOMContentLoaded", () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
   
-  const passInput = document.getElementById("passInput");
-  if (passInput) passInput.focus();
+  // ตรวจสอบ Token ใน LocalStorage อัตโนมัติเมื่อเปิดหน้าเว็บ
+  const savedPass = getValidAuthSession();
+  if (savedPass) {
+    verifyPasswordBrutal(savedPass);
+  } else {
+    const passInput = document.getElementById("passInput");
+    if (passInput) passInput.focus();
+  }
 });
 
 document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
