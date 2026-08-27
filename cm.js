@@ -1,8 +1,8 @@
 // ==========================================================================
 // CONFIGURATIONS & CONSTANTS
 // ==========================================================================
-const SUPABASE_BASE_URL = "YOUR_SUPABASE_URL_HERE"; // กำหนด URL เดิมของคุณที่นี่
-const ANON_KEY = "YOUR_ANON_KEY_HERE";              // กำหนด KEY เดิมของคุณที่นี่
+const SUPABASE_BASE_URL = "https://aawqggptasdfnhjtzrdr.supabase.co/functions/v1/get_ps_cm";
+const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhd3FnZ3B0YXNkZm5oanR6cmRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxOTA1MzUsImV4cCI6MjA1NTc2NjUzNX0.a0vBfIQL5DInyQpC2wSsnXJqllzL66S2v9a45vW-8hE";
 const DB_NAME = "InventoryCacheDB";
 const DB_VERSION = 1;
 const STORE_DATA = "items";
@@ -171,7 +171,7 @@ async function submitPassword() {
 
 function executeBrutalLockout(message) {
   securityBreached = true;
-  clearAuthToken(); // ล้าง Token ทันทีเมื่อโดนระงับ
+  clearAuthToken();
   
   const mainArea = document.getElementById("main-content-area");
   if (mainArea) { mainArea.remove(); }
@@ -303,7 +303,6 @@ async function fetchAllDataFromServer(db) {
       }
 
       if (!response.ok) {
-        // หากเซิร์ฟเวอร์ปฏิเสธสิทธิ์ (เช่น Token หมดอายุฝั่ง Server) ให้ล้าง Token ค้าง
         if (response.status === 401 || response.status === 403) {
           clearAuthToken();
           location.reload();
@@ -552,7 +551,6 @@ function renderTable(data){
     `;
   }).join("");
 
-  // Attach event handlers to rows dynamically
   tbody.querySelectorAll("tr").forEach(tr => {
     tr.addEventListener("click", () => {
       const idx = tr.getAttribute("data-index");
@@ -644,12 +642,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
-  // Table Sorting Click Listeners
   document.getElementById("th-gbarcode").addEventListener("click", () => sortTable("gbarcode"));
   document.getElementById("th-name").addEventListener("click", () => sortTable("name"));
   document.getElementById("th-dynamic").addEventListener("click", () => sortTable("dynamic"));
 
-  // Buttons & Controls Click Listeners
   document.getElementById("submitBtn").addEventListener("click", submitPassword);
   document.getElementById("syncBtn").addEventListener("click", forceSyncFromServer);
   document.getElementById("toTop").addEventListener("click", () => {
