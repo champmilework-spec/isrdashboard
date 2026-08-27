@@ -1,8 +1,11 @@
 // ==========================================================================
 // CONFIGURATIONS & CONSTANTS
 // ==========================================================================
-const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/promo";
-const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";const DB_NAME = "InventoryCacheDB";
+// ⚠️ หมายเหตุ: ตรวจสอบ URL ให้มั่นใจว่าเป็น Edge Function หรือ REST API ตาม Architecture ที่ตั้งไว้
+const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/functions/v1/get_ps_cm";
+const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
+
+const DB_NAME = "InventoryCacheDB";
 const DB_VERSION = 1;
 const STORE_DATA = "items";
 const STORE_META = "metadata";
@@ -34,7 +37,7 @@ let currentDynamicColumn = "onhand";
 let sortState = { key: null, dir: "asc" };
 
 // ==========================================================================
-// 9. AUTHENTICATION, TOKEN CACHE & LOCKOUT ENGINE
+// AUTHENTICATION, TOKEN CACHE & LOCKOUT ENGINE
 // ==========================================================================
 function saveAuthToken(pass) {
   const expiryTime = Date.now() + THIRTY_DAYS_MS;
@@ -153,7 +156,6 @@ async function submitPassword() {
       return;
     }
 
-    // ล็อกอินสำเร็จ -> บันทึก Token อายุ 30 วันลง localStorage
     globalVerifiedPassword = userPass;
     saveAuthToken(userPass);
 
@@ -170,7 +172,7 @@ async function submitPassword() {
 
 function executeBrutalLockout(message) {
   securityBreached = true;
-  clearAuthToken(); // ล้าง Token ทันทีเมื่อโดนระงับ
+  clearAuthToken();
   
   const mainArea = document.getElementById("main-content-area");
   if (mainArea) { mainArea.remove(); }
@@ -208,7 +210,7 @@ function executeBrutalLockout(message) {
 }
 
 // ==========================================================================
-// 10. INDEXED LOCAL DB STORAGE MANAGEMENT
+// INDEXED LOCAL DB STORAGE MANAGEMENT
 // ==========================================================================
 function initIndexedDB() {
   return new Promise((resolve, reject) => {
@@ -258,7 +260,7 @@ async function loadTable(){
 }
 
 // ==========================================================================
-// 11. BULK DATA STREAMING & CHUNK PROCESSING
+// BULK DATA STREAMING & CHUNK PROCESSING
 // ==========================================================================
 async function fetchAllDataFromServer(db) {
   const tbody = document.getElementById("table-body");
@@ -302,7 +304,6 @@ async function fetchAllDataFromServer(db) {
       }
 
       if (!response.ok) {
-        // หากเซิร์ฟเวอร์ปฏิเสธสิทธิ์ (เช่น Token หมดอายุฝั่ง Server) ให้ล้าง Token ค้าง
         if (response.status === 401 || response.status === 403) {
           clearAuthToken();
           location.reload();
@@ -365,7 +366,7 @@ async function forceSyncFromServer() {
 }
 
 // ==========================================================================
-// 12. MULTI-LAYER FILTER ENGINE
+// MULTI-LAYER FILTER ENGINE
 // ==========================================================================
 function applyAll(){
   if(securityBreached) return;
@@ -439,7 +440,7 @@ function applyAll(){
 }
 
 // ==========================================================================
-// 13. DATA AGGREGATION & ALGEBRA
+// DATA AGGREGATION & ALGEBRA
 // ==========================================================================
 function calculateInventorySum(data) {
   let totalCost = 0;
@@ -458,11 +459,12 @@ function calculateInventorySum(data) {
     formattedCost = totalCost.toFixed(2);
   }
   
-  document.getElementById("inventory-cost-sum").textContent = `Value: ${formattedCost}`;
+  const sumEl = document.getElementById("inventory-cost-sum");
+  if(sumEl) sumEl.textContent = `Value: ${formattedCost}`;
 }
 
 // ==========================================================================
-// 14. SORTING SYSTEM (ALPHANUMERIC)
+// SORTING SYSTEM (ALPHANUMERIC)
 // ==========================================================================
 function sortTable(key){
   if(sortState.key === key){
@@ -503,7 +505,7 @@ function applySortOnFiltered(){
 }
 
 // ==========================================================================
-// 15. UI RENDERERS & CLIPBOARD ASSISTANTS
+// UI RENDERERS & CLIPBOARD ASSISTANTS
 // ==========================================================================
 function copyRowToClipboard(index) {
   const item = viewData[index];
@@ -520,8 +522,10 @@ function copyRowToClipboard(index) {
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     const toast = document.getElementById("copyToast");
-    toast.style.display = "block";
-    setTimeout(() => { toast.style.display = "none"; }, 1800);
+    if(toast) {
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 1800);
+    }
   }).catch(err => { console.error("Clipboard copy exception: ", err); });
 }
 
@@ -551,7 +555,6 @@ function renderTable(data){
     `;
   }).join("");
 
-  // Attach event handlers to rows dynamically
   tbody.querySelectorAll("tr").forEach(tr => {
     tr.addEventListener("click", () => {
       const idx = tr.getAttribute("data-index");
@@ -613,25 +616,32 @@ function renderChipsUI() {
 }
 
 // ==========================================================================
-// 16. APPLICATION INITIALIZATION LIFECYCLE
+// APPLICATION INITIALIZATION LIFECYCLE
 // ==========================================================================
 window.addEventListener("DOMContentLoaded", async () => {
   renderChipsUI();
 
-  // ตรวจสอบ Auto-Login จาก Token Cache 30 วันก่อน
   const isAutoLogged = await checkAutoLogin();
 
-  document.getElementById("searchBox").addEventListener("input", applyAll);
-  document.getElementById("hideZero").addEventListener("change", applyAll);
-  document.getElementById("brandSelector").addEventListener("change", applyAll);
+  const searchBox = document.getElementById("searchBox");
+  if(searchBox) searchBox.addEventListener("input", applyAll);
+
+  const hideZero = document.getElementById("hideZero");
+  if(hideZero) hideZero.addEventListener("change", applyAll);
+
+  const brandSelector = document.getElementById("brandSelector");
+  if(brandSelector) brandSelector.addEventListener("change", applyAll);
 
   const colSelector = document.getElementById("columnSelector");
-  colSelector.addEventListener("change", (e) => {
-    currentDynamicColumn = e.target.value;
-    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
-    sortState = { key: null, dir: "asc" }; 
-    applyAll();
-  });
+  if(colSelector) {
+    colSelector.addEventListener("change", (e) => {
+      currentDynamicColumn = e.target.value;
+      const thLabel = document.getElementById("dynamic-th-label");
+      if(thLabel) thLabel.innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+      sortState = { key: null, dir: "asc" }; 
+      applyAll();
+    });
+  }
 
   CAT_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
@@ -643,17 +653,27 @@ window.addEventListener("DOMContentLoaded", async () => {
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
 
-  // Table Sorting Click Listeners
-  document.getElementById("th-gbarcode").addEventListener("click", () => sortTable("gbarcode"));
-  document.getElementById("th-name").addEventListener("click", () => sortTable("name"));
-  document.getElementById("th-dynamic").addEventListener("click", () => sortTable("dynamic"));
+  const thGbarcode = document.getElementById("th-gbarcode");
+  if(thGbarcode) thGbarcode.addEventListener("click", () => sortTable("gbarcode"));
 
-  // Buttons & Controls Click Listeners
-  document.getElementById("submitBtn").addEventListener("click", submitPassword);
-  document.getElementById("syncBtn").addEventListener("click", forceSyncFromServer);
-  document.getElementById("toTop").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  const thName = document.getElementById("th-name");
+  if(thName) thName.addEventListener("click", () => sortTable("name"));
+
+  const thDynamic = document.getElementById("th-dynamic");
+  if(thDynamic) thDynamic.addEventListener("click", () => sortTable("dynamic"));
+
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn) submitBtn.addEventListener("click", submitPassword);
+
+  const syncBtn = document.getElementById("syncBtn");
+  if(syncBtn) syncBtn.addEventListener("click", forceSyncFromServer);
+
+  const toTop = document.getElementById("toTop");
+  if(toTop) {
+    toTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
   const passInput = document.getElementById("passInput");
   if (passInput) {
