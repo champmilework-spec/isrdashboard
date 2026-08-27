@@ -1,105 +1,59 @@
 // ==========================================================================
-// CONFIGURATIONS & CONSTANTS
+// 8. GLOBAL CONFIGURATION & CRYPTO ROUTING
 // ==========================================================================
-// ⚠️ หมายเหตุ: ตรวจสอบ URL ให้มั่นใจว่าเป็น Edge Function หรือ REST API ตาม Architecture ที่ตั้งไว้
-const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/functions/v1/get_ps_cm";
+const SUPABASE_BASE_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/get_cm_data_secure";
 const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
-const DB_NAME = "InventoryCacheDB";
+const DB_NAME = "CM_Cache_DB";
 const DB_VERSION = 1;
-const STORE_DATA = "items";
-const STORE_META = "metadata";
+const STORE_DATA = "cm_data";
+const STORE_META = "cm_meta";
 
-// Token Cache Settings (30 Days)
-const TOKEN_KEY = "app_auth_token";
-const TOKEN_EXPIRY_KEY = "app_auth_token_expiry";
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-
+// เพิ่มตัวกรอง keyword สำหรับกระดาษทรายน้ำในระบบแมตช์ข้อมูล
 const CAT_FILTERS = [
-  { id: "cat-1", chipId: "chip-cat-1", label: "สีพ่น", keyword: "สี" },
-  { id: "cat-2", chipId: "chip-cat-2", label: "แลคเกอร์", keyword: "แลคเกอร์" },
-  { id: "cat-3", chipId: "chip-cat-3", label: "ทินเนอร์", keyword: "ทินเนอร์" }
+  { id: "cat-lacquer", keyword: "แลคเกอร์", chipId: "chip-lacquer" },
+  { id: "cat-tape",    keyword: "กระดาษกาว", chipId: "chip-tape"    },
+  { id: "cat-primer",  keyword: "สีรองพื้น",  chipId: "chip-primer"  },
+  { id: "cat-spray",   keyword: "สีพ่น",      chipId: "chip-spray"    }, 
+  { id: "cat-putty",   keyword: "สีโป๊ว",      chipId: "chip-putty"    },
+  { id: "cat-sandpaper", keyword: "กระดาษทราย", chipId: "chip-sandpaper" }
 ];
 
 const DIV_FILTERS = [
-  { id: "div-1", chipId: "chip-div-1", label: "แผนก A", value: "DivA" },
-  { id: "div-2", chipId: "chip-div-2", label: "แผนก B", value: "DivB" }
+  { id: "div-tool", value: "Tool and Equipment", chipId: "chip-div-tool" },
+  { id: "div-wos",  value: "Workshop Product Solution", chipId: "chip-div-wos" }
 ];
 
-// State Variables
-let rawData = [];
+let rawData       = [];
 let filteredData = [];
-let viewData = [];
+let viewData     = [];
+let sortState    = { key: null, dir: "asc" };
+let currentDynamicColumn = "onhand_all";
+
 let globalVerifiedPassword = "";
-let securityBreached = false;
 let countdownInterval = null;
-let currentDynamicColumn = "onhand";
-let sortState = { key: null, dir: "asc" };
+let securityBreached = false;
 
 // ==========================================================================
-// AUTHENTICATION, TOKEN CACHE & LOCKOUT ENGINE
+// 9. BRUTAL PROTECTION ENGINE (CORE LOGIC)
 // ==========================================================================
-function saveAuthToken(pass) {
-  const expiryTime = Date.now() + THIRTY_DAYS_MS;
-  localStorage.setItem(TOKEN_KEY, pass);
-  localStorage.setItem(TOKEN_EXPIRY_KEY, expiryTime.toString());
-}
-
-function clearAuthToken() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(TOKEN_EXPIRY_KEY);
-}
-
-function getValidAuthToken() {
-  const token = localStorage.getItem(TOKEN_KEY);
-  const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
-
-  if (!token || !expiry) return null;
-
-  if (Date.now() > parseInt(expiry, 10)) {
-    clearAuthToken();
-    return null;
+async function verifyPasswordBrutal() {
+  if (securityBreached) {
+    executeBrutalLockout("CRITICAL: IP Address strictly locked out by backend policy.");
+    return;
   }
 
-  return token;
-}
-
-async function checkAutoLogin() {
-  const savedToken = getValidAuthToken();
-  if (savedToken) {
-    globalVerifiedPassword = savedToken;
-    hideLockScreen();
-    loadTable();
-    return true;
-  }
-  return false;
-}
-
-function hideLockScreen() {
-  const lockScreen = document.getElementById("lock-screen");
-  if (lockScreen) {
-    lockScreen.style.removeProperty("display");
-    lockScreen.style.setProperty("display", "none", "important");
-  }
-  const mainArea = document.getElementById("main-content-area");
-  if (mainArea) {
-    mainArea.style.display = "block";
-  }
-}
-
-async function submitPassword() {
   const inputEl = document.getElementById("passInput");
   const msgEl = document.getElementById("lock-msg");
   const btnEl = document.getElementById("submitBtn");
   const boxEl = document.querySelector(".lock-box");
-
-  if (!inputEl) return;
   const userPass = inputEl.value.trim();
+  
   if (!userPass) return;
 
+  msgEl.style.color = "#3b82f6";
+  msgEl.textContent = "⏳ REQUESTING SECURE PROTOCOL AT SERVER SIDE...";
   btnEl.disabled = true;
-  msgEl.style.color = "#888";
-  msgEl.textContent = "⏳กำลังตรวจสอบสิทธิ์...";
   boxEl.classList.remove("brutal-danger");
 
   try {
@@ -157,9 +111,9 @@ async function submitPassword() {
     }
 
     globalVerifiedPassword = userPass;
-    saveAuthToken(userPass);
-
-    hideLockScreen();
+    document.getElementById("lock-screen").style.removeProperty("display");
+    document.getElementById("lock-screen").style.setProperty("display", "none", "important");
+    document.getElementById("main-content-area").style.display = "block";
     loadTable();
 
   } catch (err) {
@@ -172,7 +126,6 @@ async function submitPassword() {
 
 function executeBrutalLockout(message) {
   securityBreached = true;
-  clearAuthToken();
   
   const mainArea = document.getElementById("main-content-area");
   if (mainArea) { mainArea.remove(); }
@@ -210,7 +163,7 @@ function executeBrutalLockout(message) {
 }
 
 // ==========================================================================
-// INDEXED LOCAL DB STORAGE MANAGEMENT
+// 10. INDEXED LOCAL DB STORAGE MANAGEMENT
 // ==========================================================================
 function initIndexedDB() {
   return new Promise((resolve, reject) => {
@@ -231,7 +184,7 @@ function initIndexedDB() {
 
 async function loadTable(){
   const tbody = document.getElementById("table-body");
-  tbody.innerHTML = '<tr><td colspan="3" class="status-loading">กำลังตรวจสอบฐานข้อมูลแคชความเร็วสูง...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#777;">กำลังตรวจสอบฐานข้อมูลแคชความเร็วสูง...</td></tr>';
   
   try {
     const db = await initIndexedDB();
@@ -260,7 +213,7 @@ async function loadTable(){
 }
 
 // ==========================================================================
-// BULK DATA STREAMING & CHUNK PROCESSING
+// 11. BULK DATA STREAMING & CHUNK PROCESSING
 // ==========================================================================
 async function fetchAllDataFromServer(db) {
   const tbody = document.getElementById("table-body");
@@ -303,13 +256,7 @@ async function fetchAllDataFromServer(db) {
         }
       }
 
-      if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          clearAuthToken();
-          location.reload();
-        }
-        throw new Error(`HTTP Fail Status Code: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP Fail Status Code: ${response.status}`);
       
       const chunk = await response.json();
       
@@ -366,7 +313,7 @@ async function forceSyncFromServer() {
 }
 
 // ==========================================================================
-// MULTI-LAYER FILTER ENGINE
+// 12. MULTI-LAYER FILTER ENGINE
 // ==========================================================================
 function applyAll(){
   if(securityBreached) return;
@@ -440,7 +387,7 @@ function applyAll(){
 }
 
 // ==========================================================================
-// DATA AGGREGATION & ALGEBRA
+// 13. DATA AGGREGATION & ALGEBRA
 // ==========================================================================
 function calculateInventorySum(data) {
   let totalCost = 0;
@@ -459,12 +406,11 @@ function calculateInventorySum(data) {
     formattedCost = totalCost.toFixed(2);
   }
   
-  const sumEl = document.getElementById("inventory-cost-sum");
-  if(sumEl) sumEl.textContent = `Value: ${formattedCost}`;
+  document.getElementById("inventory-cost-sum").textContent = `Value: ${formattedCost}`;
 }
 
 // ==========================================================================
-// SORTING SYSTEM (ALPHANUMERIC)
+// 14. SORTING SYSTEM (ALPHANUMERIC)
 // ==========================================================================
 function sortTable(key){
   if(sortState.key === key){
@@ -505,7 +451,7 @@ function applySortOnFiltered(){
 }
 
 // ==========================================================================
-// UI RENDERERS & CLIPBOARD ASSISTANTS
+// 15. UI RENDERERS & CLIPBOARD ASSISTANTS
 // ==========================================================================
 function copyRowToClipboard(index) {
   const item = viewData[index];
@@ -522,10 +468,8 @@ function copyRowToClipboard(index) {
 
   navigator.clipboard.writeText(textToCopy).then(() => {
     const toast = document.getElementById("copyToast");
-    if(toast) {
-      toast.style.display = "block";
-      setTimeout(() => { toast.style.display = "none"; }, 1800);
-    }
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 1800);
   }).catch(err => { console.error("Clipboard copy exception: ", err); });
 }
 
@@ -547,20 +491,13 @@ function renderTable(data){
     }
 
     return `
-      <tr data-index="${index}">
+      <tr onclick="copyRowToClipboard(${index})">
         <td class="col-barcode">${p.gbarcode || "-"}</td>
         <td class="col-desc">${p.name || "-"}</td>
         <td class="col-dynamic">${formattedVal}</td>
       </tr>
     `;
   }).join("");
-
-  tbody.querySelectorAll("tr").forEach(tr => {
-    tr.addEventListener("click", () => {
-      const idx = tr.getAttribute("data-index");
-      if (idx !== null) copyRowToClipboard(parseInt(idx, 10));
-    });
-  });
 }
 
 function updateResultCount(n){
@@ -595,53 +532,21 @@ function updateChipStyles(){
   });
 }
 
-function renderChipsUI() {
-  const catContainer = document.getElementById("cat-chips-container");
-  if (catContainer) {
-    catContainer.innerHTML = CAT_FILTERS.map(f => `
-      <label id="${f.chipId}" class="chip">
-        <input type="checkbox" id="${f.id}"> ${f.label}
-      </label>
-    `).join("");
-  }
-
-  const divContainer = document.getElementById("div-chips-container");
-  if (divContainer) {
-    divContainer.innerHTML = DIV_FILTERS.map(f => `
-      <label id="${f.chipId}" class="chip">
-        <input type="checkbox" id="${f.id}"> ${f.label}
-      </label>
-    `).join("");
-  }
-}
-
 // ==========================================================================
-// APPLICATION INITIALIZATION LIFECYCLE
+// 16. APPLICATION INITIALIZATION LIFECYCLE
 // ==========================================================================
-window.addEventListener("DOMContentLoaded", async () => {
-  renderChipsUI();
-
-  const isAutoLogged = await checkAutoLogin();
-
-  const searchBox = document.getElementById("searchBox");
-  if(searchBox) searchBox.addEventListener("input", applyAll);
-
-  const hideZero = document.getElementById("hideZero");
-  if(hideZero) hideZero.addEventListener("change", applyAll);
-
-  const brandSelector = document.getElementById("brandSelector");
-  if(brandSelector) brandSelector.addEventListener("change", applyAll);
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("searchBox").addEventListener("input", applyAll);
+  document.getElementById("hideZero").addEventListener("change", applyAll);
+  document.getElementById("brandSelector").addEventListener("change", applyAll);
 
   const colSelector = document.getElementById("columnSelector");
-  if(colSelector) {
-    colSelector.addEventListener("change", (e) => {
-      currentDynamicColumn = e.target.value;
-      const thLabel = document.getElementById("dynamic-th-label");
-      if(thLabel) thLabel.innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
-      sortState = { key: null, dir: "asc" }; 
-      applyAll();
-    });
-  }
+  colSelector.addEventListener("change", (e) => {
+    currentDynamicColumn = e.target.value;
+    document.getElementById("dynamic-th-label").innerHTML = `${colSelector.options[colSelector.selectedIndex].text} <span class="sort-arrow" id="arrow-dynamic">↕</span>`;
+    sortState = { key: null, dir: "asc" }; 
+    applyAll();
+  });
 
   CAT_FILTERS.forEach(f => {
     const checkbox = document.getElementById(f.id);
@@ -652,34 +557,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     const checkbox = document.getElementById(f.id);
     if(checkbox) { checkbox.addEventListener("change", () => { updateChipStyles(); applyAll(); }); }
   });
-
-  const thGbarcode = document.getElementById("th-gbarcode");
-  if(thGbarcode) thGbarcode.addEventListener("click", () => sortTable("gbarcode"));
-
-  const thName = document.getElementById("th-name");
-  if(thName) thName.addEventListener("click", () => sortTable("name"));
-
-  const thDynamic = document.getElementById("th-dynamic");
-  if(thDynamic) thDynamic.addEventListener("click", () => sortTable("dynamic"));
-
-  const submitBtn = document.getElementById("submitBtn");
-  if(submitBtn) submitBtn.addEventListener("click", submitPassword);
-
-  const syncBtn = document.getElementById("syncBtn");
-  if(syncBtn) syncBtn.addEventListener("click", forceSyncFromServer);
-
-  const toTop = document.getElementById("toTop");
-  if(toTop) {
-    toTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
-
+  
   const passInput = document.getElementById("passInput");
-  if (passInput) {
-    if (!isAutoLogged) passInput.focus();
-    passInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") submitPassword();
-    });
-  }
+  if (passInput) passInput.focus();
 });
+
+document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
