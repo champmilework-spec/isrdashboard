@@ -527,25 +527,51 @@ function copyRowToClipboard(index) {
 function renderTable(data){
   const tbody = document.getElementById("table-body");
   if(!tbody) return;
+
   if(!data || data.length === 0){
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px;">ไม่พบรายการข้อมูลที่ค้นหา...</td></tr>';
     return;
   }
-  
+
   tbody.innerHTML = data.map((p, index) => {
     let rawVal = p[currentDynamicColumn] || "-";
-    if(typeof rawVal === 'string') rawVal = rawVal.replace(/,/g, '');
+
+    if(typeof rawVal === 'string') {
+      rawVal = rawVal.replace(/,/g, '');
+    }
+
     let formattedVal = rawVal;
-    
-    if (currentDynamicColumn !== "stockstatus" && currentDynamicColumn !== "glocat" && !isNaN(parseFloat(rawVal))) {
-      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    if (
+      currentDynamicColumn !== "stockstatus" &&
+      currentDynamicColumn !== "glocat" &&
+      !isNaN(parseFloat(rawVal))
+    ) {
+      formattedVal = parseFloat(rawVal).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
 
     return `
       <tr onclick="copyRowToClipboard(${index})">
-        <td class="col-barcode">${p.gbarcode || "-"}</td>
-        <td class="col-desc">${p.name || "-"}</td>
-        <td class="col-dynamic">${formattedVal}</td>
+
+        <td
+          class="col-barcode barcode-detail"
+          onclick="event.stopPropagation(); showItemDetail(${index})"
+          title="คลิกเพื่อดูรายละเอียด"
+        >
+          ${p.gbarcode || "-"}
+        </td>
+
+        <td class="col-desc">
+          ${p.name || "-"}
+        </td>
+
+        <td class="col-dynamic">
+          ${formattedVal}
+        </td>
+
       </tr>
     `;
   }).join("");
@@ -620,3 +646,134 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("toTop").onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
+
+// ==========================================================================
+// ITEM DETAIL POPUP
+// ==========================================================================
+
+const ITEM_DETAIL_FIELDS = [
+  ["code", "Code"],
+  ["spcodes", "SPCODES"],
+  ["gbarcode", "gbarcode"],
+  ["name", "Name"],
+  ["onhand_all", "Onhand_All"],
+  ["gpricef", "gpriceF"],
+  ["salecost", "Salecost"],
+  ["avgsalecost", "AvgSalecost"],
+  ["stockstatus", "StockStatus"],
+  ["gprice", "gprice"],
+  ["productdivision", "ProductDivision"],
+  ["onhand_cost", "Onhand_Cost"],
+  ["type", "TYPE"],
+  ["packcoderounding", "PackCodeRounding"],
+  ["gnamechr", "gnamechr"],
+  ["grdatemax", "GRdateMax"]
+];
+
+function showItemDetail(index) {
+  const item = viewData[index];
+
+  if (!item) return;
+
+  const modal = document.getElementById("itemDetailModal");
+  const body = document.getElementById("itemDetailBody");
+
+  if (!modal || !body) return;
+
+  body.innerHTML = ITEM_DETAIL_FIELDS.map(([key, label]) => {
+
+    let value = item[key];
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      value = "-";
+    }
+
+    return `
+      <div class="item-detail-row">
+        <div class="item-detail-label">${label}</div>
+        <div class="item-detail-value">${escapeHtml(String(value))}</div>
+      </div>
+    `;
+
+  }).join("");
+
+  const codeValue = item.code || "";
+
+  const copyCodeBtn = document.getElementById("copyItemCodeBtn");
+
+  if (copyCodeBtn) {
+    copyCodeBtn.onclick = () => copyItemCode(codeValue);
+  }
+
+  modal.style.display = "flex";
+}
+
+function closeItemDetail() {
+  const modal = document.getElementById("itemDetailModal");
+
+  if (modal) {
+    modal.style.display = "none";
+  }
+}
+
+function copyItemCode(code) {
+
+  if (!code || code === "-") {
+    return;
+  }
+
+  navigator.clipboard.writeText(String(code))
+    .then(() => {
+
+      const toast = document.getElementById("copyToast");
+
+      if (toast) {
+        toast.textContent = "📋 คัดลอก Code เรียบร้อย!";
+        toast.style.display = "block";
+
+        setTimeout(() => {
+          toast.style.display = "none";
+          toast.textContent = "📋 คัดลอกข้อมูลเรียบร้อย!";
+        }, 1800);
+      }
+
+    })
+    .catch(err => {
+      console.error("Copy Code exception:", err);
+    });
+}
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+// ปิด Popup เมื่อคลิกพื้นที่ด้านนอก
+document.addEventListener("click", function(e) {
+
+  const modal = document.getElementById("itemDetailModal");
+
+  if (modal && e.target === modal) {
+    closeItemDetail();
+  }
+
+});
+
+
+// ปิด Popup ด้วย ESC
+document.addEventListener("keydown", function(e) {
+
+  if (e.key === "Escape") {
+    closeItemDetail();
+  }
+
+});
