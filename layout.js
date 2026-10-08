@@ -10,9 +10,9 @@ let layoutInitialized = false;
 let authInitialized = false;
 
 // ==========================================================================
-// SUPABASE LAYOUT AUTH CONFIG
+// SUPABASE LAYOUT AUTH CONFIG (ใช้ตาราง superpart_config ผ่าน GET แทน RPC)
 // ==========================================================================
-const LAYOUT_AUTH_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/verify_superpart_password";
+const LAYOUT_AUTH_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/superpart_config?password_value=eq.";
 const LAYOUT_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
 const LAYOUT_AUTH_CACHE_KEY = "SUPERPART_LAYOUT_AUTH_TOKEN";
@@ -252,7 +252,7 @@ function showLoginScreen() {
 
 
 // ==========================================================================
-// PASSWORD VERIFICATION ENGINE
+// PASSWORD VERIFICATION ENGINE (GET Request ไปที่ตารางโดยตรง)
 // ==========================================================================
 
 async function verifyLayoutPasswordBrutal(autoSavedPass = null) {
@@ -283,33 +283,18 @@ async function verifyLayoutPasswordBrutal(autoSavedPass = null) {
   }
 
   try {
-
-    const response = await fetch(LAYOUT_AUTH_URL, {
-      method: "POST",
-      headers: {
-        "apikey": LAYOUT_ANON_KEY,
-        "Authorization": "Bearer " + LAYOUT_ANON_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user_input_password: password,
-        limit: 1,
-        offset: 0
-      })
-    });
-
-    if (response.status === 400) {
-      const errorData = await response.json().catch(() => ({}));
-      if (errorData.message && errorData.message.includes("locked")) {
-        clearLayoutAuthSession();
-        if (message) {
-          message.textContent = "ระบบถูกระงับชั่วคราว กรุณาลองใหม่ภายหลัง";
-          message.className = "superpart-login-message error";
+    // ใช้ GET method ยิงตรงไปที่ตารางพร้อมพ่วงรหัสผ่านผ่าน query string
+    const response = await fetch(
+      LAYOUT_AUTH_URL + encodeURIComponent(password),
+      {
+        method: "GET",
+        headers: {
+          "apikey": LAYOUT_ANON_KEY,
+          "Authorization": "Bearer " + LAYOUT_ANON_KEY,
+          "Content-Type": "application/json"
         }
-        if (button) button.disabled = true;
-        return;
       }
-    }
+    );
 
     if (!response.ok) {
       throw new Error("Authentication request failed");
@@ -317,6 +302,7 @@ async function verifyLayoutPasswordBrutal(autoSavedPass = null) {
 
     const data = await response.json();
 
+    // ถ้าอาเรย์ว่าง แปลว่ารหัสผ่านไม่ตรงกับในตาราง
     if (!Array.isArray(data) || data.length === 0) {
       clearLayoutAuthSession();
       if (message) {
