@@ -1,6 +1,6 @@
-// =========================
+// ==========================================================================
 // LAYOUT CONTROLLER + ACCESS AUTH
-// =========================
+// ==========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
   initLayout();
@@ -9,25 +9,20 @@ document.addEventListener("DOMContentLoaded", () => {
 let layoutInitialized = false;
 let authInitialized = false;
 
-// =========================
-// SUPABASE AUTH CONFIG
-// =========================
+// ==========================================================================
+// SUPABASE LAYOUT AUTH CONFIG
+// ==========================================================================
+const LAYOUT_AUTH_URL = "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/verify_superpart_password";
+const LAYOUT_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
-// เปลี่ยนมาใช้การยิง Query ตรงไปที่ตาราง superpart_config แทน RPC เพื่อป้องกันปัญหา 404
-const SUPABASE_AUTH_URL =
-  "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/superpart_config?password_value=eq.";
-  
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
-
-const AUTH_CACHE_KEY = "SUPERPART_AUTH_CACHE";
-const AUTH_CACHE_DAYS = 3;
-const AUTH_CACHE_MS = AUTH_CACHE_DAYS * 24 * 60 * 60 * 1000;
+const LAYOUT_AUTH_CACHE_KEY = "SUPERPART_LAYOUT_AUTH_TOKEN";
+const LAYOUT_AUTH_EXPIRY_KEY = "SUPERPART_LAYOUT_AUTH_EXPIRY";
+const LAYOUT_CACHE_MS = 3 * 24 * 60 * 60 * 1000; // 3 วัน
 
 
-// =========================
+// ==========================================================================
 // MAIN LAYOUT
-// =========================
+// ==========================================================================
 
 async function initLayout() {
 
@@ -68,7 +63,7 @@ async function initLayout() {
   // AUTHENTICATION
   // =========================
 
-  await initAuthentication();
+  await initLayoutAuthentication();
 
   // =========================
   // INIT INTERACTIONS
@@ -78,19 +73,19 @@ async function initLayout() {
 }
 
 
-// =========================
+// ==========================================================================
 // AUTHENTICATION CONTROLLER
-// =========================
+// ==========================================================================
 
-async function initAuthentication() {
+async function initLayoutAuthentication() {
 
   if (authInitialized) return;
   authInitialized = true;
 
-  const cachedAuth = getAuthCache();
+  const savedPass = getValidLayoutAuthSession();
 
-  if (cachedAuth) {
-    enableProtectedPage();
+  if (savedPass) {
+    verifyLayoutPasswordBrutal(savedPass);
     return;
   }
 
@@ -99,74 +94,39 @@ async function initAuthentication() {
 }
 
 
-// =========================
-// CHECK LOCAL AUTH CACHE
-// =========================
+// ==========================================================================
+// AUTH SESSION MANAGEMENT
+// ==========================================================================
 
-function getAuthCache() {
+function getValidLayoutAuthSession() {
+  const savedPass = localStorage.getItem(LAYOUT_AUTH_CACHE_KEY);
+  const expiryTime = localStorage.getItem(LAYOUT_AUTH_EXPIRY_KEY);
 
-  const raw = localStorage.getItem(AUTH_CACHE_KEY);
+  if (!savedPass || !expiryTime) return null;
 
-  if (!raw) return null;
-
-  try {
-
-    const data = JSON.parse(raw);
-
-    if (!data.authenticated || !data.expiresAt) {
-      clearAuthCache();
-      return null;
-    }
-
-    if (Date.now() > Number(data.expiresAt)) {
-      clearAuthCache();
-      return null;
-    }
-
-    return data;
-
-  } catch (error) {
-
-    clearAuthCache();
+  if (Date.now() > parseInt(expiryTime, 10)) {
+    clearLayoutAuthSession();
     return null;
   }
+
+  return savedPass;
+}
+
+function saveLayoutAuthSession(pass) {
+  const expiryTime = Date.now() + LAYOUT_CACHE_MS;
+  localStorage.setItem(LAYOUT_AUTH_CACHE_KEY, pass);
+  localStorage.setItem(LAYOUT_AUTH_EXPIRY_KEY, expiryTime.toString());
+}
+
+function clearLayoutAuthSession() {
+  localStorage.removeItem(LAYOUT_AUTH_CACHE_KEY);
+  localStorage.removeItem(LAYOUT_AUTH_EXPIRY_KEY);
 }
 
 
-// =========================
-// SAVE AUTH CACHE
-// =========================
-
-function saveAuthCache() {
-
-  const expiresAt = Date.now() + AUTH_CACHE_MS;
-
-  const authData = {
-    authenticated: true,
-    loginAt: Date.now(),
-    expiresAt: expiresAt
-  };
-
-  localStorage.setItem(
-    AUTH_CACHE_KEY,
-    JSON.stringify(authData)
-  );
-}
-
-
-// =========================
-// CLEAR AUTH CACHE
-// =========================
-
-function clearAuthCache() {
-
-  localStorage.removeItem(AUTH_CACHE_KEY);
-}
-
-
-// =========================
+// ==========================================================================
 // DISABLE PAGE UNTIL LOGIN
-// =========================
+// ==========================================================================
 
 function disableProtectedPage() {
 
@@ -183,9 +143,9 @@ function disableProtectedPage() {
 }
 
 
-// =========================
+// ==========================================================================
 // ENABLE PAGE AFTER LOGIN
-// =========================
+// ==========================================================================
 
 function enableProtectedPage() {
 
@@ -208,9 +168,9 @@ function enableProtectedPage() {
 }
 
 
-// =========================
+// ==========================================================================
 // CREATE LOGIN SCREEN
-// =========================
+// ==========================================================================
 
 function showLoginScreen() {
 
@@ -279,172 +239,145 @@ function showLoginScreen() {
     input.focus();
 
     input.addEventListener("keydown", event => {
-
       if (event.key === "Enter") {
-        verifySuperpartPassword();
+        verifyLayoutPasswordBrutal();
       }
-
     });
   }
 
   if (button) {
-    button.addEventListener(
-      "click",
-      verifySuperpartPassword
-    );
+    button.addEventListener("click", () => verifyLayoutPasswordBrutal());
   }
 }
 
 
-// =========================
-// VERIFY PASSWORD
-// =========================
+// ==========================================================================
+// PASSWORD VERIFICATION ENGINE
+// ==========================================================================
 
-async function verifySuperpartPassword() {
+async function verifyLayoutPasswordBrutal(autoSavedPass = null) {
 
-  const input = document.getElementById(
-    "superpartLoginPassword"
-  );
+  const input = document.getElementById("superpartLoginPassword");
+  const button = document.getElementById("superpartLoginButton");
+  const message = document.getElementById("superpartLoginMessage");
 
-  const button = document.getElementById(
-    "superpartLoginButton"
-  );
-
-  const message = document.getElementById(
-    "superpartLoginMessage"
-  );
-
-  if (!input || !button || !message) return;
-
-  const password = input.value.trim();
+  const password = autoSavedPass || (input ? input.value.trim() : "");
 
   if (!password) {
-
-    message.textContent =
-      "กรุณาใส่รหัสผ่าน";
-
-    message.className =
-      "superpart-login-message error";
-
-    input.focus();
-
+    if (message) {
+      message.textContent = "กรุณาใส่รหัสผ่าน";
+      message.className = "superpart-login-message error";
+    }
+    if (input) input.focus();
     return;
   }
 
-  button.disabled = true;
-  button.textContent = "CHECKING...";
+  if (button) {
+    button.disabled = true;
+    button.textContent = "CHECKING...";
+  }
 
-  message.textContent =
-    "กำลังตรวจสอบสิทธิ์...";
-
-  message.className =
-    "superpart-login-message loading";
+  if (message) {
+    message.textContent = "กำลังตรวจสอบสิทธิ์...";
+    message.className = "superpart-login-message loading";
+  }
 
   try {
 
-    // เปลี่ยนมาใช้ GET request ส่งรหัสผ่านต่อท้าย URL ของตารางเพื่อตรวจสอบ
-    const response = await fetch(
-      SUPABASE_AUTH_URL + encodeURIComponent(password),
-      {
-        method: "GET",
+    const response = await fetch(LAYOUT_AUTH_URL, {
+      method: "POST",
+      headers: {
+        "apikey": LAYOUT_ANON_KEY,
+        "Authorization": "Bearer " + LAYOUT_ANON_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_input_password: password,
+        limit: 1,
+        offset: 0
+      })
+    });
 
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization":
-            "Bearer " + SUPABASE_ANON_KEY,
-          "Content-Type":
-            "application/json"
+    if (response.status === 400) {
+      const errorData = await response.json().catch(() => ({}));
+      if (errorData.message && errorData.message.includes("locked")) {
+        clearLayoutAuthSession();
+        if (message) {
+          message.textContent = "ระบบถูกระงับชั่วคราว กรุณาลองใหม่ภายหลัง";
+          message.className = "superpart-login-message error";
         }
+        if (button) button.disabled = true;
+        return;
       }
-    );
+    }
 
     if (!response.ok) {
-      throw new Error(
-        "Authentication request failed"
-      );
+      throw new Error("Authentication request failed");
     }
 
     const data = await response.json();
 
-    // ถ้าอาเรย์มีข้อมูล แสดงว่ารหัสผ่านถูกต้องตรงกับในตาราง
     if (!Array.isArray(data) || data.length === 0) {
-
-      message.textContent =
-        "รหัสผ่านไม่ถูกต้อง";
-
-      message.className =
-        "superpart-login-message error";
-
-      input.value = "";
-      input.focus();
-
-      button.disabled = false;
-      button.textContent = "LOGIN";
-
+      clearLayoutAuthSession();
+      if (message) {
+        message.textContent = "รหัสผ่านไม่ถูกต้อง";
+        message.className = "superpart-login-message error";
+      }
+      if (input) {
+        input.value = "";
+        input.focus();
+      }
+      if (button) {
+        button.disabled = false;
+        button.textContent = "LOGIN";
+      }
       return;
     }
 
     // =========================
     // LOGIN SUCCESS
     // =========================
-
-    saveAuthCache();
-
+    saveLayoutAuthSession(password);
     enableProtectedPage();
 
   } catch (error) {
-
-    console.error(
-      "Authentication error:",
-      error
-    );
-
-    message.textContent =
-      "ไม่สามารถเชื่อมต่อระบบตรวจสอบสิทธิ์ได้";
-
-    message.className =
-      "superpart-login-message error";
-
-    button.disabled = false;
-    button.textContent = "LOGIN";
+    console.error("Authentication error:", error);
+    if (message) {
+      message.textContent = "ไม่สามารถเชื่อมต่อระบบตรวจสอบสิทธิ์ได้";
+      message.className = "superpart-login-message error";
+    }
+    if (button) {
+      button.disabled = false;
+      button.textContent = "LOGIN";
+    }
   }
 }
 
 
-// =========================
+// ==========================================================================
 // LOGOUT
-// =========================
+// ==========================================================================
 
 function superpartLogout() {
-
-  clearAuthCache();
-
+  clearLayoutAuthSession();
   location.reload();
 }
 
 
-// =========================
+// ==========================================================================
 // LOGIN STYLES
-// =========================
+// ==========================================================================
 
 function injectLoginStyles() {
 
-  if (
-    document.getElementById(
-      "superpartLoginStyles"
-    )
-  ) {
+  if (document.getElementById("superpartLoginStyles")) {
     return;
   }
 
-  const style =
-    document.createElement("style");
-
-  style.id =
-    "superpartLoginStyles";
+  const style = document.createElement("style");
+  style.id = "superpartLoginStyles";
 
   style.textContent = `
-
     .superpart-login-overlay {
       position: fixed;
       inset: 0;
@@ -467,8 +400,7 @@ function injectLoginStyles() {
       border-radius: 20px;
       padding: 34px 30px;
       box-sizing: border-box;
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.08);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
       text-align: center;
     }
 
@@ -556,77 +488,49 @@ function injectLoginStyles() {
     }
 
     @media(max-width:768px){
-
       .superpart-login-box {
         padding: 30px 22px;
         border-radius: 18px;
       }
-
     }
-
   `;
 
   document.head.appendChild(style);
 }
 
 
-// =========================
+// ==========================================================================
 // HAMBURGER MENU
-// =========================
+// ==========================================================================
 
 let hamburgerBound = false;
 let outsideClickBound = false;
 
 function initHamburgerMenu() {
 
-  const menuBtn =
-    document.getElementById("menuBtn");
-
-  const menuDropdown =
-    document.getElementById("menuDropdown");
+  const menuBtn = document.getElementById("menuBtn");
+  const menuDropdown = document.getElementById("menuDropdown");
 
   if (!menuBtn || !menuDropdown) return;
-
   if (hamburgerBound) return;
 
   hamburgerBound = true;
 
   menuBtn.addEventListener("click", (e) => {
-
     e.stopPropagation();
-
     menuDropdown.classList.toggle("active");
-
   });
 
   if (!outsideClickBound) {
-
     window.addEventListener("click", (e) => {
+      const menuBtnLive = document.getElementById("menuBtn");
+      const menuDropdownLive = document.getElementById("menuDropdown");
 
-      const menuBtnLive =
-        document.getElementById("menuBtn");
+      if (!menuBtnLive || !menuDropdownLive) return;
 
-      const menuDropdownLive =
-        document.getElementById("menuDropdown");
-
-      if (
-        !menuBtnLive ||
-        !menuDropdownLive
-      ) {
-        return;
+      if (!menuBtnLive.contains(e.target) && !menuDropdownLive.contains(e.target)) {
+        menuDropdownLive.classList.remove("active");
       }
-
-      if (
-        !menuBtnLive.contains(e.target) &&
-        !menuDropdownLive.contains(e.target)
-      ) {
-
-        menuDropdownLive.classList.remove(
-          "active"
-        );
-
-      }
-
     });
 
     outsideClickBound = true;
