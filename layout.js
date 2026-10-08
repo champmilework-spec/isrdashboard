@@ -15,7 +15,7 @@ let authInitialized = false;
 
 const SUPABASE_AUTH_URL =
   "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/verify_superpart_password";
-
+  
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
