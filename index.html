@@ -2,134 +2,30 @@
 <html lang="en">
 <head>
 <link rel="icon" type="image/png" href="favicon.png">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SUPERPART</title>
-
 <style>
-
-/* =========================
-   BASE
-========================= */
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:"Kanit", Arial, sans-serif;
+  font-family:"Kanit",Arial,sans-serif;
 }
-
 body{
   background:#ffffff;
   color:#111;
   overflow-x:hidden;
 }
-
-/* subtle background */
 .bg{
   position:fixed;
   width:700px;
   height:700px;
-  background:radial-gradient(circle, rgba(0,0,0,0.04), transparent 70%);
+  background:radial-gradient(circle,rgba(0,0,0,0.04),transparent 70%);
   top:-250px;
   right:-250px;
   z-index:-1;
 }
-
-/* =========================
-   TOP BAR (minimal)
-========================= */
-.topbar{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  padding:18px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid #eee;
-  z-index:100;
-}
-
-.logo{
-  font-size:12px;
-  letter-spacing:3px;
-  color:#111;
-  text-decoration:none;
-}
-
-.menu{
-  width:28px;
-  height:14px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  cursor:pointer;
-}
-
-.menu span{
-  height:2px;
-  background:#111;
-  width:100%;
-  border-radius:999px;
-  transition:0.3s;
-}
-
-/* =========================
-   MENU DROPDOWN
-========================= */
-.menu-dropdown{
-  position:fixed;
-  top:70px;
-  right:24px;
-  width:240px;
-  background:rgba(255,255,255,0.96);
-  backdrop-filter:blur(14px);
-  border:1px solid #eee;
-  border-radius:18px;
-  padding:14px;
-  display:none;
-  flex-direction:column;
-  gap:4px;
-  z-index:200;
-  box-shadow:0 18px 40px rgba(0,0,0,0.08);
-}
-
-.menu-dropdown.active{
-  display:flex;
-  animation:fadeDown 0.25s ease;
-}
-
-.menu-dropdown a{
-  text-decoration:none;
-  color:#111;
-  font-size:14px;
-  padding:12px 14px;
-  border-radius:12px;
-  transition:0.2s;
-}
-
-.menu-dropdown a:hover{
-  background:#f5f5f5;
-  transform:translateX(3px);
-}
-
-@keyframes fadeDown{
-  from{
-    opacity:0;
-    transform:translateY(-10px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* =========================
-   HERO & BRAND LOGO
-========================= */
 .hero{
   min-height:75vh;
   display:flex;
@@ -139,47 +35,38 @@ body{
   text-align:center;
   padding:120px 20px 60px;
 }
-
-.brand-logo-wrap {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.brand-logo-wrap{
+  margin-bottom:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
-
-.brand-logo-img {
-  max-width: 240px;
-  height: auto;
-  object-fit: contain;
+.brand-logo-img{
+  max-width:240px;
+  height:auto;
+  object-fit:contain;
 }
-
 .tag{
   font-size:12px;
   letter-spacing:3px;
   color:#666;
-  margin-top: 10px;
+  margin-top:10px;
 }
-
 .sub{
   max-width:720px;
   font-size:18px;
   color:#555;
   line-height:1.8;
-  margin-top: 20px;
+  margin-top:20px;
 }
-
-/* =========================
-   HERO CTA (GRID 2x2)
-========================= */
 .hero-action{
   margin-top:35px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  width: 100%;
-  max-width: 500px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  width:100%;
+  max-width:500px;
 }
-
 .hero-btn{
   display:inline-flex;
   align-items:center;
@@ -190,85 +77,66 @@ body{
   color:#fff;
   text-decoration:none;
   font-size:13px;
-  font-weight: 500;
+  font-weight:500;
   letter-spacing:1px;
   border:1px solid #111;
   transition:0.25s;
 }
-
 .hero-btn:hover{
   background:#fff;
   color:#111;
   transform:translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+  box-shadow:0 6px 15px rgba(0,0,0,0.05);
 }
-
-/* สีน้ำเงิน (Inventory) */
-.hero-btn-blue {
+.hero-btn-blue{
   background:#2f5ea8;
   border-color:#2f5ea8;
 }
-.hero-btn-blue:hover {
+.hero-btn-blue:hover{
   background:#fff;
   color:#2f5ea8;
   border-color:#2f5ea8;
 }
-
-/* สีขาว อักษรดำ (Sales Dashboard & Promotions) */
-.hero-btn-white {
+.hero-btn-white{
   background:#ffffff;
   color:#111;
   border-color:#ddd;
 }
-.hero-btn-white:hover {
+.hero-btn-white:hover{
   background:#111;
   color:#fff;
   border-color:#111;
 }
-
-/* =========================
-   REMARK WARNING
-========================= */
-.remark-warning {
-  font-size: 11px;
-  color: #ef4444;
-  margin-top: 18px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  background: #fff5f5;
-  border: 1px solid #fee2e2;
-  padding: 6px 16px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.03);
+.remark-warning{
+  font-size:11px;
+  color:#ef4444;
+  margin-top:18px;
+  font-weight:500;
+  letter-spacing:0.5px;
+  background:#fff5f5;
+  border:1px solid #fee2e2;
+  padding:6px 16px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 2px 5px rgba(239,68,68,0.03);
 }
-
-/* =========================
-   SECTION SYSTEM
-========================= */
 .section{
   padding:60px 20px;
 }
-
 .title{
   text-align:center;
   font-size:24px;
   margin-bottom:30px;
   letter-spacing:2px;
 }
-
 .textblock{
   max-width:720px;
   margin:0 auto;
   line-height:1.8;
   color:#444;
 }
-
-/* =========================
-   BRANDS
-========================= */
 .brands{
   max-width:900px;
   margin:0 auto;
@@ -278,7 +146,6 @@ body{
   align-items:center;
   gap:10px;
 }
-
 .brandtag{
   font-size:12px;
   border:1px solid #ddd;
@@ -288,189 +155,86 @@ body{
   text-decoration:none;
   display:inline-block;
 }
-
-/* เอฟเฟกต์โฮเวอร์สำหรับแบรนด์ที่มีลิงก์ เช่น DOMAC */
-a.brandtag:hover {
+a.brandtag:hover{
   background:#111;
   color:#fff;
   border-color:#111;
   transform:translateY(-1px);
-  transition: 0.2s;
+  transition:0.2s;
 }
-
-/* =========================
-   CONTACT
-========================= */
 .contact{
   padding:60px 20px;
   text-align:center;
 }
-
-/* =========================
-   FALLBACK FOOTER STYLE
-========================= */
-.fallback-footer {
-  background: #111;
-  color: #777;
-  text-align: center;
-  padding: 30px 20px;
-  font-size: 13px;
-  border-top: 1px solid #222;
+.fallback-footer{
+  background:#111;
+  color:#777;
+  text-align:center;
+  padding:30px 20px;
+  font-size:13px;
+  border-top:1px solid #222;
 }
-
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
 @media(max-width:768px){
-
   .hero{
     padding:140px 20px 60px;
   }
-
-  .brand-logo-img {
-    max-width: 190px;
+  .brand-logo-img{
+    max-width:190px;
   }
-
   .sub{
     font-size:15px;
-    padding: 0 10px;
+    padding:0 10px;
   }
-
-  .hero-action {
-    max-width: 100%;
-    padding: 0 10px;
-    gap: 10px;
+  .hero-action{
+    max-width:100%;
+    padding:0 10px;
+    gap:10px;
   }
-
-  .hero-btn {
-    padding: 12px 10px;
-    font-size: 11px;
-    letter-spacing: 0.5px;
+  .hero-btn{
+    padding:12px 10px;
+    font-size:11px;
+    letter-spacing:0.5px;
   }
-
-  .remark-warning {
-    font-size: 10px;
-    padding: 4px 12px;
+  .remark-warning{
+    font-size:10px;
+    padding:4px 12px;
   }
-
 }
-
 </style>
 </head>
-
 <body>
-
 <div class="bg"></div>
-
 <div id="header-placeholder"></div>
-
 <section class="hero">
-
-  <div class="brand-logo-wrap">
-    <img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779160379/Asset_1_kayj8w.png" alt="SUPERPART Logo" class="brand-logo-img">
-  </div>
-
-  <div class="tag">AUTOMOTIVE COATING &amp; PARTS SYSTEM</div>
-
-  <div class="sub">
-    ศูนย์รวมสีพ่นรถยนต์และชิ้นส่วนอะไหล่คุณภาพสูง คัดสรรเพื่อประสิทธิภาพและความทนทานสูงสุดสำหรับยานยนต์คุณ
-  </div>
-
-  <div class="hero-action">
-    <a class="hero-btn" href="cases.html">CASES</a>
-    <a class="hero-btn hero-btn-blue" href="inventory.html">INVENTORY</a>
-    
-    <a class="hero-btn hero-btn-white" href="sales.html">SALES DASHBOARD</a>
-    <a class="hero-btn hero-btn-white" href="promo.html">PROMOTIONS</a>
-
-    <a class="hero-btn hero-btn-white" href="products.html">CATALOG</a>
-  </div>
-
+<div class="brand-logo-wrap">
+<img src="https://res.cloudinary.com/dqtbgfk73/image/upload/v1779160379/Asset_1_kayj8w.png" alt="SUPERPART Logo" class="brand-logo-img">
+</div>
+<div class="tag">AUTOMOTIVE COATING &amp; PARTS SYSTEM</div>
+<div class="sub">ศูนย์รวมสีพ่นรถยนต์และชิ้นส่วนอะไหล่คุณภาพสูง คัดสรรเพื่อประสิทธิภาพและความทนทานสูงสุดสำหรับยานยนต์คุณ</div>
+<div class="hero-action">
+<a class="hero-btn" href="cases.html">CASES</a>
+<a class="hero-btn hero-btn-blue" href="inventory.html">INVENTORY</a>
+<a class="hero-btn hero-btn-white" href="sales.html">SALES DASHBOARD</a>
+<a class="hero-btn hero-btn-white" href="promo.html">PROMOTIONS</a>
+<a class="hero-btn hero-btn-white" href="products.html">CATALOG</a>
+</div>
 </section>
-
 <section class="section">
-
-  <div class="title">OUR BRANDS</div>
-
-  <div class="brands">
-    <div class="brandtag">CROMAX</div>
-    <div class="brandtag">NIPPON PAINT</div>
-    <a class="brandtag" href="domac.html">DOMAC</a>
-    <div class="brandtag">3M</div>
-    <div class="brandtag">LEZZON</div>
-    <div class="brandtag">SOLAR</div>
-  </div>
-
+<div class="title">OUR BRANDS</div>
+<div class="brands">
+<div class="brandtag">CROMAX</div>
+<div class="brandtag">NIPPON PAINT</div>
+<a class="brandtag" href="domac.html">DOMAC</a>
+<div class="brandtag">3M</div>
+<div class="brandtag">LEZZON</div>
+<div class="brandtag">SOLAR</div>
+</div>
 </section>
-
 <section class="contact">
-
-  <div class="title">CONTACT</div>
-  <p>Email: supalerk.k@superpart.co.th</p>
-
+<div class="title">CONTACT</div>
+<p>Email: supalerk.k@superpart.co.th</p>
 </section>
-
 <div id="footer-placeholder"></div>
-
-<script>
-
-/* =========================
-   LOAD HEADER
-========================= */
-fetch("header.html")
-  .then(response => {
-    if(!response.ok) throw new Error('Network error');
-    return response.text();
-  })
-  .then(data => {
-    document.getElementById("header-placeholder").innerHTML = data;
-
-    const menuBtn = document.getElementById("menuBtn");
-    const menuDropdown = document.getElementById("menuDropdown");
-
-    if(menuBtn && menuDropdown){
-      if (!menuDropdown.querySelector('a[href="promo.html"]')) {
-        const promoLink = document.createElement("a");
-        promoLink.href = "promo.html";
-        promoLink.textContent = "PROMOTIONS";
-        menuDropdown.insertBefore(promoLink, menuDropdown.firstChild);
-      }
-
-      menuBtn.addEventListener("click", () => {
-        menuDropdown.classList.toggle("active");
-      });
-
-      window.addEventListener("click", (e) => {
-        if(!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)){
-          menuDropdown.classList.remove("active");
-        } 
-      });
-    }
-  })
-  .catch(err => {
-    console.log("Header placeholder active or external file not found.");
-  });
-
-/* =========================
-   LOAD FOOTER
-========================= */
-fetch("footer.html")
-  .then(response => {
-    if(!response.ok) throw new Error('NOT_FOUND');
-    return response.text();
-  })
-  .then(data => {
-    document.getElementById("footer-placeholder").innerHTML = data;
-  })
-  .catch(err => {
-    document.getElementById("footer-placeholder").innerHTML = `
-      <footer class="fallback-footer">
-        <p>&copy; 2026 SUPERPART. All rights reserved. | Contact: supalerk.k@superpart.co.th</p>
-      </footer>
-    `;
-  });
-
-</script>
-
+<script src="layout.js"></script>
 </body>
 </html>
