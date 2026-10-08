@@ -14,8 +14,8 @@ let authInitialized = false;
 // =========================
 
 const SUPABASE_AUTH_URL =
-  "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/get_cm_data_secure";
-
+  "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/verify_superpart_password";
+  
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsm3JweHpldyIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzgyNDUyMjUwLCJleHAiOjIwOTgwMjgyNTB9.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
 
