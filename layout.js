@@ -13,8 +13,9 @@ let authInitialized = false;
 // SUPABASE AUTH CONFIG
 // =========================
 
+// เปลี่ยนมาใช้การยิง Query ตรงไปที่ตาราง superpart_config แทน RPC เพื่อป้องกันปัญหา 404
 const SUPABASE_AUTH_URL =
-  "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/rpc/verify_superpart_password";
+  "https://lhnhmjbdowlmurpvxzew.supabase.co/rest/v1/superpart_config?password_value=eq.";
   
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobmhtamJkb3dsbXVycHZ4emV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NTIyNTAsImV4cCI6MjA5ODAyODI1MH0.suJwzEkJKLD3tsv2o-fY_hOwatmy7i3-saD3Nt0hb4A";
@@ -341,10 +342,11 @@ async function verifySuperpartPassword() {
 
   try {
 
+    // เปลี่ยนมาใช้ GET request ส่งรหัสผ่านต่อท้าย URL ของตารางเพื่อตรวจสอบ
     const response = await fetch(
-      SUPABASE_AUTH_URL,
+      SUPABASE_AUTH_URL + encodeURIComponent(password),
       {
-        method: "POST",
+        method: "GET",
 
         headers: {
           "apikey": SUPABASE_ANON_KEY,
@@ -352,37 +354,9 @@ async function verifySuperpartPassword() {
             "Bearer " + SUPABASE_ANON_KEY,
           "Content-Type":
             "application/json"
-        },
-
-        body: JSON.stringify({
-          user_input_password: password,
-          limit: 1,
-          offset: 0
-        })
+        }
       }
     );
-
-    if (response.status === 400) {
-
-      const errorData =
-        await response.json().catch(() => ({}));
-
-      if (
-        errorData.message &&
-        errorData.message.includes("locked")
-      ) {
-
-        message.textContent =
-          "ระบบถูกระงับชั่วคราว กรุณาลองใหม่ภายหลัง";
-
-        message.className =
-          "superpart-login-message error";
-
-        button.disabled = true;
-
-        return;
-      }
-    }
 
     if (!response.ok) {
       throw new Error(
@@ -392,6 +366,7 @@ async function verifySuperpartPassword() {
 
     const data = await response.json();
 
+    // ถ้าอาเรย์มีข้อมูล แสดงว่ารหัสผ่านถูกต้องตรงกับในตาราง
     if (!Array.isArray(data) || data.length === 0) {
 
       message.textContent =
